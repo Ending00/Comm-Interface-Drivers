@@ -1,0 +1,439 @@
+Component: ARM Compiler 5.06 update 7 (build 960) Tool: armlink [4d3601]
+
+==============================================================================
+
+Section Cross References
+
+    main.o(i.main) refers to crg.o(i.PLL_Init) for PLL_Init
+    main.o(i.main) refers to delay.o(i.Delay_Init) for Delay_Init
+    main.o(i.main) refers to uart.o(i.LIN_Init) for LIN_Init
+    rjs32k116_it.o(i.UART0_IRQHandler) refers to uart.o(i.UART0_LINSendData) for UART0_LINSendData
+    rjs32k116_it.o(i.UART0_IRQHandler) refers to rjs32k116_it.o(.data) for lin_state
+    rjs32k116_it.o(i.UART0_IRQHandler) refers to rjs32k116_it.o(.bss) for data_buff
+    startup_rjs32k116.o(RESET) refers to startup_rjs32k116.o(STACK) for __initial_sp
+    startup_rjs32k116.o(RESET) refers to startup_rjs32k116.o(.text) for Reset_Handler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.SysTick_Handler) for SysTick_Handler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.PVD_IRQHandler) for PVD_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.IWDG_IRQHandler) for IWDG_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.I2C0_IRQHandler) for I2C0_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.I2C1_IRQHandler) for I2C1_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.SPI0_IRQHandler) for SPI0_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.SPI1_IRQHandler) for SPI1_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.UART0_IRQHandler) for UART0_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.UART1_IRQHandler) for UART1_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.UART2_IRQHandler) for UART2_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.UART3_IRQHandler) for UART3_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.LPUART_IRQHandler) for LPUART_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.RTC_IRQHandler) for RTC_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.GPIOA_IRQHandler) for GPIOA_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.GPIOB_IRQHandler) for GPIOB_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.GPIOC_IRQHandler) for GPIOC_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.GPIOH_IRQHandler) for GPIOH_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.TIMER0_IRQHandler) for TIMER0_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.TIMER1_IRQHandler) for TIMER1_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.TIMER2_IRQHandler) for TIMER2_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.TIMER3_IRQHandler) for TIMER3_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.TIMER4_IRQHandler) for TIMER4_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.LPTIMER_IRQHandler) for LPTIMER_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.WDG_IRQHandler) for WDG_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.ADC_IRQHandler) for ADC_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.CLKCHK_IRQHandler) for CLKCHK_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.COMP1COMP2_IRQHandler) for COMP1COMP2_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.CAN_IRQHandler) for CAN_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.SRAM_ERROR_IRQHandler) for SRAM_ERROR_IRQHandler
+    startup_rjs32k116.o(RESET) refers to rjs32k116_it.o(i.DMA_IRQHandler) for DMA_IRQHandler
+    startup_rjs32k116.o(.text) refers to entry.o(.ARM.Collect$$$$00000000) for __main
+    uart.o(i.LIN_Init) refers to uidiv.o(.text) for __aeabi_uidivmod
+    uart.o(i.UART0_Init) refers to uidiv.o(.text) for __aeabi_uidivmod
+    uart.o(i.UART0_LINSendData) refers to uart.o(i.UART0_LINSendByte) for UART0_LINSendByte
+    uart.o(i.fputc) refers to uart.o(i.UART0_SendData) for UART0_SendData
+    delay.o(i.Delay_Init) refers to delay.o(.data) for us
+    delay.o(i.Delay_ms) refers to delay.o(.data) for ms
+    delay.o(i.Delay_us) refers to delay.o(.data) for us
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry10a.o(.ARM.Collect$$$$0000000F) for __rt_final_cpp
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry11a.o(.ARM.Collect$$$$00000011) for __rt_final_exit
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry12b.o(.ARM.Collect$$$$0000000E) for __rt_lib_shutdown_fini
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry7b.o(.ARM.Collect$$$$00000008) for _main_clock
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry8b.o(.ARM.Collect$$$$0000000A) for _main_cpp_init
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry9a.o(.ARM.Collect$$$$0000000B) for _main_init
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry5.o(.ARM.Collect$$$$00000004) for _main_scatterload
+    entry.o(.ARM.Collect$$$$00000000) refers (Special) to entry2.o(.ARM.Collect$$$$00000001) for _main_stk
+    entry2.o(.ARM.Collect$$$$00000001) refers to entry2.o(.ARM.Collect$$$$00002712) for __lit__00000000
+    entry2.o(.ARM.Collect$$$$00002712) refers to startup_rjs32k116.o(STACK) for __initial_sp
+    entry2.o(__vectab_stack_and_reset_area) refers to startup_rjs32k116.o(STACK) for __initial_sp
+    entry2.o(__vectab_stack_and_reset_area) refers to entry.o(.ARM.Collect$$$$00000000) for __main
+    entry5.o(.ARM.Collect$$$$00000004) refers to init.o(.text) for __scatterload
+    entry9a.o(.ARM.Collect$$$$0000000B) refers to main.o(i.main) for main
+    entry9b.o(.ARM.Collect$$$$0000000C) refers to main.o(i.main) for main
+    init.o(.text) refers to entry5.o(.ARM.Collect$$$$00000004) for __main_after_scatterload
+
+
+==============================================================================
+
+Removing Unused input sections from the image.
+
+    Removing main.o(.rev16_text), (4 bytes).
+    Removing main.o(.revsh_text), (4 bytes).
+    Removing main.o(.bss), (100 bytes).
+    Removing main.o(.data), (9 bytes).
+    Removing rjs32k116_it.o(.rev16_text), (4 bytes).
+    Removing rjs32k116_it.o(.revsh_text), (4 bytes).
+    Removing startup_rjs32k116.o(HEAP), (512 bytes).
+    Removing uart.o(.rev16_text), (4 bytes).
+    Removing uart.o(.revsh_text), (4 bytes).
+    Removing uart.o(i.UART0_Init), (176 bytes).
+    Removing uart.o(i.UART0_ReceiveData), (16 bytes).
+    Removing uart.o(i.UART0_SendData), (28 bytes).
+    Removing uart.o(i.fputc), (16 bytes).
+    Removing crg.o(.rev16_text), (4 bytes).
+    Removing crg.o(.revsh_text), (4 bytes).
+    Removing crg.o(i.HSI_Init), (76 bytes).
+    Removing delay.o(.rev16_text), (4 bytes).
+    Removing delay.o(.revsh_text), (4 bytes).
+    Removing delay.o(i.Delay_ms), (64 bytes).
+    Removing delay.o(i.Delay_us), (64 bytes).
+    Removing can.o(.rev16_text), (4 bytes).
+    Removing can.o(.revsh_text), (4 bytes).
+    Removing can.o(i.CAN_Init), (552 bytes).
+    Removing can.o(i.CAN_Receive), (100 bytes).
+    Removing can.o(i.CAN_Transmit), (376 bytes).
+
+25 unused section(s) (total 2137 bytes) removed from the image.
+
+==============================================================================
+
+Image Symbol Table
+
+    Local Symbols
+
+    Symbol Name                              Value     Ov Type        Size  Object(Section)
+
+    RESET                                    0x00000000   Section      192  startup_rjs32k116.o(RESET)
+    ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry12b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry12a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
+    ..\..\..\..\..\CMSIS\startup_rjs32k116.s 0x00000000   Number         0  startup_rjs32k116.o ABSOLUTE
+    System\Src\can.c                         0x00000000   Number         0  can.o ABSOLUTE
+    System\Src\crg.c                         0x00000000   Number         0  crg.o ABSOLUTE
+    System\Src\delay.c                       0x00000000   Number         0  delay.o ABSOLUTE
+    System\Src\uart.c                        0x00000000   Number         0  uart.o ABSOLUTE
+    System\\Src\\can.c                       0x00000000   Number         0  can.o ABSOLUTE
+    System\\Src\\crg.c                       0x00000000   Number         0  crg.o ABSOLUTE
+    System\\Src\\delay.c                     0x00000000   Number         0  delay.o ABSOLUTE
+    System\\Src\\uart.c                      0x00000000   Number         0  uart.o ABSOLUTE
+    User\\main.c                             0x00000000   Number         0  main.o ABSOLUTE
+    User\\rjs32k116_it.c                     0x00000000   Number         0  rjs32k116_it.o ABSOLUTE
+    User\main.c                              0x00000000   Number         0  main.o ABSOLUTE
+    User\rjs32k116_it.c                      0x00000000   Number         0  rjs32k116_it.o ABSOLUTE
+    dc.s                                     0x00000000   Number         0  dc.o ABSOLUTE
+    handlers.s                               0x00000000   Number         0  handlers.o ABSOLUTE
+    init.s                                   0x00000000   Number         0  init.o ABSOLUTE
+    .ARM.Collect$$$$00000000                 0x000000c0   Section        0  entry.o(.ARM.Collect$$$$00000000)
+    .ARM.Collect$$$$00000001                 0x000000c0   Section        4  entry2.o(.ARM.Collect$$$$00000001)
+    .ARM.Collect$$$$00000004                 0x000000c4   Section        4  entry5.o(.ARM.Collect$$$$00000004)
+    .ARM.Collect$$$$00000008                 0x000000c8   Section        0  entry7b.o(.ARM.Collect$$$$00000008)
+    .ARM.Collect$$$$0000000A                 0x000000c8   Section        0  entry8b.o(.ARM.Collect$$$$0000000A)
+    .ARM.Collect$$$$0000000B                 0x000000c8   Section        8  entry9a.o(.ARM.Collect$$$$0000000B)
+    .ARM.Collect$$$$0000000E                 0x000000d0   Section        4  entry12b.o(.ARM.Collect$$$$0000000E)
+    .ARM.Collect$$$$0000000F                 0x000000d4   Section        0  entry10a.o(.ARM.Collect$$$$0000000F)
+    .ARM.Collect$$$$00000011                 0x000000d4   Section        0  entry11a.o(.ARM.Collect$$$$00000011)
+    .ARM.Collect$$$$00002712                 0x000000d4   Section        4  entry2.o(.ARM.Collect$$$$00002712)
+    __lit__00000000                          0x000000d4   Data           4  entry2.o(.ARM.Collect$$$$00002712)
+    .text                                    0x000000d8   Section       20  startup_rjs32k116.o(.text)
+    .text                                    0x000000ec   Section        0  uidiv.o(.text)
+    .text                                    0x00000118   Section       36  init.o(.text)
+    i.ADC_IRQHandler                         0x0000013c   Section        0  rjs32k116_it.o(i.ADC_IRQHandler)
+    i.CAN_IRQHandler                         0x0000013e   Section        0  rjs32k116_it.o(i.CAN_IRQHandler)
+    i.CLKCHK_IRQHandler                      0x00000140   Section        0  rjs32k116_it.o(i.CLKCHK_IRQHandler)
+    i.COMP1COMP2_IRQHandler                  0x00000142   Section        0  rjs32k116_it.o(i.COMP1COMP2_IRQHandler)
+    i.DMA_IRQHandler                         0x00000144   Section        0  rjs32k116_it.o(i.DMA_IRQHandler)
+    i.Delay_Init                             0x00000148   Section        0  delay.o(i.Delay_Init)
+    i.GPIOA_IRQHandler                       0x00000184   Section        0  rjs32k116_it.o(i.GPIOA_IRQHandler)
+    i.GPIOB_IRQHandler                       0x00000186   Section        0  rjs32k116_it.o(i.GPIOB_IRQHandler)
+    i.GPIOC_IRQHandler                       0x00000188   Section        0  rjs32k116_it.o(i.GPIOC_IRQHandler)
+    i.GPIOH_IRQHandler                       0x0000018a   Section        0  rjs32k116_it.o(i.GPIOH_IRQHandler)
+    i.I2C0_IRQHandler                        0x0000018c   Section        0  rjs32k116_it.o(i.I2C0_IRQHandler)
+    i.I2C1_IRQHandler                        0x0000018e   Section        0  rjs32k116_it.o(i.I2C1_IRQHandler)
+    i.IWDG_IRQHandler                        0x00000190   Section        0  rjs32k116_it.o(i.IWDG_IRQHandler)
+    i.LIN_Init                               0x00000194   Section        0  uart.o(i.LIN_Init)
+    i.LPTIMER_IRQHandler                     0x000002a8   Section        0  rjs32k116_it.o(i.LPTIMER_IRQHandler)
+    i.LPUART_IRQHandler                      0x000002aa   Section        0  rjs32k116_it.o(i.LPUART_IRQHandler)
+    i.PLL_Init                               0x000002ac   Section        0  crg.o(i.PLL_Init)
+    i.PVD_IRQHandler                         0x00000318   Section        0  rjs32k116_it.o(i.PVD_IRQHandler)
+    i.RTC_IRQHandler                         0x0000031a   Section        0  rjs32k116_it.o(i.RTC_IRQHandler)
+    i.SPI0_IRQHandler                        0x0000031c   Section        0  rjs32k116_it.o(i.SPI0_IRQHandler)
+    i.SPI1_IRQHandler                        0x0000031e   Section        0  rjs32k116_it.o(i.SPI1_IRQHandler)
+    i.SRAM_ERROR_IRQHandler                  0x00000320   Section        0  rjs32k116_it.o(i.SRAM_ERROR_IRQHandler)
+    i.SysTick_Handler                        0x00000322   Section        0  rjs32k116_it.o(i.SysTick_Handler)
+    i.TIMER0_IRQHandler                      0x00000324   Section        0  rjs32k116_it.o(i.TIMER0_IRQHandler)
+    i.TIMER1_IRQHandler                      0x00000326   Section        0  rjs32k116_it.o(i.TIMER1_IRQHandler)
+    i.TIMER2_IRQHandler                      0x00000328   Section        0  rjs32k116_it.o(i.TIMER2_IRQHandler)
+    i.TIMER3_IRQHandler                      0x0000032a   Section        0  rjs32k116_it.o(i.TIMER3_IRQHandler)
+    i.TIMER4_IRQHandler                      0x0000032c   Section        0  rjs32k116_it.o(i.TIMER4_IRQHandler)
+    i.UART0_IRQHandler                       0x00000330   Section        0  rjs32k116_it.o(i.UART0_IRQHandler)
+    i.UART0_LINSendByte                      0x00000404   Section        0  uart.o(i.UART0_LINSendByte)
+    i.UART0_LINSendData                      0x0000041c   Section        0  uart.o(i.UART0_LINSendData)
+    i.UART1_IRQHandler                       0x00000458   Section        0  rjs32k116_it.o(i.UART1_IRQHandler)
+    i.UART2_IRQHandler                       0x0000045a   Section        0  rjs32k116_it.o(i.UART2_IRQHandler)
+    i.UART3_IRQHandler                       0x0000045c   Section        0  rjs32k116_it.o(i.UART3_IRQHandler)
+    i.WDG_IRQHandler                         0x0000045e   Section        0  rjs32k116_it.o(i.WDG_IRQHandler)
+    i.__scatterload_copy                     0x00000460   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x0000046e   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x00000470   Section       14  handlers.o(i.__scatterload_zeroinit)
+    i.main                                   0x00000480   Section        0  main.o(i.main)
+    .data                                    0x20000000   Section       11  rjs32k116_it.o(.data)
+    .data                                    0x2000000c   Section        8  delay.o(.data)
+    .bss                                     0x20000014   Section       64  rjs32k116_it.o(.bss)
+    STACK                                    0x20000058   Section     1024  startup_rjs32k116.o(STACK)
+
+    Global Symbols
+
+    Symbol Name                              Value     Ov Type        Size  Object(Section)
+
+    BuildAttributes$$THM_ISAv3M$S$PE$A:L22$X:L11$S22$IEEE1$IW$USESV6$~STKCKD$USESV7$~SHL$OSPACE$EBA8$MICROLIB$REQ8$PRES8$EABIv2 0x00000000   Number         0  anon$$obj.o ABSOLUTE
+    __ARM_use_no_argv                        0x00000000   Number         0  main.o ABSOLUTE
+    __Vectors                                0x00000000   Data           4  startup_rjs32k116.o(RESET)
+    __arm_fini_                               - Undefined Weak Reference
+    __cpp_initialize__aeabi_                  - Undefined Weak Reference
+    __cxa_finalize                            - Undefined Weak Reference
+    __decompress                              - Undefined Weak Reference
+    _clock_init                               - Undefined Weak Reference
+    _microlib_exit                            - Undefined Weak Reference
+    __Vectors_End                            0x000000c0   Data           0  startup_rjs32k116.o(RESET)
+    __Vectors_Size                           0x000000c0   Number         0  startup_rjs32k116.o ABSOLUTE
+    __main                                   0x000000c1   Thumb Code     0  entry.o(.ARM.Collect$$$$00000000)
+    _main_stk                                0x000000c1   Thumb Code     0  entry2.o(.ARM.Collect$$$$00000001)
+    _main_scatterload                        0x000000c5   Thumb Code     0  entry5.o(.ARM.Collect$$$$00000004)
+    __main_after_scatterload                 0x000000c9   Thumb Code     0  entry5.o(.ARM.Collect$$$$00000004)
+    _main_clock                              0x000000c9   Thumb Code     0  entry7b.o(.ARM.Collect$$$$00000008)
+    _main_cpp_init                           0x000000c9   Thumb Code     0  entry8b.o(.ARM.Collect$$$$0000000A)
+    _main_init                               0x000000c9   Thumb Code     0  entry9a.o(.ARM.Collect$$$$0000000B)
+    __rt_lib_shutdown_fini                   0x000000d1   Thumb Code     0  entry12b.o(.ARM.Collect$$$$0000000E)
+    __rt_final_cpp                           0x000000d5   Thumb Code     0  entry10a.o(.ARM.Collect$$$$0000000F)
+    __rt_final_exit                          0x000000d5   Thumb Code     0  entry11a.o(.ARM.Collect$$$$00000011)
+    Reset_Handler                            0x000000d9   Thumb Code     4  startup_rjs32k116.o(.text)
+    NMI_Handler                              0x000000dd   Thumb Code     2  startup_rjs32k116.o(.text)
+    HardFault_Handler                        0x000000df   Thumb Code     2  startup_rjs32k116.o(.text)
+    SVC_Handler                              0x000000e1   Thumb Code     2  startup_rjs32k116.o(.text)
+    PendSV_Handler                           0x000000e3   Thumb Code     2  startup_rjs32k116.o(.text)
+    __aeabi_uidiv                            0x000000ed   Thumb Code     0  uidiv.o(.text)
+    __aeabi_uidivmod                         0x000000ed   Thumb Code    44  uidiv.o(.text)
+    __scatterload                            0x00000119   Thumb Code    28  init.o(.text)
+    __scatterload_rt2                        0x00000119   Thumb Code     0  init.o(.text)
+    ADC_IRQHandler                           0x0000013d   Thumb Code     2  rjs32k116_it.o(i.ADC_IRQHandler)
+    CAN_IRQHandler                           0x0000013f   Thumb Code     2  rjs32k116_it.o(i.CAN_IRQHandler)
+    CLKCHK_IRQHandler                        0x00000141   Thumb Code     2  rjs32k116_it.o(i.CLKCHK_IRQHandler)
+    COMP1COMP2_IRQHandler                    0x00000143   Thumb Code     2  rjs32k116_it.o(i.COMP1COMP2_IRQHandler)
+    DMA_IRQHandler                           0x00000145   Thumb Code     2  rjs32k116_it.o(i.DMA_IRQHandler)
+    Delay_Init                               0x00000149   Thumb Code    44  delay.o(i.Delay_Init)
+    GPIOA_IRQHandler                         0x00000185   Thumb Code     2  rjs32k116_it.o(i.GPIOA_IRQHandler)
+    GPIOB_IRQHandler                         0x00000187   Thumb Code     2  rjs32k116_it.o(i.GPIOB_IRQHandler)
+    GPIOC_IRQHandler                         0x00000189   Thumb Code     2  rjs32k116_it.o(i.GPIOC_IRQHandler)
+    GPIOH_IRQHandler                         0x0000018b   Thumb Code     2  rjs32k116_it.o(i.GPIOH_IRQHandler)
+    I2C0_IRQHandler                          0x0000018d   Thumb Code     2  rjs32k116_it.o(i.I2C0_IRQHandler)
+    I2C1_IRQHandler                          0x0000018f   Thumb Code     2  rjs32k116_it.o(i.I2C1_IRQHandler)
+    IWDG_IRQHandler                          0x00000191   Thumb Code     2  rjs32k116_it.o(i.IWDG_IRQHandler)
+    LIN_Init                                 0x00000195   Thumb Code   264  uart.o(i.LIN_Init)
+    LPTIMER_IRQHandler                       0x000002a9   Thumb Code     2  rjs32k116_it.o(i.LPTIMER_IRQHandler)
+    LPUART_IRQHandler                        0x000002ab   Thumb Code     2  rjs32k116_it.o(i.LPUART_IRQHandler)
+    PLL_Init                                 0x000002ad   Thumb Code    90  crg.o(i.PLL_Init)
+    PVD_IRQHandler                           0x00000319   Thumb Code     2  rjs32k116_it.o(i.PVD_IRQHandler)
+    RTC_IRQHandler                           0x0000031b   Thumb Code     2  rjs32k116_it.o(i.RTC_IRQHandler)
+    SPI0_IRQHandler                          0x0000031d   Thumb Code     2  rjs32k116_it.o(i.SPI0_IRQHandler)
+    SPI1_IRQHandler                          0x0000031f   Thumb Code     2  rjs32k116_it.o(i.SPI1_IRQHandler)
+    SRAM_ERROR_IRQHandler                    0x00000321   Thumb Code     2  rjs32k116_it.o(i.SRAM_ERROR_IRQHandler)
+    SysTick_Handler                          0x00000323   Thumb Code     2  rjs32k116_it.o(i.SysTick_Handler)
+    TIMER0_IRQHandler                        0x00000325   Thumb Code     2  rjs32k116_it.o(i.TIMER0_IRQHandler)
+    TIMER1_IRQHandler                        0x00000327   Thumb Code     2  rjs32k116_it.o(i.TIMER1_IRQHandler)
+    TIMER2_IRQHandler                        0x00000329   Thumb Code     2  rjs32k116_it.o(i.TIMER2_IRQHandler)
+    TIMER3_IRQHandler                        0x0000032b   Thumb Code     2  rjs32k116_it.o(i.TIMER3_IRQHandler)
+    TIMER4_IRQHandler                        0x0000032d   Thumb Code     2  rjs32k116_it.o(i.TIMER4_IRQHandler)
+    UART0_IRQHandler                         0x00000331   Thumb Code   192  rjs32k116_it.o(i.UART0_IRQHandler)
+    UART0_LINSendByte                        0x00000405   Thumb Code    20  uart.o(i.UART0_LINSendByte)
+    UART0_LINSendData                        0x0000041d   Thumb Code    54  uart.o(i.UART0_LINSendData)
+    UART1_IRQHandler                         0x00000459   Thumb Code     2  rjs32k116_it.o(i.UART1_IRQHandler)
+    UART2_IRQHandler                         0x0000045b   Thumb Code     2  rjs32k116_it.o(i.UART2_IRQHandler)
+    UART3_IRQHandler                         0x0000045d   Thumb Code     2  rjs32k116_it.o(i.UART3_IRQHandler)
+    WDG_IRQHandler                           0x0000045f   Thumb Code     2  rjs32k116_it.o(i.WDG_IRQHandler)
+    __scatterload_copy                       0x00000461   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x0000046f   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x00000471   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    main                                     0x00000481   Thumb Code    50  main.o(i.main)
+    Region$$Table$$Base                      0x000004c0   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x000004e0   Number         0  anon$$obj.o(Region$$Table)
+    in_count                                 0x20000000   Data           1  rjs32k116_it.o(.data)
+    out_count                                0x20000001   Data           1  rjs32k116_it.o(.data)
+    lin_state                                0x20000002   Data           1  rjs32k116_it.o(.data)
+    send_buf                                 0x20000003   Data           8  rjs32k116_it.o(.data)
+    us                                       0x2000000c   Data           4  delay.o(.data)
+    ms                                       0x20000010   Data           4  delay.o(.data)
+    data_buff                                0x20000014   Data          64  rjs32k116_it.o(.bss)
+    __initial_sp                             0x20000458   Data           0  startup_rjs32k116.o(STACK)
+
+
+
+==============================================================================
+
+Memory Map of the image
+
+  Image Entry point : 0x000000c1
+
+  Load Region LR_IROM1 (Base: 0x00000000, Size: 0x000004f4, Max: 0x00020000, ABSOLUTE)
+
+    Execution Region ER_IROM1 (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x000004e0, Max: 0x00020000, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x00000000   0x00000000   0x000000c0   Data   RO          271    RESET               startup_rjs32k116.o
+    0x000000c0   0x000000c0   0x00000000   Code   RO          459  * .ARM.Collect$$$$00000000  mc_p.l(entry.o)
+    0x000000c0   0x000000c0   0x00000004   Code   RO          464    .ARM.Collect$$$$00000001  mc_p.l(entry2.o)
+    0x000000c4   0x000000c4   0x00000004   Code   RO          467    .ARM.Collect$$$$00000004  mc_p.l(entry5.o)
+    0x000000c8   0x000000c8   0x00000000   Code   RO          469    .ARM.Collect$$$$00000008  mc_p.l(entry7b.o)
+    0x000000c8   0x000000c8   0x00000000   Code   RO          471    .ARM.Collect$$$$0000000A  mc_p.l(entry8b.o)
+    0x000000c8   0x000000c8   0x00000008   Code   RO          472    .ARM.Collect$$$$0000000B  mc_p.l(entry9a.o)
+    0x000000d0   0x000000d0   0x00000004   Code   RO          479    .ARM.Collect$$$$0000000E  mc_p.l(entry12b.o)
+    0x000000d4   0x000000d4   0x00000000   Code   RO          474    .ARM.Collect$$$$0000000F  mc_p.l(entry10a.o)
+    0x000000d4   0x000000d4   0x00000000   Code   RO          476    .ARM.Collect$$$$00000011  mc_p.l(entry11a.o)
+    0x000000d4   0x000000d4   0x00000004   Code   RO          465    .ARM.Collect$$$$00002712  mc_p.l(entry2.o)
+    0x000000d8   0x000000d8   0x00000014   Code   RO          272    .text               startup_rjs32k116.o
+    0x000000ec   0x000000ec   0x0000002c   Code   RO          462    .text               mc_p.l(uidiv.o)
+    0x00000118   0x00000118   0x00000024   Code   RO          480    .text               mc_p.l(init.o)
+    0x0000013c   0x0000013c   0x00000002   Code   RO           67    i.ADC_IRQHandler    rjs32k116_it.o
+    0x0000013e   0x0000013e   0x00000002   Code   RO           68    i.CAN_IRQHandler    rjs32k116_it.o
+    0x00000140   0x00000140   0x00000002   Code   RO           69    i.CLKCHK_IRQHandler  rjs32k116_it.o
+    0x00000142   0x00000142   0x00000002   Code   RO           70    i.COMP1COMP2_IRQHandler  rjs32k116_it.o
+    0x00000144   0x00000144   0x00000002   Code   RO           71    i.DMA_IRQHandler    rjs32k116_it.o
+    0x00000146   0x00000146   0x00000002   PAD
+    0x00000148   0x00000148   0x0000003c   Code   RO          388    i.Delay_Init        delay.o
+    0x00000184   0x00000184   0x00000002   Code   RO           72    i.GPIOA_IRQHandler  rjs32k116_it.o
+    0x00000186   0x00000186   0x00000002   Code   RO           73    i.GPIOB_IRQHandler  rjs32k116_it.o
+    0x00000188   0x00000188   0x00000002   Code   RO           74    i.GPIOC_IRQHandler  rjs32k116_it.o
+    0x0000018a   0x0000018a   0x00000002   Code   RO           75    i.GPIOH_IRQHandler  rjs32k116_it.o
+    0x0000018c   0x0000018c   0x00000002   Code   RO           76    i.I2C0_IRQHandler   rjs32k116_it.o
+    0x0000018e   0x0000018e   0x00000002   Code   RO           77    i.I2C1_IRQHandler   rjs32k116_it.o
+    0x00000190   0x00000190   0x00000002   Code   RO           78    i.IWDG_IRQHandler   rjs32k116_it.o
+    0x00000192   0x00000192   0x00000002   PAD
+    0x00000194   0x00000194   0x00000114   Code   RO          278    i.LIN_Init          uart.o
+    0x000002a8   0x000002a8   0x00000002   Code   RO           79    i.LPTIMER_IRQHandler  rjs32k116_it.o
+    0x000002aa   0x000002aa   0x00000002   Code   RO           80    i.LPUART_IRQHandler  rjs32k116_it.o
+    0x000002ac   0x000002ac   0x0000006c   Code   RO          360    i.PLL_Init          crg.o
+    0x00000318   0x00000318   0x00000002   Code   RO           81    i.PVD_IRQHandler    rjs32k116_it.o
+    0x0000031a   0x0000031a   0x00000002   Code   RO           82    i.RTC_IRQHandler    rjs32k116_it.o
+    0x0000031c   0x0000031c   0x00000002   Code   RO           83    i.SPI0_IRQHandler   rjs32k116_it.o
+    0x0000031e   0x0000031e   0x00000002   Code   RO           84    i.SPI1_IRQHandler   rjs32k116_it.o
+    0x00000320   0x00000320   0x00000002   Code   RO           85    i.SRAM_ERROR_IRQHandler  rjs32k116_it.o
+    0x00000322   0x00000322   0x00000002   Code   RO           86    i.SysTick_Handler   rjs32k116_it.o
+    0x00000324   0x00000324   0x00000002   Code   RO           87    i.TIMER0_IRQHandler  rjs32k116_it.o
+    0x00000326   0x00000326   0x00000002   Code   RO           88    i.TIMER1_IRQHandler  rjs32k116_it.o
+    0x00000328   0x00000328   0x00000002   Code   RO           89    i.TIMER2_IRQHandler  rjs32k116_it.o
+    0x0000032a   0x0000032a   0x00000002   Code   RO           90    i.TIMER3_IRQHandler  rjs32k116_it.o
+    0x0000032c   0x0000032c   0x00000002   Code   RO           91    i.TIMER4_IRQHandler  rjs32k116_it.o
+    0x0000032e   0x0000032e   0x00000002   PAD
+    0x00000330   0x00000330   0x000000d4   Code   RO           92    i.UART0_IRQHandler  rjs32k116_it.o
+    0x00000404   0x00000404   0x00000018   Code   RO          280    i.UART0_LINSendByte  uart.o
+    0x0000041c   0x0000041c   0x0000003c   Code   RO          281    i.UART0_LINSendData  uart.o
+    0x00000458   0x00000458   0x00000002   Code   RO           93    i.UART1_IRQHandler  rjs32k116_it.o
+    0x0000045a   0x0000045a   0x00000002   Code   RO           94    i.UART2_IRQHandler  rjs32k116_it.o
+    0x0000045c   0x0000045c   0x00000002   Code   RO           95    i.UART3_IRQHandler  rjs32k116_it.o
+    0x0000045e   0x0000045e   0x00000002   Code   RO           96    i.WDG_IRQHandler    rjs32k116_it.o
+    0x00000460   0x00000460   0x0000000e   Code   RO          484    i.__scatterload_copy  mc_p.l(handlers.o)
+    0x0000046e   0x0000046e   0x00000002   Code   RO          485    i.__scatterload_null  mc_p.l(handlers.o)
+    0x00000470   0x00000470   0x0000000e   Code   RO          486    i.__scatterload_zeroinit  mc_p.l(handlers.o)
+    0x0000047e   0x0000047e   0x00000002   PAD
+    0x00000480   0x00000480   0x00000040   Code   RO            3    i.main              main.o
+    0x000004c0   0x000004c0   0x00000020   Data   RO          482    Region$$Table       anon$$obj.o
+
+
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x000004e0, Size: 0x00000458, Max: 0x00004000, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x20000000   0x000004e0   0x0000000b   Data   RW           98    .data               rjs32k116_it.o
+    0x2000000b   0x000004eb   0x00000001   PAD
+    0x2000000c   0x000004ec   0x00000008   Data   RW          391    .data               delay.o
+    0x20000014        -       0x00000040   Zero   RW           97    .bss                rjs32k116_it.o
+    0x20000054   0x000004f4   0x00000004   PAD
+    0x20000058        -       0x00000400   Zero   RW          269    STACK               startup_rjs32k116.o
+
+
+==============================================================================
+
+Image component sizes
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
+
+       108         18          0          0          0        467   crg.o
+        60         16          0          8          0        773   delay.o
+        64         14          0          0          0      29571   main.o
+       270         20          0         11         64      14509   rjs32k116_it.o
+        20          4        192          0       1024        676   startup_rjs32k116.o
+       360         22          0          0          0      17199   uart.o
+
+    ----------------------------------------------------------------------
+       888         94        224         20       1092      63195   Object Totals
+         0          0         32          0          0          0   (incl. Generated)
+         6          0          0          1          4          0   (incl. Padding)
+
+    ----------------------------------------------------------------------
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Member Name
+
+         0          0          0          0          0          0   entry.o
+         0          0          0          0          0          0   entry10a.o
+         0          0          0          0          0          0   entry11a.o
+         4          0          0          0          0          0   entry12b.o
+         8          4          0          0          0          0   entry2.o
+         4          0          0          0          0          0   entry5.o
+         0          0          0          0          0          0   entry7b.o
+         0          0          0          0          0          0   entry8b.o
+         8          4          0          0          0          0   entry9a.o
+        30          0          0          0          0          0   handlers.o
+        36          8          0          0          0         68   init.o
+        44          0          0          0          0         72   uidiv.o
+
+    ----------------------------------------------------------------------
+       136         16          0          0          0        140   Library Totals
+         2          0          0          0          0          0   (incl. Padding)
+
+    ----------------------------------------------------------------------
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Library Name
+
+       134         16          0          0          0        140   mc_p.l
+
+    ----------------------------------------------------------------------
+       136         16          0          0          0        140   Library Totals
+
+    ----------------------------------------------------------------------
+
+==============================================================================
+
+
+      Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
+
+      1024        110        224         20       1092      62079   Grand Totals
+      1024        110        224         20       1092      62079   ELF Image Totals
+      1024        110        224         20          0          0   ROM Totals
+
+==============================================================================
+
+    Total RO  Size (Code + RO Data)                 1248 (   1.22kB)
+    Total RW  Size (RW Data + ZI Data)              1112 (   1.09kB)
+    Total ROM Size (Code + RO Data + RW Data)       1268 (   1.24kB)
+
+==============================================================================
+

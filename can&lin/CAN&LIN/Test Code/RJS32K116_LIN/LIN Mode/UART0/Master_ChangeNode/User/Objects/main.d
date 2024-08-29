@@ -1,0 +1,13 @@
+.\user\objects\main.o: User\main.c
+.\user\objects\main.o: ..\..\..\..\..\CMSIS\rjs32k116.h
+.\user\objects\main.o: ..\..\..\..\..\CMSIS\core_cm0plus.h
+.\user\objects\main.o: E:\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\user\objects\main.o: ..\..\..\..\..\CMSIS\cmsis_version.h
+.\user\objects\main.o: ..\..\..\..\..\CMSIS\cmsis_compiler.h
+.\user\objects\main.o: ..\..\..\..\..\CMSIS\cmsis_armcc.h
+.\user\objects\main.o: ..\..\..\..\..\CMSIS\mpu_armv7.h
+.\user\objects\main.o: E:\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+.\user\objects\main.o: .\System\Inc\crg.h
+.\user\objects\main.o: .\System\Inc\delay.h
+.\user\objects\main.o: .\System\Inc\uart.h
+.\user\objects\main.o: .\System\Inc\can.h

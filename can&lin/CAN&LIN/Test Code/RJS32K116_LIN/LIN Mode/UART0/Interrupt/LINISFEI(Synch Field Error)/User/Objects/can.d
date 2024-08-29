@@ -1,0 +1,9 @@
+.\user\objects\can.o: System\Src\can.c
+.\user\objects\can.o: .\System\Inc\can.h
+.\user\objects\can.o: ..\..\..\..\..\..\CMSIS\rjs32k116.h
+.\user\objects\can.o: ..\..\..\..\..\..\CMSIS\core_cm0plus.h
+.\user\objects\can.o: E:\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\user\objects\can.o: ..\..\..\..\..\..\CMSIS\cmsis_version.h
+.\user\objects\can.o: ..\..\..\..\..\..\CMSIS\cmsis_compiler.h
+.\user\objects\can.o: ..\..\..\..\..\..\CMSIS\cmsis_armcc.h
+.\user\objects\can.o: ..\..\..\..\..\..\CMSIS\mpu_armv7.h

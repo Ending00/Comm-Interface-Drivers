@@ -1,0 +1,12 @@
+--cpu Cortex-M0+
+".\user\objects\main.o"
+".\user\objects\rjs32k116_it.o"
+".\user\objects\startup_rjs32k116.o"
+".\user\objects\uart.o"
+".\user\objects\crg.o"
+".\user\objects\delay.o"
+".\user\objects\can.o"
+--library_type=microlib --strict --scatter ".\User\Objects\RJS32K116_Template.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\User\Listings\RJS32K116_Template.map" -o .\User\Objects\RJS32K116_Template.axf

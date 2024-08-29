@@ -1,0 +1,63 @@
+#include "delay.h"
+
+uint32_t  g_us;		//us
+uint32_t  g_ms;		//ms
+
+void Delay_Init(uint32_t sysclk)
+{
+	CRG->SYSTICK_SETUP |= Bit26_En;	
+
+	if((CRG->SYSTICK_SETUP & Bit25_En) == Bit25_En)     //没有外部参考时钟
+	{
+		SysTick->CTRL |= Bit2_En;                       //选择内核时钟
+	}
+	else
+	{
+		SysTick->CTRL &= Bit2_Dis;			            //选择外部参考时钟
+	}	
+
+	g_ms = sysclk/1000;	                                //ms	
+	g_us = g_ms/1000;
+}	
+
+void Delay_us(unsigned int nus)
+{
+    unsigned int temp;
+	
+    SysTick->LOAD=nus*g_us; 						    //时间加载(乘法计算时间较长)
+		SysTick->VAL=0x00;        						//清空计数器
+    SysTick->CTRL |=Bit0_En ;      			            //开始倒数
+    do
+    {
+        temp=SysTick->CTRL;								//获取计数状态
+    }
+    while((temp&0x01)&&!(temp&(1<<16)));	            //等待时间到达
+		
+    SysTick->CTRL &=Bit0_Dis;      	 		            //关闭计数器
+    SysTick->VAL =0X00;       						    //清空计数器
+}
+
+void Delay_ms(unsigned int nms)
+{
+    unsigned int temp;
+    SysTick->LOAD=(unsigned int)nms*g_ms;		        //时间加载(SysTick->LOAD为24bit)
+    SysTick->VAL=0x00;        						    //清空计数器
+    SysTick->CTRL |=Bit0_En ;      			            //开始倒数
+    do
+    {
+        temp=SysTick->CTRL;								//获取计数状态
+    }
+    while((temp&0x01)&&!(temp&(1<<16)));	            //等待时间到达
+		
+    SysTick->CTRL &=Bit0_Dis;      	 		            //关闭计数器
+    SysTick->VAL =0X00;       						    //清空计数器
+}
+
+
+
+
+
+
+
+
+

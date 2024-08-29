@@ -1,0 +1,63 @@
+Dependencies for Project 'RJS32K116_LIN', Target 'Target 1': (DO NOT MODIFY !)
+CompilerVersion: 5060960::V5.06 update 7 (build 960)::ARMCC
+F (.\User\main.c)(0x6535DDD2)(--gnu -c --cpu Cortex-M0+ -D__MICROLIB --li -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\..\CMSIS -I .\User -I .\App\Inc -I .\System\Inc-IE:\Keil\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0plus\Include-IE:\Keil\ARM\CMSIS\Include-D__UVISION_VERSION="538" -DARMCM0P-o .\user\objects\main.o --omf_browse .\user\objects\main.crf --depend .\user\objects\main.d)
+I (..\..\..\..\..\CMSIS\rjs32k116.h)(0x653F1959)
+I (..\..\..\..\..\CMSIS\core_cm0plus.h)(0x65153738)
+I (E:\Keil\ARM\ARMCC\include\stdint.h)(0x5E8E2EB2)
+I (..\..\..\..\..\CMSIS\cmsis_version.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\cmsis_compiler.h)(0x5E8306C2)
+I (..\..\..\..\..\CMSIS\cmsis_armcc.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\mpu_armv7.h)(0x5E8ED122)
+I (E:\Keil\ARM\ARMCC\include\stdio.h)(0x5E8E2EB2)
+I (.\System\Inc\crg.h)(0x6530D6AA)
+I (.\System\Inc\delay.h)(0x652F49EC)
+I (.\System\Inc\uart.h)(0x6535CD3A)
+I (.\System\Inc\can.h)(0x652E325D)
+F (.\User\rjs32k116_it.c)(0x6535CE65)(--gnu -c --cpu Cortex-M0+ -D__MICROLIB --li -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\..\CMSIS -I .\User -I .\App\Inc -I .\System\Inc-IE:\Keil\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0plus\Include-IE:\Keil\ARM\CMSIS\Include-D__UVISION_VERSION="538" -DARMCM0P-o .\user\objects\rjs32k116_it.o --omf_browse .\user\objects\rjs32k116_it.crf --depend .\user\objects\rjs32k116_it.d)
+I (..\..\..\..\..\CMSIS\rjs32k116.h)(0x653F1959)
+I (..\..\..\..\..\CMSIS\core_cm0plus.h)(0x65153738)
+I (E:\Keil\ARM\ARMCC\include\stdint.h)(0x5E8E2EB2)
+I (..\..\..\..\..\CMSIS\cmsis_version.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\cmsis_compiler.h)(0x5E8306C2)
+I (..\..\..\..\..\CMSIS\cmsis_armcc.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\mpu_armv7.h)(0x5E8ED122)
+I (User\rjs32k116_it.h)(0x65321C26)
+I (.\System\Inc\can.h)(0x652E325D)
+F (..\..\..\..\..\CMSIS\startup_rjs32k116.s)(0x653A0D05)(--cpu Cortex-M0+ --li -g --apcs=interwork --pd "__MICROLIB SETA 1"-IE:\Keil\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0plus\Include-IE:\Keil\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 538" --pd "ARMCM0P SETA 1"--list .\user\listings\startup_rjs32k116.lst --xref -o .\user\objects\startup_rjs32k116.o --depend .\user\objects\startup_rjs32k116.d)
+F (.\System\Src\uart.c)(0x6535DC75)(--gnu -c --cpu Cortex-M0+ -D__MICROLIB --li -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\..\CMSIS -I .\User -I .\App\Inc -I .\System\Inc-IE:\Keil\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0plus\Include-IE:\Keil\ARM\CMSIS\Include-D__UVISION_VERSION="538" -DARMCM0P-o .\user\objects\uart.o --omf_browse .\user\objects\uart.crf --depend .\user\objects\uart.d)
+I (.\System\Inc\uart.h)(0x6535CD3A)
+I (..\..\..\..\..\CMSIS\rjs32k116.h)(0x653F1959)
+I (..\..\..\..\..\CMSIS\core_cm0plus.h)(0x65153738)
+I (E:\Keil\ARM\ARMCC\include\stdint.h)(0x5E8E2EB2)
+I (..\..\..\..\..\CMSIS\cmsis_version.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\cmsis_compiler.h)(0x5E8306C2)
+I (..\..\..\..\..\CMSIS\cmsis_armcc.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\mpu_armv7.h)(0x5E8ED122)
+I (E:\Keil\ARM\ARMCC\include\stdio.h)(0x5E8E2EB2)
+F (.\System\Src\crg.c)(0x65323D2C)(--gnu -c --cpu Cortex-M0+ -D__MICROLIB --li -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\..\CMSIS -I .\User -I .\App\Inc -I .\System\Inc-IE:\Keil\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0plus\Include-IE:\Keil\ARM\CMSIS\Include-D__UVISION_VERSION="538" -DARMCM0P-o .\user\objects\crg.o --omf_browse .\user\objects\crg.crf --depend .\user\objects\crg.d)
+I (.\System\Inc\crg.h)(0x6530D6AA)
+I (..\..\..\..\..\CMSIS\rjs32k116.h)(0x653F1959)
+I (..\..\..\..\..\CMSIS\core_cm0plus.h)(0x65153738)
+I (E:\Keil\ARM\ARMCC\include\stdint.h)(0x5E8E2EB2)
+I (..\..\..\..\..\CMSIS\cmsis_version.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\cmsis_compiler.h)(0x5E8306C2)
+I (..\..\..\..\..\CMSIS\cmsis_armcc.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\mpu_armv7.h)(0x5E8ED122)
+F (.\System\Src\delay.c)(0x65322B80)(--gnu -c --cpu Cortex-M0+ -D__MICROLIB --li -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\..\CMSIS -I .\User -I .\App\Inc -I .\System\Inc-IE:\Keil\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0plus\Include-IE:\Keil\ARM\CMSIS\Include-D__UVISION_VERSION="538" -DARMCM0P-o .\user\objects\delay.o --omf_browse .\user\objects\delay.crf --depend .\user\objects\delay.d)
+I (.\System\Inc\delay.h)(0x652F49EC)
+I (..\..\..\..\..\CMSIS\rjs32k116.h)(0x653F1959)
+I (..\..\..\..\..\CMSIS\core_cm0plus.h)(0x65153738)
+I (E:\Keil\ARM\ARMCC\include\stdint.h)(0x5E8E2EB2)
+I (..\..\..\..\..\CMSIS\cmsis_version.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\cmsis_compiler.h)(0x5E8306C2)
+I (..\..\..\..\..\CMSIS\cmsis_armcc.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\mpu_armv7.h)(0x5E8ED122)
+F (.\System\Src\can.c)(0x6532462D)(--gnu -c --cpu Cortex-M0+ -D__MICROLIB --li -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\..\CMSIS -I .\User -I .\App\Inc -I .\System\Inc-IE:\Keil\ARM\CMSIS\5.9.0\Device\ARM\ARMCM0plus\Include-IE:\Keil\ARM\CMSIS\Include-D__UVISION_VERSION="538" -DARMCM0P-o .\user\objects\can.o --omf_browse .\user\objects\can.crf --depend .\user\objects\can.d)
+I (.\System\Inc\can.h)(0x652E325D)
+I (..\..\..\..\..\CMSIS\rjs32k116.h)(0x653F1959)
+I (..\..\..\..\..\CMSIS\core_cm0plus.h)(0x65153738)
+I (E:\Keil\ARM\ARMCC\include\stdint.h)(0x5E8E2EB2)
+I (..\..\..\..\..\CMSIS\cmsis_version.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\cmsis_compiler.h)(0x5E8306C2)
+I (..\..\..\..\..\CMSIS\cmsis_armcc.h)(0x5E8ED122)
+I (..\..\..\..\..\CMSIS\mpu_armv7.h)(0x5E8ED122)

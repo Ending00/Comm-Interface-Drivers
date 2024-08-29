@@ -1,0 +1,11 @@
+.\user\objects\rjs32k116_it.o: User\rjs32k116_it.c
+.\user\objects\rjs32k116_it.o: ..\..\..\..\..\CMSIS\rjs32k116.h
+.\user\objects\rjs32k116_it.o: ..\..\..\..\..\CMSIS\core_cm0plus.h
+.\user\objects\rjs32k116_it.o: E:\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\user\objects\rjs32k116_it.o: ..\..\..\..\..\CMSIS\cmsis_version.h
+.\user\objects\rjs32k116_it.o: ..\..\..\..\..\CMSIS\cmsis_compiler.h
+.\user\objects\rjs32k116_it.o: ..\..\..\..\..\CMSIS\cmsis_armcc.h
+.\user\objects\rjs32k116_it.o: ..\..\..\..\..\CMSIS\mpu_armv7.h
+.\user\objects\rjs32k116_it.o: User\rjs32k116_it.h
+.\user\objects\rjs32k116_it.o: .\System\Inc\can.h
+.\user\objects\rjs32k116_it.o: .\System\Inc\uart.h

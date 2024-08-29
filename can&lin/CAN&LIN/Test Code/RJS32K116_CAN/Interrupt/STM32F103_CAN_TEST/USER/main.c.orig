@@ -1,0 +1,48 @@
+#include "led.h"
+#include "delay.h"
+#include "key.h"
+#include "sys.h"
+#include "usart.h"
+#include "timer.h"
+
+/************************************************
+ ALIENTEK精英STM32开发板实验9
+ PWM输出实验
+ 技术支持：www.openedv.com
+ 淘宝店铺：http://eboard.taobao.com
+ 关注微信公众平台微信号："正点原子"，免费获取STM32资料。
+ 广州市星翼电子科技有限公司
+ 作者：正点原子 @ALIENTEK
+************************************************/
+uint16_t count = 0;
+
+void IO_Init(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7; 
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD; 
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+}
+
+int main(void)
+{
+    delay_init();	    	 //延时函数初始化
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 	 //设置NVIC中断分组2:2位抢占优先级，2位响应优先级
+    uart_init(115200);	 //串口初始化为115200
+	IO_Init();
+	delay_ms(100);
+    USART_SendData(USART1,0xA5);
+    while(1)
+    {
+
+    }
+}
+
+
+void USART1_IRQHandler(void)                	//串口1中断服务程序
+{
+ 
+}

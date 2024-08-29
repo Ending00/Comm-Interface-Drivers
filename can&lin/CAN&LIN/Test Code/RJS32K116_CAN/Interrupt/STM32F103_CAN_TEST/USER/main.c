@@ -1,0 +1,492 @@
+#include <intrins.h>
+#include "led.h"
+#include "delay.h"
+#include "key.h"
+#include "sys.h"
+#include "usart.h"
+#include "timer.h"
+
+#define PA8_H   GPIOA->BSRR = 0x0100
+#define PA8_L   GPIOA->BRR = 0x0100
+
+uint8_t Test_Data[0x200]= {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,
+                         0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,0x10
+                        };
+uint8_t Data_Buffer[0x400] = {0x00};
+uint16_t count = 0, us_count = 10;
+uint8_t cts_flag = 0;
+
+//void Delay_us(uint16_t us)
+//{
+//    unsigned int _dcnt = us*6;
+//    while(_dcnt-- > 0) 
+//    { 
+//        __NOP();
+//        __NOP();
+//        continue; 
+//    }0
+//    
+//}
+
+
+void IO_Init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure;
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA,ENABLE);
+    
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5|GPIO_Pin_6|GPIO_Pin_7;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_SetBits(GPIOA, GPIO_Pin_8);
+}
+
+void CAN_BitError_test(void)
+{
+    PA8_H;
+    delay_ms(100);
+    PA8_L;
+    delay_us(3);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(1);    
+    PA8_H;
+    delay_us(1);    
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(7);
+    PA8_H;
+    delay_us(5);
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(5);
+}
+
+void CAN_StuffError_test(void)
+{
+    PA8_H;
+    delay_ms(100);
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(11);
+}
+
+void CAN_FromError_test(void)
+{
+    PA8_H;
+    delay_ms(100);
+    PA8_L;
+    delay_us(3);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(1);    
+    PA8_H;
+    delay_us(1);    
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(5);
+    PA8_H;
+    delay_us(7);
+    PA8_L;
+    delay_us(1);
+    
+    //CRC
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(3); 
+    PA8_H;
+    delay_us(8);   
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(3);
+    PA8_L;
+    delay_us(5);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+
+}
+
+void CAN_CRCError_test(void)
+{
+    PA8_L;
+    delay_us(5);
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(9); 
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(9); 
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(7);   
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(9);   
+    PA8_H;
+    delay_us(1);
+    PA8_L;
+    delay_us(5);   
+    PA8_H;
+    delay_us(1);
+    
+    PA8_L;
+    delay_us(3);   
+    PA8_H;
+    delay_us(1);    
+    PA8_L;
+    delay_us(3);   
+    PA8_H;
+    delay_us(1);  
+    PA8_L;
+    delay_us(1);   
+    PA8_H;
+    delay_us(1);    
+    PA8_L;
+    delay_us(1);   
+    PA8_H;
+    delay_us(3);  
+    PA8_L;
+    delay_us(1);   
+    PA8_H;
+    delay_us(1);      
+}
+
+//制造出CRC界定符出错
+void CANFD_FromError_test(void)     
+{
+//    PA8_H;
+//    delay_us(2);    
+//    PA8_L;
+//    delay_us(3);
+//    PA8_H;
+//    delay_us(1);
+
+//    PA8_L;
+//    delay_us(9);
+//    PA8_H;
+//    delay_us(1);
+//    
+//    PA8_L;
+//    delay_us(9);
+//    PA8_H;
+//    delay_us(3);  
+
+//    PA8_L;
+//    delay_us(9);
+//    PA8_H;
+//    delay_us(1);      
+//    
+//    PA8_L;
+//    delay_us(1);
+//    PA8_H;
+//    delay_us(1); 
+
+//    PA8_L;
+//    delay_us(9);
+//    PA8_H;
+//    delay_us(1);
+
+//    PA8_L;
+//    delay_us(5);
+//    PA8_H;
+//    delay_us(5);
+
+//    PA8_L;
+//    delay_us(3);
+//    PA8_H;
+//    delay_us(1);
+
+//    PA8_L;
+//    delay_us(7);
+//    PA8_H;
+//    delay_us(1);
+
+//    PA8_L;
+//    delay_us(5);
+//    PA8_H;
+//    delay_us(1);
+
+//    PA8_L;
+//    delay_us(1);
+//    PA8_H;
+//    delay_us(1);
+
+//    PA8_L;
+//    delay_us(1);
+//    PA8_H;
+//    delay_us(1);
+
+//    PA8_L;
+//    delay_us(1);
+//    PA8_H;
+//    delay_us(1);
+//    
+//    PA8_L;
+//    delay_us(7);
+//    PA8_H;
+//    delay_us(1);    
+
+
+}
+
+void CANFD_StuffError_test(void)
+{
+    PA8_L;
+    delay_us(5);
+    PA8_H;
+    delay_us(1);
+    
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);  
+
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(3);
+
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);
+
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+
+    PA8_L;
+    delay_us(5);
+    PA8_H;
+    delay_us(5);
+
+    PA8_L;
+    delay_us(3);
+    PA8_H;
+    delay_us(1);   
+
+    PA8_L;
+    delay_us(7);
+    PA8_H;
+    delay_us(1);
+
+    PA8_L;
+    delay_us(3);            //error bit
+    PA8_H;
+    delay_us(3);
+
+    PA8_L;
+    delay_us(5);
+    PA8_H;
+    delay_us(1);
+    
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);    
+    
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);    
+    
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);   
+
+    PA8_L;                          //无CRC界定符
+    delay_us(3);   
+}
+
+void CANFD_CRCError_test(void)
+{
+    PA8_L;
+    delay_us(5);
+    PA8_H;
+    delay_us(1);
+    
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);  
+
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(3);
+
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);
+
+    PA8_L;
+    delay_us(9);
+    PA8_H;
+    delay_us(1);
+
+    PA8_L;
+    delay_us(5);
+    PA8_H;
+    delay_us(5);
+
+    PA8_L;
+    delay_us(3);
+    PA8_H;
+    delay_us(1);   
+
+    PA8_L;
+    delay_us(7);
+    PA8_H;
+    delay_us(1);
+
+    PA8_L;
+    delay_us(3);            //error bit
+    PA8_H;
+    delay_us(3);
+
+    PA8_L;
+    delay_us(5);
+    PA8_H;
+    delay_us(1);
+    
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);    
+    
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);    
+    
+    PA8_L;
+    delay_us(1);
+    PA8_H;
+    delay_us(1);   
+
+    PA8_L;
+    delay_us(3);
+    PA8_H;
+    delay_us(1);
+}
+
+
+int main(void)
+{
+    delay_init();
+    KEY_Init();
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); 	 //设置NVIC中断分组2:2位抢占优先级，2位响应优先级
+    IO_Init();  
+    while(1)
+    {
+        delay_ms(10);
+        if(KEY0_PRES == KEY_Scan(0))
+        {
+            CANFD_CRCError_test();
+        }
+
+    }
+}
+
+
+void USART1_IRQHandler(void)                	    //串口1中断服务程序
+{
+    if(USART_GetITStatus(USART1, USART_IT_CTS))
+    {
+        USART1_SendBuff(Test_Data, 0x01);
+
+    }
+    if(USART_GetITStatus(USART1, USART_IT_RXNE))
+    {
+        Data_Buffer[count++] = USART1 -> DR;
+        
+    }
+}

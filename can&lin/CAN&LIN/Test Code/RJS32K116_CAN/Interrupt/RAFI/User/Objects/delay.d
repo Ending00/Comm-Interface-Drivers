@@ -1,0 +1,9 @@
+.\user\objects\delay.o: System\Src\delay.c
+.\user\objects\delay.o: .\System\Inc\delay.h
+.\user\objects\delay.o: ..\..\..\..\CMSIS\rjs32k116.h
+.\user\objects\delay.o: ..\..\..\..\CMSIS\core_cm0plus.h
+.\user\objects\delay.o: E:\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\user\objects\delay.o: ..\..\..\..\CMSIS\cmsis_version.h
+.\user\objects\delay.o: ..\..\..\..\CMSIS\cmsis_compiler.h
+.\user\objects\delay.o: ..\..\..\..\CMSIS\cmsis_armcc.h
+.\user\objects\delay.o: ..\..\..\..\CMSIS\mpu_armv7.h
