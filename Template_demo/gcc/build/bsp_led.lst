@@ -1,0 +1,125 @@
+ARM GAS  C:\Users\28470\AppData\Local\Temp\cc6gdkmO.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"bsp_led.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.led_init,"ax",%progbits
+  18              		.align	1
+  19              		.global	led_init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	led_init:
+  25              	.LFB29:
+  26              		.file 1 "../bsp/bsp_led.c"
+   1:../bsp/bsp_led.c **** #include "bsp_led.h"
+   2:../bsp/bsp_led.c **** 
+   3:../bsp/bsp_led.c **** //初始化PB5和PE5为输出口.并使能这两个口的时钟		    
+   4:../bsp/bsp_led.c **** //LED IO初始化
+   5:../bsp/bsp_led.c **** void led_init(void)
+   6:../bsp/bsp_led.c **** {
+  27              		.loc 1 6 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 8
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 30B5     		push	{r4, r5, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 12
+  34              		.cfi_offset 4, -12
+  35              		.cfi_offset 5, -8
+  36              		.cfi_offset 14, -4
+  37 0002 83B0     		sub	sp, sp, #12
+  38              	.LCFI1:
+  39              		.cfi_def_cfa_offset 24
+   7:../bsp/bsp_led.c ****  
+   8:../bsp/bsp_led.c ****  GPIO_InitTypeDef  GPIO_InitStructure;
+  40              		.loc 1 8 2 view .LVU1
+   9:../bsp/bsp_led.c ****  	
+  10:../bsp/bsp_led.c ****  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOD, ENABLE);	 //使能PB,PE端口时钟
+  41              		.loc 1 10 2 view .LVU2
+  42 0004 0121     		movs	r1, #1
+  43 0006 3020     		movs	r0, #48
+  44 0008 FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  45              	.LVL0:
+  11:../bsp/bsp_led.c **** 	
+  12:../bsp/bsp_led.c ****  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;				 //LED0-->PC.4 端口配置
+  46              		.loc 1 12 2 view .LVU3
+ARM GAS  C:\Users\28470\AppData\Local\Temp\cc6gdkmO.s 			page 2
+
+
+  47              		.loc 1 12 30 is_stmt 0 view .LVU4
+  48 000c 1024     		movs	r4, #16
+  49 000e ADF80440 		strh	r4, [sp, #4]	@ movhi
+  13:../bsp/bsp_led.c ****  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; 		 //推挽输出
+  50              		.loc 1 13 2 is_stmt 1 view .LVU5
+  51              		.loc 1 13 31 is_stmt 0 view .LVU6
+  52 0012 8DF80740 		strb	r4, [sp, #7]
+  14:../bsp/bsp_led.c ****  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;		 //IO口速度为50MHz
+  53              		.loc 1 14 2 is_stmt 1 view .LVU7
+  54              		.loc 1 14 32 is_stmt 0 view .LVU8
+  55 0016 0323     		movs	r3, #3
+  56 0018 8DF80630 		strb	r3, [sp, #6]
+  15:../bsp/bsp_led.c ****  GPIO_Init(GPIOC, &GPIO_InitStructure);					 //根据设定参数初始化GPIOB.5
+  57              		.loc 1 15 2 is_stmt 1 view .LVU9
+  58 001c 054D     		ldr	r5, .L3
+  59 001e 01A9     		add	r1, sp, #4
+  60 0020 2846     		mov	r0, r5
+  61 0022 FFF7FEFF 		bl	GPIO_Init
+  62              	.LVL1:
+  16:../bsp/bsp_led.c ****  GPIO_ResetBits(GPIOC,GPIO_Pin_4);						 //PC.4 输出低
+  63              		.loc 1 16 2 view .LVU10
+  64 0026 2146     		mov	r1, r4
+  65 0028 2846     		mov	r0, r5
+  66 002a FFF7FEFF 		bl	GPIO_ResetBits
+  67              	.LVL2:
+  17:../bsp/bsp_led.c **** 
+  18:../bsp/bsp_led.c **** // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;	    		 //LED1-->PE.5 端口配置, 推挽输出
+  19:../bsp/bsp_led.c **** // GPIO_Init(GPIOD, &GPIO_InitStructure);	  				 //推挽输出 ，IO口速度为50MHz
+  20:../bsp/bsp_led.c **** // GPIO_SetBits(GPIOD,GPIO_Pin_2); 						 //PE.5 输出高 
+  21:../bsp/bsp_led.c **** }
+  68              		.loc 1 21 1 is_stmt 0 view .LVU11
+  69 002e 03B0     		add	sp, sp, #12
+  70              	.LCFI2:
+  71              		.cfi_def_cfa_offset 12
+  72              		@ sp needed
+  73 0030 30BD     		pop	{r4, r5, pc}
+  74              	.L4:
+  75 0032 00BF     		.align	2
+  76              	.L3:
+  77 0034 00100140 		.word	1073811456
+  78              		.cfi_endproc
+  79              	.LFE29:
+  81              		.text
+  82              	.Letext0:
+  83              		.file 2 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\machi
+  84              		.file 3 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\sys\\
+  85              		.file 4 "../user/stm32f10x.h"
+  86              		.file 5 "../stm32f10x_fwlib/inc/stm32f10x_gpio.h"
+  87              		.file 6 "../stm32f10x_fwlib/inc/stm32f10x_rcc.h"
+ARM GAS  C:\Users\28470\AppData\Local\Temp\cc6gdkmO.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 bsp_led.c
+C:\Users\28470\AppData\Local\Temp\cc6gdkmO.s:18     .text.led_init:00000000 $t
+C:\Users\28470\AppData\Local\Temp\cc6gdkmO.s:24     .text.led_init:00000000 led_init
+C:\Users\28470\AppData\Local\Temp\cc6gdkmO.s:77     .text.led_init:00000034 $d
+
+UNDEFINED SYMBOLS
+RCC_APB2PeriphClockCmd
+GPIO_Init
+GPIO_ResetBits

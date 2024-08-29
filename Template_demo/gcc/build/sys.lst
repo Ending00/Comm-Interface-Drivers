@@ -1,0 +1,179 @@
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"sys.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.WFI_SET,"ax",%progbits
+  18              		.align	1
+  19              		.global	WFI_SET
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	WFI_SET:
+  25              	.LFB29:
+  26              		.file 1 "../system/sys/sys.c"
+   1:../system/sys/sys.c **** #include "sys.h"
+   2:../system/sys/sys.c **** 
+   3:../system/sys/sys.c **** #ifdef GCC
+   4:../system/sys/sys.c **** // THUMB指令不支持汇编内联
+   5:../system/sys/sys.c **** // 采用如下方法实现执行汇编指令WFI  
+   6:../system/sys/sys.c **** void WFI_SET(void)
+   7:../system/sys/sys.c **** {
+  27              		.loc 1 7 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+   8:../system/sys/sys.c ****     __asm__ volatile ("wfi");
+  32              		.loc 1 8 5 view .LVU1
+  33              		.syntax unified
+  34              	@ 8 "../system/sys/sys.c" 1
+  35 0000 30BF     		wfi
+  36              	@ 0 "" 2
+   9:../system/sys/sys.c **** }
+  37              		.loc 1 9 1 is_stmt 0 view .LVU2
+  38              		.thumb
+  39              		.syntax unified
+  40 0002 7047     		bx	lr
+  41              		.cfi_endproc
+  42              	.LFE29:
+  44              		.section	.text.INTX_DISABLE,"ax",%progbits
+  45              		.align	1
+  46              		.global	INTX_DISABLE
+  47              		.syntax unified
+  48              		.thumb
+  49              		.thumb_func
+  51              	INTX_DISABLE:
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s 			page 2
+
+
+  52              	.LFB30:
+  10:../system/sys/sys.c **** 
+  11:../system/sys/sys.c **** // 关闭所有中断
+  12:../system/sys/sys.c **** void INTX_DISABLE(void)
+  13:../system/sys/sys.c **** {		  
+  53              		.loc 1 13 1 is_stmt 1 view -0
+  54              		.cfi_startproc
+  55              		@ args = 0, pretend = 0, frame = 0
+  56              		@ frame_needed = 0, uses_anonymous_args = 0
+  57              		@ link register save eliminated.
+  14:../system/sys/sys.c ****     __asm__ volatile ("cpsid i");
+  58              		.loc 1 14 5 view .LVU4
+  59              		.syntax unified
+  60              	@ 14 "../system/sys/sys.c" 1
+  61 0000 72B6     		cpsid i
+  62              	@ 0 "" 2
+  15:../system/sys/sys.c **** }
+  63              		.loc 1 15 1 is_stmt 0 view .LVU5
+  64              		.thumb
+  65              		.syntax unified
+  66 0002 7047     		bx	lr
+  67              		.cfi_endproc
+  68              	.LFE30:
+  70              		.section	.text.INTX_ENABLE,"ax",%progbits
+  71              		.align	1
+  72              		.global	INTX_ENABLE
+  73              		.syntax unified
+  74              		.thumb
+  75              		.thumb_func
+  77              	INTX_ENABLE:
+  78              	.LFB31:
+  16:../system/sys/sys.c **** 
+  17:../system/sys/sys.c **** // 开启所有中断
+  18:../system/sys/sys.c **** void INTX_ENABLE(void)
+  19:../system/sys/sys.c **** {
+  79              		.loc 1 19 1 is_stmt 1 view -0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              		@ link register save eliminated.
+  20:../system/sys/sys.c ****     __asm__ volatile ("cpsie i");
+  84              		.loc 1 20 5 view .LVU7
+  85              		.syntax unified
+  86              	@ 20 "../system/sys/sys.c" 1
+  87 0000 62B6     		cpsie i
+  88              	@ 0 "" 2
+  21:../system/sys/sys.c **** }
+  89              		.loc 1 21 1 is_stmt 0 view .LVU8
+  90              		.thumb
+  91              		.syntax unified
+  92 0002 7047     		bx	lr
+  93              		.cfi_endproc
+  94              	.LFE31:
+  96              		.section	.text.MSR_MSP,"ax",%progbits
+  97              		.align	1
+  98              		.global	MSR_MSP
+  99              		.syntax unified
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s 			page 3
+
+
+ 100              		.thumb
+ 101              		.thumb_func
+ 103              	MSR_MSP:
+ 104              	.LVL0:
+ 105              	.LFB32:
+  22:../system/sys/sys.c **** 
+  23:../system/sys/sys.c **** // 设置栈顶地址
+  24:../system/sys/sys.c **** // addr:栈顶地址
+  25:../system/sys/sys.c **** 
+  26:../system/sys/sys.c **** void MSR_MSP(uint32_t addr)
+  27:../system/sys/sys.c **** {
+ 106              		.loc 1 27 1 is_stmt 1 view -0
+ 107              		.cfi_startproc
+ 108              		@ args = 0, pretend = 0, frame = 0
+ 109              		@ frame_needed = 0, uses_anonymous_args = 0
+ 110              		@ link register save eliminated.
+  28:../system/sys/sys.c ****     __asm__ volatile (
+ 111              		.loc 1 28 5 view .LVU10
+ 112              		.syntax unified
+ 113              	@ 28 "../system/sys/sys.c" 1
+ 114 0000 80F30888 		MSR MSP, r0
+ 115 0004 7047     	BX lr
+ 116              	
+ 117              	@ 0 "" 2
+  29:../system/sys/sys.c ****         "MSR MSP, %0\n"  // 设置主栈指针
+  30:../system/sys/sys.c ****         "BX lr\n"        // 返回
+  31:../system/sys/sys.c ****         :                // 没有输出
+  32:../system/sys/sys.c ****         : "r" (addr)     // 输入寄存器 r0
+  33:../system/sys/sys.c ****         : "memory"       // 内存被修改
+  34:../system/sys/sys.c ****     );
+  35:../system/sys/sys.c **** }
+ 118              		.loc 1 35 1 is_stmt 0 view .LVU11
+ 119              		.thumb
+ 120              		.syntax unified
+ 121 0006 7047     		bx	lr
+ 122              		.cfi_endproc
+ 123              	.LFE32:
+ 125              		.text
+ 126              	.Letext0:
+ 127              		.file 2 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\machi
+ 128              		.file 3 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\sys\\
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 sys.c
+C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s:18     .text.WFI_SET:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s:24     .text.WFI_SET:00000000 WFI_SET
+C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s:45     .text.INTX_DISABLE:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s:51     .text.INTX_DISABLE:00000000 INTX_DISABLE
+C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s:71     .text.INTX_ENABLE:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s:77     .text.INTX_ENABLE:00000000 INTX_ENABLE
+C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s:97     .text.MSR_MSP:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccMHQGwo.s:103    .text.MSR_MSP:00000000 MSR_MSP
+
+NO UNDEFINED SYMBOLS

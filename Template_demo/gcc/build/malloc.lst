@@ -1,0 +1,1020 @@
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"malloc.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.mem_perused,"ax",%progbits
+  18              		.align	1
+  19              		.global	mem_perused
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	mem_perused:
+  25              	.LFB32:
+  26              		.file 1 "../bsp/malloc.c"
+   1:../bsp/malloc.c **** #include "malloc.h"	    
+   2:../bsp/malloc.c **** //////////////////////////////////////////////////////////////////////////////////	 
+   3:../bsp/malloc.c **** //本程序只供学习使用，未经作者许可，不得用于其它任何用途
+   4:../bsp/malloc.c **** //ALIENTEK MiniSTM32开发板
+   5:../bsp/malloc.c **** //内存管理 驱动代码	   
+   6:../bsp/malloc.c **** //正点原子@ALIENTEK
+   7:../bsp/malloc.c **** //技术论坛:www.openedv.com
+   8:../bsp/malloc.c **** //修改日期:2014/3/12
+   9:../bsp/malloc.c **** //版本：V1.0
+  10:../bsp/malloc.c **** //版权所有，盗版必究。
+  11:../bsp/malloc.c **** //Copyright(C) 广州市星翼电子科技有限公司 2009-2019
+  12:../bsp/malloc.c **** //All rights reserved									  
+  13:../bsp/malloc.c **** //////////////////////////////////////////////////////////////////////////////////
+  14:../bsp/malloc.c **** 
+  15:../bsp/malloc.c **** //内存池(4字节对齐)
+  16:../bsp/malloc.c **** __attribute__((aligned(4))) u8 membase[MEM_MAX_SIZE];
+  17:../bsp/malloc.c **** //__align(4) u8 membase[MEM_MAX_SIZE];			//SRAM内存池
+  18:../bsp/malloc.c **** //内存管理表
+  19:../bsp/malloc.c **** u16 memmapbase[MEM_ALLOC_TABLE_SIZE];			//SRAM内存池MAP
+  20:../bsp/malloc.c **** //内存管理参数	   
+  21:../bsp/malloc.c **** const u32 memtblsize=MEM_ALLOC_TABLE_SIZE;		//内存表大小
+  22:../bsp/malloc.c **** const u32 memblksize=MEM_BLOCK_SIZE;			//内存分块大小
+  23:../bsp/malloc.c **** const u32 memsize=MEM_MAX_SIZE;					//内存总大小
+  24:../bsp/malloc.c **** 
+  25:../bsp/malloc.c **** 
+  26:../bsp/malloc.c **** //内存管理控制器
+  27:../bsp/malloc.c **** struct _m_mallco_dev mallco_dev=
+  28:../bsp/malloc.c **** {
+  29:../bsp/malloc.c **** 	mem_init,			//内存初始化
+  30:../bsp/malloc.c **** 	mem_perused,		//内存使用率
+  31:../bsp/malloc.c **** 	membase,			//内存池
+  32:../bsp/malloc.c **** 	memmapbase,			//内存管理状态表
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 2
+
+
+  33:../bsp/malloc.c **** 	0,  				//内存管理未就绪
+  34:../bsp/malloc.c **** };
+  35:../bsp/malloc.c **** 
+  36:../bsp/malloc.c **** //复制内存
+  37:../bsp/malloc.c **** //*des:目的地址
+  38:../bsp/malloc.c **** //*src:源地址
+  39:../bsp/malloc.c **** //n:需要复制的内存长度(字节为单位)
+  40:../bsp/malloc.c **** void mymemcpy(void *des,void *src,u32 n)  
+  41:../bsp/malloc.c **** {  
+  42:../bsp/malloc.c ****     u8 *xdes=des;
+  43:../bsp/malloc.c **** 	u8 *xsrc=src; 
+  44:../bsp/malloc.c ****     while(n--)*xdes++=*xsrc++;  
+  45:../bsp/malloc.c **** }  
+  46:../bsp/malloc.c **** //设置内存
+  47:../bsp/malloc.c **** //*s:内存首地址
+  48:../bsp/malloc.c **** //c :要设置的值
+  49:../bsp/malloc.c **** //count:需要设置的内存大小(字节为单位)
+  50:../bsp/malloc.c **** void mymemset(void *s,u8 c,u32 count)  
+  51:../bsp/malloc.c **** {  
+  52:../bsp/malloc.c ****     u8 *xs = s;  
+  53:../bsp/malloc.c ****     while(count--)*xs++=c;  
+  54:../bsp/malloc.c **** }	   
+  55:../bsp/malloc.c **** //内存管理初始化  
+  56:../bsp/malloc.c **** void mem_init(void)  
+  57:../bsp/malloc.c **** {  
+  58:../bsp/malloc.c ****     mymemset(mallco_dev.memmap, 0,memtblsize*2);//内存状态表数据清零  
+  59:../bsp/malloc.c **** 	mymemset(mallco_dev.membase, 0,memsize);	//内存池所有数据清零  
+  60:../bsp/malloc.c **** 	mallco_dev.memrdy=1;						//内存管理初始化OK  
+  61:../bsp/malloc.c **** }  
+  62:../bsp/malloc.c **** //获取内存使用率
+  63:../bsp/malloc.c **** //返回值:使用率(0~100)
+  64:../bsp/malloc.c **** u8 mem_perused(void)  
+  65:../bsp/malloc.c **** {  
+  27              		.loc 1 65 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		@ link register save eliminated.
+  66:../bsp/malloc.c ****     u32 used=0;  
+  32              		.loc 1 66 5 view .LVU1
+  33              	.LVL0:
+  67:../bsp/malloc.c ****     u32 i;  
+  34              		.loc 1 67 5 view .LVU2
+  68:../bsp/malloc.c ****     for(i=0;i<memtblsize;i++)  
+  35              		.loc 1 68 5 view .LVU3
+  36              		.loc 1 68 10 is_stmt 0 view .LVU4
+  37 0000 0023     		movs	r3, #0
+  66:../bsp/malloc.c ****     u32 used=0;  
+  38              		.loc 1 66 9 view .LVU5
+  39 0002 1946     		mov	r1, r3
+  40              		.loc 1 68 5 view .LVU6
+  41 0004 00E0     		b	.L2
+  42              	.LVL1:
+  43              	.L3:
+  44              		.loc 1 68 26 is_stmt 1 discriminator 2 view .LVU7
+  45              		.loc 1 68 27 is_stmt 0 discriminator 2 view .LVU8
+  46 0006 0133     		adds	r3, r3, #1
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 3
+
+
+  47              	.LVL2:
+  48              	.L2:
+  49              		.loc 1 68 13 is_stmt 1 discriminator 1 view .LVU9
+  50              		.loc 1 68 5 is_stmt 0 discriminator 1 view .LVU10
+  51 0008 B3F58C6F 		cmp	r3, #1120
+  52 000c 07D2     		bcs	.L5
+  69:../bsp/malloc.c ****     {  
+  70:../bsp/malloc.c ****         if(mallco_dev.memmap[i])used++; 
+  53              		.loc 1 70 9 is_stmt 1 view .LVU11
+  54              		.loc 1 70 22 is_stmt 0 view .LVU12
+  55 000e 084A     		ldr	r2, .L6
+  56 0010 D268     		ldr	r2, [r2, #12]
+  57              		.loc 1 70 29 view .LVU13
+  58 0012 32F81320 		ldrh	r2, [r2, r3, lsl #1]
+  59              		.loc 1 70 11 view .LVU14
+  60 0016 002A     		cmp	r2, #0
+  61 0018 F5D0     		beq	.L3
+  62              		.loc 1 70 33 is_stmt 1 discriminator 1 view .LVU15
+  63              		.loc 1 70 37 is_stmt 0 discriminator 1 view .LVU16
+  64 001a 0131     		adds	r1, r1, #1
+  65              	.LVL3:
+  66              		.loc 1 70 37 discriminator 1 view .LVU17
+  67 001c F3E7     		b	.L3
+  68              	.L5:
+  71:../bsp/malloc.c ****     } 
+  72:../bsp/malloc.c ****     return (used*100)/(memtblsize);  
+  69              		.loc 1 72 5 is_stmt 1 view .LVU18
+  70              		.loc 1 72 17 is_stmt 0 view .LVU19
+  71 001e 6420     		movs	r0, #100
+  72 0020 01FB00F0 		mul	r0, r1, r0
+  73              		.loc 1 72 22 view .LVU20
+  74 0024 4009     		lsrs	r0, r0, #5
+  75 0026 034B     		ldr	r3, .L6+4
+  76              	.LVL4:
+  77              		.loc 1 72 22 view .LVU21
+  78 0028 A3FB0030 		umull	r3, r0, r3, r0
+  73:../bsp/malloc.c **** }  
+  79              		.loc 1 73 1 view .LVU22
+  80 002c C0B2     		uxtb	r0, r0
+  81 002e 7047     		bx	lr
+  82              	.L7:
+  83              		.align	2
+  84              	.L6:
+  85 0030 00000000 		.word	.LANCHOR0
+  86 0034 08755007 		.word	122713352
+  87              		.cfi_endproc
+  88              	.LFE32:
+  90              		.section	.text.mymemcpy,"ax",%progbits
+  91              		.align	1
+  92              		.global	mymemcpy
+  93              		.syntax unified
+  94              		.thumb
+  95              		.thumb_func
+  97              	mymemcpy:
+  98              	.LVL5:
+  99              	.LFB29:
+  41:../bsp/malloc.c ****     u8 *xdes=des;
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 4
+
+
+ 100              		.loc 1 41 1 is_stmt 1 view -0
+ 101              		.cfi_startproc
+ 102              		@ args = 0, pretend = 0, frame = 0
+ 103              		@ frame_needed = 0, uses_anonymous_args = 0
+ 104              		@ link register save eliminated.
+  42:../bsp/malloc.c **** 	u8 *xsrc=src; 
+ 105              		.loc 1 42 5 view .LVU24
+  43:../bsp/malloc.c ****     while(n--)*xdes++=*xsrc++;  
+ 106              		.loc 1 43 2 view .LVU25
+  44:../bsp/malloc.c **** }  
+ 107              		.loc 1 44 5 view .LVU26
+  44:../bsp/malloc.c **** }  
+ 108              		.loc 1 44 10 is_stmt 0 view .LVU27
+ 109 0000 04E0     		b	.L9
+ 110              	.LVL6:
+ 111              	.L10:
+  44:../bsp/malloc.c **** }  
+ 112              		.loc 1 44 15 is_stmt 1 discriminator 2 view .LVU28
+  44:../bsp/malloc.c **** }  
+ 113              		.loc 1 44 23 is_stmt 0 discriminator 2 view .LVU29
+ 114 0002 11F8012B 		ldrb	r2, [r1], #1	@ zero_extendqisi2
+ 115              	.LVL7:
+  44:../bsp/malloc.c **** }  
+ 116              		.loc 1 44 22 discriminator 2 view .LVU30
+ 117 0006 00F8012B 		strb	r2, [r0], #1
+ 118              	.LVL8:
+  44:../bsp/malloc.c **** }  
+ 119              		.loc 1 44 12 discriminator 2 view .LVU31
+ 120 000a 1A46     		mov	r2, r3
+ 121              	.LVL9:
+ 122              	.L9:
+  44:../bsp/malloc.c **** }  
+ 123              		.loc 1 44 10 is_stmt 1 discriminator 1 view .LVU32
+  44:../bsp/malloc.c **** }  
+ 124              		.loc 1 44 12 is_stmt 0 discriminator 1 view .LVU33
+ 125 000c 531E     		subs	r3, r2, #1
+ 126              	.LVL10:
+  44:../bsp/malloc.c **** }  
+ 127              		.loc 1 44 10 discriminator 1 view .LVU34
+ 128 000e 002A     		cmp	r2, #0
+ 129 0010 F7D1     		bne	.L10
+  45:../bsp/malloc.c **** //设置内存
+ 130              		.loc 1 45 1 view .LVU35
+ 131 0012 7047     		bx	lr
+ 132              		.cfi_endproc
+ 133              	.LFE29:
+ 135              		.section	.text.mymemset,"ax",%progbits
+ 136              		.align	1
+ 137              		.global	mymemset
+ 138              		.syntax unified
+ 139              		.thumb
+ 140              		.thumb_func
+ 142              	mymemset:
+ 143              	.LVL11:
+ 144              	.LFB30:
+  51:../bsp/malloc.c ****     u8 *xs = s;  
+ 145              		.loc 1 51 1 is_stmt 1 view -0
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 5
+
+
+ 146              		.cfi_startproc
+ 147              		@ args = 0, pretend = 0, frame = 0
+ 148              		@ frame_needed = 0, uses_anonymous_args = 0
+ 149              		@ link register save eliminated.
+  52:../bsp/malloc.c ****     while(count--)*xs++=c;  
+ 150              		.loc 1 52 5 view .LVU37
+  53:../bsp/malloc.c **** }	   
+ 151              		.loc 1 53 5 view .LVU38
+  53:../bsp/malloc.c **** }	   
+ 152              		.loc 1 53 10 is_stmt 0 view .LVU39
+ 153 0000 02E0     		b	.L12
+ 154              	.LVL12:
+ 155              	.L13:
+  53:../bsp/malloc.c **** }	   
+ 156              		.loc 1 53 19 is_stmt 1 discriminator 2 view .LVU40
+  53:../bsp/malloc.c **** }	   
+ 157              		.loc 1 53 24 is_stmt 0 discriminator 2 view .LVU41
+ 158 0002 00F8011B 		strb	r1, [r0], #1
+ 159              	.LVL13:
+  53:../bsp/malloc.c **** }	   
+ 160              		.loc 1 53 16 discriminator 2 view .LVU42
+ 161 0006 1A46     		mov	r2, r3
+ 162              	.LVL14:
+ 163              	.L12:
+  53:../bsp/malloc.c **** }	   
+ 164              		.loc 1 53 10 is_stmt 1 discriminator 1 view .LVU43
+  53:../bsp/malloc.c **** }	   
+ 165              		.loc 1 53 16 is_stmt 0 discriminator 1 view .LVU44
+ 166 0008 531E     		subs	r3, r2, #1
+ 167              	.LVL15:
+  53:../bsp/malloc.c **** }	   
+ 168              		.loc 1 53 10 discriminator 1 view .LVU45
+ 169 000a 002A     		cmp	r2, #0
+ 170 000c F9D1     		bne	.L13
+  54:../bsp/malloc.c **** //内存管理初始化  
+ 171              		.loc 1 54 1 view .LVU46
+ 172 000e 7047     		bx	lr
+ 173              		.cfi_endproc
+ 174              	.LFE30:
+ 176              		.section	.text.mem_init,"ax",%progbits
+ 177              		.align	1
+ 178              		.global	mem_init
+ 179              		.syntax unified
+ 180              		.thumb
+ 181              		.thumb_func
+ 183              	mem_init:
+ 184              	.LFB31:
+  57:../bsp/malloc.c ****     mymemset(mallco_dev.memmap, 0,memtblsize*2);//内存状态表数据清零  
+ 185              		.loc 1 57 1 is_stmt 1 view -0
+ 186              		.cfi_startproc
+ 187              		@ args = 0, pretend = 0, frame = 0
+ 188              		@ frame_needed = 0, uses_anonymous_args = 0
+ 189 0000 10B5     		push	{r4, lr}
+ 190              	.LCFI0:
+ 191              		.cfi_def_cfa_offset 8
+ 192              		.cfi_offset 4, -8
+ 193              		.cfi_offset 14, -4
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 6
+
+
+  58:../bsp/malloc.c **** 	mymemset(mallco_dev.membase, 0,memsize);	//内存池所有数据清零  
+ 194              		.loc 1 58 5 view .LVU48
+  58:../bsp/malloc.c **** 	mymemset(mallco_dev.membase, 0,memsize);	//内存池所有数据清零  
+ 195              		.loc 1 58 24 is_stmt 0 view .LVU49
+ 196 0002 084C     		ldr	r4, .L16
+  58:../bsp/malloc.c **** 	mymemset(mallco_dev.membase, 0,memsize);	//内存池所有数据清零  
+ 197              		.loc 1 58 5 view .LVU50
+ 198 0004 4FF40C62 		mov	r2, #2240
+ 199 0008 0021     		movs	r1, #0
+ 200 000a E068     		ldr	r0, [r4, #12]
+ 201 000c FFF7FEFF 		bl	mymemset
+ 202              	.LVL16:
+  59:../bsp/malloc.c **** 	mallco_dev.memrdy=1;						//内存管理初始化OK  
+ 203              		.loc 1 59 2 is_stmt 1 view .LVU51
+ 204 0010 4FF40C42 		mov	r2, #35840
+ 205 0014 0021     		movs	r1, #0
+ 206 0016 A068     		ldr	r0, [r4, #8]
+ 207 0018 FFF7FEFF 		bl	mymemset
+ 208              	.LVL17:
+  60:../bsp/malloc.c **** }  
+ 209              		.loc 1 60 2 view .LVU52
+  60:../bsp/malloc.c **** }  
+ 210              		.loc 1 60 19 is_stmt 0 view .LVU53
+ 211 001c 0123     		movs	r3, #1
+ 212 001e 2374     		strb	r3, [r4, #16]
+  61:../bsp/malloc.c **** //获取内存使用率
+ 213              		.loc 1 61 1 view .LVU54
+ 214 0020 10BD     		pop	{r4, pc}
+ 215              	.L17:
+ 216 0022 00BF     		.align	2
+ 217              	.L16:
+ 218 0024 00000000 		.word	.LANCHOR0
+ 219              		.cfi_endproc
+ 220              	.LFE31:
+ 222              		.section	.text.mem_malloc,"ax",%progbits
+ 223              		.align	1
+ 224              		.global	mem_malloc
+ 225              		.syntax unified
+ 226              		.thumb
+ 227              		.thumb_func
+ 229              	mem_malloc:
+ 230              	.LVL18:
+ 231              	.LFB33:
+  74:../bsp/malloc.c **** //内存分配(内部调用)
+  75:../bsp/malloc.c **** //memx:所属内存块
+  76:../bsp/malloc.c **** //size:要分配的内存大小(字节)
+  77:../bsp/malloc.c **** //返回值:0XFFFFFFFF,代表错误;其他,内存偏移地址 
+  78:../bsp/malloc.c **** u32 mem_malloc(u32 size)  
+  79:../bsp/malloc.c **** {  
+ 232              		.loc 1 79 1 is_stmt 1 view -0
+ 233              		.cfi_startproc
+ 234              		@ args = 0, pretend = 0, frame = 0
+ 235              		@ frame_needed = 0, uses_anonymous_args = 0
+ 236              		.loc 1 79 1 is_stmt 0 view .LVU56
+ 237 0000 10B5     		push	{r4, lr}
+ 238              	.LCFI1:
+ 239              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 7
+
+
+ 240              		.cfi_offset 4, -8
+ 241              		.cfi_offset 14, -4
+ 242 0002 0446     		mov	r4, r0
+  80:../bsp/malloc.c ****     signed long offset=0;  
+ 243              		.loc 1 80 5 is_stmt 1 view .LVU57
+ 244              	.LVL19:
+  81:../bsp/malloc.c ****     u16 nmemb;	//需要的内存块数  
+ 245              		.loc 1 81 5 view .LVU58
+  82:../bsp/malloc.c **** 	u16 cmemb=0;//连续空内存块数
+ 246              		.loc 1 82 2 view .LVU59
+  83:../bsp/malloc.c ****     u32 i;  
+ 247              		.loc 1 83 5 view .LVU60
+  84:../bsp/malloc.c ****     if(!mallco_dev.memrdy)mallco_dev.init();	//未初始化,先执行初始化 
+ 248              		.loc 1 84 5 view .LVU61
+ 249              		.loc 1 84 19 is_stmt 0 view .LVU62
+ 250 0004 1A4B     		ldr	r3, .L35
+ 251 0006 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
+ 252              		.loc 1 84 7 view .LVU63
+ 253 0008 13B9     		cbnz	r3, .L19
+ 254              		.loc 1 84 27 is_stmt 1 discriminator 1 view .LVU64
+ 255              		.loc 1 84 37 is_stmt 0 discriminator 1 view .LVU65
+ 256 000a 194B     		ldr	r3, .L35
+ 257 000c 1B68     		ldr	r3, [r3]
+ 258              		.loc 1 84 27 discriminator 1 view .LVU66
+ 259 000e 9847     		blx	r3
+ 260              	.LVL20:
+ 261              	.L19:
+  85:../bsp/malloc.c ****     if(size==0)return 0XFFFFFFFF;				//不需要分配
+ 262              		.loc 1 85 5 is_stmt 1 view .LVU67
+ 263              		.loc 1 85 7 is_stmt 0 view .LVU68
+ 264 0010 5CB3     		cbz	r4, .L28
+  86:../bsp/malloc.c ****     nmemb=size/memblksize;  					//获取需要分配的连续内存块数
+ 265              		.loc 1 86 5 is_stmt 1 view .LVU69
+ 266              		.loc 1 86 10 is_stmt 0 view .LVU70
+ 267 0012 C4F34F11 		ubfx	r1, r4, #5, #16
+ 268              	.LVL21:
+  87:../bsp/malloc.c ****     if(size%memblksize)nmemb++;  
+ 269              		.loc 1 87 5 is_stmt 1 view .LVU71
+ 270              		.loc 1 87 7 is_stmt 0 view .LVU72
+ 271 0016 14F01F0F 		tst	r4, #31
+ 272 001a 01D0     		beq	.L21
+ 273              		.loc 1 87 24 is_stmt 1 discriminator 1 view .LVU73
+ 274              		.loc 1 87 29 is_stmt 0 discriminator 1 view .LVU74
+ 275 001c 0131     		adds	r1, r1, #1
+ 276              	.LVL22:
+ 277              		.loc 1 87 29 discriminator 1 view .LVU75
+ 278 001e 89B2     		uxth	r1, r1
+ 279              	.LVL23:
+ 280              	.L21:
+  88:../bsp/malloc.c ****     for(offset=memtblsize-1;offset>=0;offset--)	//搜索整个内存控制区  
+ 281              		.loc 1 88 5 is_stmt 1 view .LVU76
+  82:../bsp/malloc.c ****     u32 i;  
+ 282              		.loc 1 82 6 is_stmt 0 view .LVU77
+ 283 0020 0022     		movs	r2, #0
+ 284              		.loc 1 88 15 view .LVU78
+ 285 0022 40F25F43 		movw	r3, #1119
+ 286              		.loc 1 88 5 view .LVU79
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 8
+
+
+ 287 0026 03E0     		b	.L22
+ 288              	.LVL24:
+ 289              	.L29:
+  89:../bsp/malloc.c ****     {     
+  90:../bsp/malloc.c **** 		if(!mallco_dev.memmap[offset])cmemb++;	//连续空内存块数增加
+  91:../bsp/malloc.c **** 		else cmemb=0;							//连续内存块清零
+ 290              		.loc 1 91 13 view .LVU80
+ 291 0028 0022     		movs	r2, #0
+ 292              	.LVL25:
+ 293              	.L23:
+  92:../bsp/malloc.c **** 		if(cmemb==nmemb)						//找到了连续nmemb个空内存块
+ 294              		.loc 1 92 3 is_stmt 1 view .LVU81
+ 295              		.loc 1 92 5 is_stmt 0 view .LVU82
+ 296 002a 9142     		cmp	r1, r2
+ 297 002c 18D0     		beq	.L33
+  88:../bsp/malloc.c ****     {     
+ 298              		.loc 1 88 39 is_stmt 1 discriminator 2 view .LVU83
+  88:../bsp/malloc.c ****     {     
+ 299              		.loc 1 88 45 is_stmt 0 discriminator 2 view .LVU84
+ 300 002e 013B     		subs	r3, r3, #1
+ 301              	.LVL26:
+ 302              	.L22:
+  88:../bsp/malloc.c ****     {     
+ 303              		.loc 1 88 29 is_stmt 1 discriminator 1 view .LVU85
+  88:../bsp/malloc.c ****     {     
+ 304              		.loc 1 88 5 is_stmt 0 discriminator 1 view .LVU86
+ 305 0030 002B     		cmp	r3, #0
+ 306 0032 17DB     		blt	.L34
+  90:../bsp/malloc.c **** 		else cmemb=0;							//连续内存块清零
+ 307              		.loc 1 90 3 is_stmt 1 view .LVU87
+  90:../bsp/malloc.c **** 		else cmemb=0;							//连续内存块清零
+ 308              		.loc 1 90 17 is_stmt 0 view .LVU88
+ 309 0034 0E48     		ldr	r0, .L35
+ 310 0036 C068     		ldr	r0, [r0, #12]
+  90:../bsp/malloc.c **** 		else cmemb=0;							//连续内存块清零
+ 311              		.loc 1 90 24 view .LVU89
+ 312 0038 9C46     		mov	ip, r3
+ 313 003a 30F81300 		ldrh	r0, [r0, r3, lsl #1]
+  90:../bsp/malloc.c **** 		else cmemb=0;							//连续内存块清零
+ 314              		.loc 1 90 5 view .LVU90
+ 315 003e 0028     		cmp	r0, #0
+ 316 0040 F2D1     		bne	.L29
+  90:../bsp/malloc.c **** 		else cmemb=0;							//连续内存块清零
+ 317              		.loc 1 90 33 is_stmt 1 discriminator 1 view .LVU91
+  90:../bsp/malloc.c **** 		else cmemb=0;							//连续内存块清零
+ 318              		.loc 1 90 38 is_stmt 0 discriminator 1 view .LVU92
+ 319 0042 0132     		adds	r2, r2, #1
+ 320              	.LVL27:
+  90:../bsp/malloc.c **** 		else cmemb=0;							//连续内存块清零
+ 321              		.loc 1 90 38 discriminator 1 view .LVU93
+ 322 0044 92B2     		uxth	r2, r2
+ 323              	.LVL28:
+  90:../bsp/malloc.c **** 		else cmemb=0;							//连续内存块清零
+ 324              		.loc 1 90 38 discriminator 1 view .LVU94
+ 325 0046 F0E7     		b	.L23
+ 326              	.LVL29:
+ 327              	.L26:
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 9
+
+
+  93:../bsp/malloc.c **** 		{
+  94:../bsp/malloc.c ****             for(i=0;i<nmemb;i++)  				//标注内存块非空 
+  95:../bsp/malloc.c ****             {  
+  96:../bsp/malloc.c ****                 mallco_dev.memmap[offset+i]=nmemb;  
+ 328              		.loc 1 96 17 is_stmt 1 discriminator 3 view .LVU95
+ 329              		.loc 1 96 27 is_stmt 0 discriminator 3 view .LVU96
+ 330 0048 094A     		ldr	r2, .L35
+ 331 004a D268     		ldr	r2, [r2, #12]
+ 332              		.loc 1 96 41 discriminator 3 view .LVU97
+ 333 004c 0CEB0300 		add	r0, ip, r3
+ 334              		.loc 1 96 44 discriminator 3 view .LVU98
+ 335 0050 22F81010 		strh	r1, [r2, r0, lsl #1]	@ movhi
+  94:../bsp/malloc.c ****             {  
+ 336              		.loc 1 94 29 is_stmt 1 discriminator 3 view .LVU99
+  94:../bsp/malloc.c ****             {  
+ 337              		.loc 1 94 30 is_stmt 0 discriminator 3 view .LVU100
+ 338 0054 0133     		adds	r3, r3, #1
+ 339              	.LVL30:
+ 340              	.L24:
+  94:../bsp/malloc.c ****             {  
+ 341              		.loc 1 94 21 is_stmt 1 discriminator 1 view .LVU101
+  94:../bsp/malloc.c ****             {  
+ 342              		.loc 1 94 13 is_stmt 0 discriminator 1 view .LVU102
+ 343 0056 9942     		cmp	r1, r3
+ 344 0058 F6D8     		bhi	.L26
+  97:../bsp/malloc.c ****             }  
+  98:../bsp/malloc.c ****             return (offset*memblksize);			//返回偏移地址  
+ 345              		.loc 1 98 13 is_stmt 1 view .LVU103
+ 346              		.loc 1 98 27 is_stmt 0 view .LVU104
+ 347 005a 4FEA4C10 		lsl	r0, ip, #5
+ 348              	.LVL31:
+ 349              	.L18:
+  99:../bsp/malloc.c **** 		}
+ 100:../bsp/malloc.c ****     }  
+ 101:../bsp/malloc.c ****     return 0XFFFFFFFF;//未找到符合分配条件的内存块  
+ 102:../bsp/malloc.c **** }  
+ 350              		.loc 1 102 1 view .LVU105
+ 351 005e 10BD     		pop	{r4, pc}
+ 352              	.LVL32:
+ 353              	.L33:
+  94:../bsp/malloc.c ****             {  
+ 354              		.loc 1 94 18 view .LVU106
+ 355 0060 0023     		movs	r3, #0
+ 356              	.LVL33:
+  94:../bsp/malloc.c ****             {  
+ 357              		.loc 1 94 18 view .LVU107
+ 358 0062 F8E7     		b	.L24
+ 359              	.LVL34:
+ 360              	.L34:
+ 101:../bsp/malloc.c **** }  
+ 361              		.loc 1 101 12 view .LVU108
+ 362 0064 4FF0FF30 		mov	r0, #-1
+ 363 0068 F9E7     		b	.L18
+ 364              	.LVL35:
+ 365              	.L28:
+  85:../bsp/malloc.c ****     nmemb=size/memblksize;  					//获取需要分配的连续内存块数
+ 366              		.loc 1 85 23 view .LVU109
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 10
+
+
+ 367 006a 4FF0FF30 		mov	r0, #-1
+ 368 006e F6E7     		b	.L18
+ 369              	.L36:
+ 370              		.align	2
+ 371              	.L35:
+ 372 0070 00000000 		.word	.LANCHOR0
+ 373              		.cfi_endproc
+ 374              	.LFE33:
+ 376              		.section	.text.mem_free,"ax",%progbits
+ 377              		.align	1
+ 378              		.global	mem_free
+ 379              		.syntax unified
+ 380              		.thumb
+ 381              		.thumb_func
+ 383              	mem_free:
+ 384              	.LVL36:
+ 385              	.LFB34:
+ 103:../bsp/malloc.c **** //释放内存(内部调用) 
+ 104:../bsp/malloc.c **** //offset:内存地址偏移
+ 105:../bsp/malloc.c **** //返回值:0,释放成功;1,释放失败;  
+ 106:../bsp/malloc.c **** u8 mem_free(u32 offset)  
+ 107:../bsp/malloc.c **** {  
+ 386              		.loc 1 107 1 is_stmt 1 view -0
+ 387              		.cfi_startproc
+ 388              		@ args = 0, pretend = 0, frame = 0
+ 389              		@ frame_needed = 0, uses_anonymous_args = 0
+ 390              		.loc 1 107 1 is_stmt 0 view .LVU111
+ 391 0000 08B5     		push	{r3, lr}
+ 392              	.LCFI2:
+ 393              		.cfi_def_cfa_offset 8
+ 394              		.cfi_offset 3, -8
+ 395              		.cfi_offset 14, -4
+ 108:../bsp/malloc.c ****     int i;  
+ 396              		.loc 1 108 5 is_stmt 1 view .LVU112
+ 109:../bsp/malloc.c ****     if(!mallco_dev.memrdy)//未初始化,先执行初始化
+ 397              		.loc 1 109 5 view .LVU113
+ 398              		.loc 1 109 19 is_stmt 0 view .LVU114
+ 399 0002 104B     		ldr	r3, .L45
+ 400 0004 1B7C     		ldrb	r3, [r3, #16]	@ zero_extendqisi2
+ 401              		.loc 1 109 7 view .LVU115
+ 402 0006 4BB1     		cbz	r3, .L44
+ 110:../bsp/malloc.c **** 	{
+ 111:../bsp/malloc.c **** 		mallco_dev.init();    
+ 112:../bsp/malloc.c ****         return 1;//未初始化  
+ 113:../bsp/malloc.c ****     }  
+ 114:../bsp/malloc.c ****     if(offset<memsize)//偏移在内存池内. 
+ 403              		.loc 1 114 5 is_stmt 1 view .LVU116
+ 404              		.loc 1 114 7 is_stmt 0 view .LVU117
+ 405 0008 B0F50C4F 		cmp	r0, #35840
+ 406 000c 17D2     		bcs	.L42
+ 407              	.LBB2:
+ 115:../bsp/malloc.c ****     {  
+ 116:../bsp/malloc.c ****         int index=offset/memblksize;		//偏移所在内存块号码  
+ 408              		.loc 1 116 9 is_stmt 1 view .LVU118
+ 409              		.loc 1 116 25 is_stmt 0 view .LVU119
+ 410 000e 4009     		lsrs	r0, r0, #5
+ 411              	.LVL37:
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 11
+
+
+ 117:../bsp/malloc.c ****         int nmemb=mallco_dev.memmap[index];	//内存块数量
+ 412              		.loc 1 117 9 is_stmt 1 view .LVU120
+ 413              		.loc 1 117 29 is_stmt 0 view .LVU121
+ 414 0010 0C4B     		ldr	r3, .L45
+ 415 0012 DB68     		ldr	r3, [r3, #12]
+ 416              		.loc 1 117 36 view .LVU122
+ 417 0014 33F810E0 		ldrh	lr, [r3, r0, lsl #1]
+ 418              	.LVL38:
+ 118:../bsp/malloc.c ****         for(i=0;i<nmemb;i++)  				//内存块清零
+ 419              		.loc 1 118 9 is_stmt 1 view .LVU123
+ 420              		.loc 1 118 14 is_stmt 0 view .LVU124
+ 421 0018 0023     		movs	r3, #0
+ 422              		.loc 1 118 9 view .LVU125
+ 423 001a 0CE0     		b	.L40
+ 424              	.LVL39:
+ 425              	.L44:
+ 426              		.loc 1 118 9 view .LVU126
+ 427              	.LBE2:
+ 111:../bsp/malloc.c ****         return 1;//未初始化  
+ 428              		.loc 1 111 3 is_stmt 1 view .LVU127
+ 111:../bsp/malloc.c ****         return 1;//未初始化  
+ 429              		.loc 1 111 13 is_stmt 0 view .LVU128
+ 430 001c 094B     		ldr	r3, .L45
+ 431 001e 1B68     		ldr	r3, [r3]
+ 111:../bsp/malloc.c ****         return 1;//未初始化  
+ 432              		.loc 1 111 3 view .LVU129
+ 433 0020 9847     		blx	r3
+ 434              	.LVL40:
+ 112:../bsp/malloc.c ****     }  
+ 435              		.loc 1 112 9 is_stmt 1 view .LVU130
+ 112:../bsp/malloc.c ****     }  
+ 436              		.loc 1 112 16 is_stmt 0 view .LVU131
+ 437 0022 0120     		movs	r0, #1
+ 438 0024 0AE0     		b	.L39
+ 439              	.LVL41:
+ 440              	.L41:
+ 441              	.LBB3:
+ 119:../bsp/malloc.c ****         {  
+ 120:../bsp/malloc.c ****             mallco_dev.memmap[index+i]=0;  
+ 442              		.loc 1 120 13 is_stmt 1 discriminator 3 view .LVU132
+ 443              		.loc 1 120 23 is_stmt 0 discriminator 3 view .LVU133
+ 444 0026 074A     		ldr	r2, .L45
+ 445 0028 D268     		ldr	r2, [r2, #12]
+ 446              		.loc 1 120 36 discriminator 3 view .LVU134
+ 447 002a 1918     		adds	r1, r3, r0
+ 448              		.loc 1 120 39 discriminator 3 view .LVU135
+ 449 002c 4FF0000C 		mov	ip, #0
+ 450 0030 22F811C0 		strh	ip, [r2, r1, lsl #1]	@ movhi
+ 118:../bsp/malloc.c ****         {  
+ 451              		.loc 1 118 25 is_stmt 1 discriminator 3 view .LVU136
+ 118:../bsp/malloc.c ****         {  
+ 452              		.loc 1 118 26 is_stmt 0 discriminator 3 view .LVU137
+ 453 0034 0133     		adds	r3, r3, #1
+ 454              	.LVL42:
+ 455              	.L40:
+ 118:../bsp/malloc.c ****         {  
+ 456              		.loc 1 118 17 is_stmt 1 discriminator 1 view .LVU138
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 12
+
+
+ 118:../bsp/malloc.c ****         {  
+ 457              		.loc 1 118 9 is_stmt 0 discriminator 1 view .LVU139
+ 458 0036 7345     		cmp	r3, lr
+ 459 0038 F5DB     		blt	.L41
+ 121:../bsp/malloc.c ****         }
+ 122:../bsp/malloc.c ****         return 0;  
+ 460              		.loc 1 122 16 view .LVU140
+ 461 003a 0020     		movs	r0, #0
+ 462              	.LVL43:
+ 463              	.L39:
+ 464              		.loc 1 122 16 view .LVU141
+ 465              	.LBE3:
+ 123:../bsp/malloc.c ****     }else return 2;//偏移超区了.  
+ 124:../bsp/malloc.c **** }  
+ 466              		.loc 1 124 1 view .LVU142
+ 467 003c 08BD     		pop	{r3, pc}
+ 468              	.LVL44:
+ 469              	.L42:
+ 123:../bsp/malloc.c ****     }else return 2;//偏移超区了.  
+ 470              		.loc 1 123 18 view .LVU143
+ 471 003e 0220     		movs	r0, #2
+ 472              	.LVL45:
+ 123:../bsp/malloc.c ****     }else return 2;//偏移超区了.  
+ 473              		.loc 1 123 18 view .LVU144
+ 474 0040 FCE7     		b	.L39
+ 475              	.L46:
+ 476 0042 00BF     		.align	2
+ 477              	.L45:
+ 478 0044 00000000 		.word	.LANCHOR0
+ 479              		.cfi_endproc
+ 480              	.LFE34:
+ 482              		.section	.text.myfree,"ax",%progbits
+ 483              		.align	1
+ 484              		.global	myfree
+ 485              		.syntax unified
+ 486              		.thumb
+ 487              		.thumb_func
+ 489              	myfree:
+ 490              	.LVL46:
+ 491              	.LFB35:
+ 125:../bsp/malloc.c **** //释放内存(外部调用) 
+ 126:../bsp/malloc.c **** //ptr:内存首地址 
+ 127:../bsp/malloc.c **** void myfree(void *ptr)  
+ 128:../bsp/malloc.c **** {  
+ 492              		.loc 1 128 1 is_stmt 1 view -0
+ 493              		.cfi_startproc
+ 494              		@ args = 0, pretend = 0, frame = 0
+ 495              		@ frame_needed = 0, uses_anonymous_args = 0
+ 129:../bsp/malloc.c **** 	u32 offset;  
+ 496              		.loc 1 129 2 view .LVU146
+ 130:../bsp/malloc.c ****     if(ptr==NULL)return;//地址为0.  
+ 497              		.loc 1 130 5 view .LVU147
+ 498              		.loc 1 130 7 is_stmt 0 view .LVU148
+ 499 0000 38B1     		cbz	r0, .L50
+ 128:../bsp/malloc.c **** 	u32 offset;  
+ 500              		.loc 1 128 1 view .LVU149
+ 501 0002 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 13
+
+
+ 502              	.LCFI3:
+ 503              		.cfi_def_cfa_offset 8
+ 504              		.cfi_offset 3, -8
+ 505              		.cfi_offset 14, -4
+ 506 0004 0346     		mov	r3, r0
+ 131:../bsp/malloc.c ****  	offset=(u32)ptr-(u32)mallco_dev.membase;  
+ 507              		.loc 1 131 3 is_stmt 1 view .LVU150
+ 508              		.loc 1 131 34 is_stmt 0 view .LVU151
+ 509 0006 034A     		ldr	r2, .L53
+ 510 0008 9068     		ldr	r0, [r2, #8]
+ 511              	.LVL47:
+ 132:../bsp/malloc.c ****     mem_free(offset);	//释放内存     
+ 512              		.loc 1 132 5 is_stmt 1 view .LVU152
+ 513 000a 181A     		subs	r0, r3, r0
+ 514              	.LVL48:
+ 515              		.loc 1 132 5 is_stmt 0 view .LVU153
+ 516 000c FFF7FEFF 		bl	mem_free
+ 517              	.LVL49:
+ 133:../bsp/malloc.c **** }  
+ 518              		.loc 1 133 1 view .LVU154
+ 519 0010 08BD     		pop	{r3, pc}
+ 520              	.LVL50:
+ 521              	.L50:
+ 522              	.LCFI4:
+ 523              		.cfi_def_cfa_offset 0
+ 524              		.cfi_restore 3
+ 525              		.cfi_restore 14
+ 526              		.loc 1 133 1 view .LVU155
+ 527 0012 7047     		bx	lr
+ 528              	.L54:
+ 529              		.align	2
+ 530              	.L53:
+ 531 0014 00000000 		.word	.LANCHOR0
+ 532              		.cfi_endproc
+ 533              	.LFE35:
+ 535              		.section	.text.mymalloc,"ax",%progbits
+ 536              		.align	1
+ 537              		.global	mymalloc
+ 538              		.syntax unified
+ 539              		.thumb
+ 540              		.thumb_func
+ 542              	mymalloc:
+ 543              	.LVL51:
+ 544              	.LFB36:
+ 134:../bsp/malloc.c **** //分配内存(外部调用)
+ 135:../bsp/malloc.c **** //size:内存大小(字节)
+ 136:../bsp/malloc.c **** //返回值:分配到的内存首地址.
+ 137:../bsp/malloc.c **** void *mymalloc(u32 size)  
+ 138:../bsp/malloc.c **** {  
+ 545              		.loc 1 138 1 is_stmt 1 view -0
+ 546              		.cfi_startproc
+ 547              		@ args = 0, pretend = 0, frame = 0
+ 548              		@ frame_needed = 0, uses_anonymous_args = 0
+ 549              		.loc 1 138 1 is_stmt 0 view .LVU157
+ 550 0000 08B5     		push	{r3, lr}
+ 551              	.LCFI5:
+ 552              		.cfi_def_cfa_offset 8
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 14
+
+
+ 553              		.cfi_offset 3, -8
+ 554              		.cfi_offset 14, -4
+ 139:../bsp/malloc.c ****     u32 offset;  									      
+ 555              		.loc 1 139 5 is_stmt 1 view .LVU158
+ 140:../bsp/malloc.c **** 	offset=mem_malloc(size);  	   				   
+ 556              		.loc 1 140 2 view .LVU159
+ 557              		.loc 1 140 9 is_stmt 0 view .LVU160
+ 558 0002 FFF7FEFF 		bl	mem_malloc
+ 559              	.LVL52:
+ 141:../bsp/malloc.c ****     if(offset==0XFFFFFFFF)return NULL;  
+ 560              		.loc 1 141 5 is_stmt 1 view .LVU161
+ 561              		.loc 1 141 7 is_stmt 0 view .LVU162
+ 562 0006 B0F1FF3F 		cmp	r0, #-1
+ 563 000a 03D0     		beq	.L57
+ 142:../bsp/malloc.c ****     else return (void*)((u32)mallco_dev.membase+offset);  
+ 564              		.loc 1 142 10 is_stmt 1 view .LVU163
+ 565              		.loc 1 142 40 is_stmt 0 view .LVU164
+ 566 000c 024B     		ldr	r3, .L59
+ 567 000e 9B68     		ldr	r3, [r3, #8]
+ 568              		.loc 1 142 48 view .LVU165
+ 569 0010 1844     		add	r0, r0, r3
+ 570              	.LVL53:
+ 571              	.L55:
+ 143:../bsp/malloc.c **** }  
+ 572              		.loc 1 143 1 view .LVU166
+ 573 0012 08BD     		pop	{r3, pc}
+ 574              	.LVL54:
+ 575              	.L57:
+ 141:../bsp/malloc.c ****     if(offset==0XFFFFFFFF)return NULL;  
+ 576              		.loc 1 141 34 view .LVU167
+ 577 0014 0020     		movs	r0, #0
+ 578              	.LVL55:
+ 141:../bsp/malloc.c ****     if(offset==0XFFFFFFFF)return NULL;  
+ 579              		.loc 1 141 34 view .LVU168
+ 580 0016 FCE7     		b	.L55
+ 581              	.L60:
+ 582              		.align	2
+ 583              	.L59:
+ 584 0018 00000000 		.word	.LANCHOR0
+ 585              		.cfi_endproc
+ 586              	.LFE36:
+ 588              		.section	.text.myrealloc,"ax",%progbits
+ 589              		.align	1
+ 590              		.global	myrealloc
+ 591              		.syntax unified
+ 592              		.thumb
+ 593              		.thumb_func
+ 595              	myrealloc:
+ 596              	.LVL56:
+ 597              	.LFB37:
+ 144:../bsp/malloc.c **** //重新分配内存(外部调用)
+ 145:../bsp/malloc.c **** //*ptr:旧内存首地址
+ 146:../bsp/malloc.c **** //size:要分配的内存大小(字节)
+ 147:../bsp/malloc.c **** //返回值:新分配到的内存首地址.
+ 148:../bsp/malloc.c **** void *myrealloc(void *ptr,u32 size)  
+ 149:../bsp/malloc.c **** {  
+ 598              		.loc 1 149 1 is_stmt 1 view -0
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 15
+
+
+ 599              		.cfi_startproc
+ 600              		@ args = 0, pretend = 0, frame = 0
+ 601              		@ frame_needed = 0, uses_anonymous_args = 0
+ 602              		.loc 1 149 1 is_stmt 0 view .LVU170
+ 603 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 604              	.LCFI6:
+ 605              		.cfi_def_cfa_offset 24
+ 606              		.cfi_offset 3, -24
+ 607              		.cfi_offset 4, -20
+ 608              		.cfi_offset 5, -16
+ 609              		.cfi_offset 6, -12
+ 610              		.cfi_offset 7, -8
+ 611              		.cfi_offset 14, -4
+ 612 0002 0646     		mov	r6, r0
+ 613 0004 0D46     		mov	r5, r1
+ 150:../bsp/malloc.c ****     u32 offset;  
+ 614              		.loc 1 150 5 is_stmt 1 view .LVU171
+ 151:../bsp/malloc.c ****     offset=mem_malloc(size);  
+ 615              		.loc 1 151 5 view .LVU172
+ 616              		.loc 1 151 12 is_stmt 0 view .LVU173
+ 617 0006 0846     		mov	r0, r1
+ 618              	.LVL57:
+ 619              		.loc 1 151 12 view .LVU174
+ 620 0008 FFF7FEFF 		bl	mem_malloc
+ 621              	.LVL58:
+ 152:../bsp/malloc.c ****     if(offset==0XFFFFFFFF)return NULL;     
+ 622              		.loc 1 152 5 is_stmt 1 view .LVU175
+ 623              		.loc 1 152 7 is_stmt 0 view .LVU176
+ 624 000c B0F1FF3F 		cmp	r0, #-1
+ 625 0010 0DD0     		beq	.L63
+ 626 0012 0446     		mov	r4, r0
+ 153:../bsp/malloc.c ****     else  
+ 154:../bsp/malloc.c ****     {  									   
+ 155:../bsp/malloc.c **** 	    mymemcpy((void*)((u32)mallco_dev.membase+offset),ptr,size);	//拷贝旧内存内容到新内存   
+ 627              		.loc 1 155 6 is_stmt 1 view .LVU177
+ 628              		.loc 1 155 38 is_stmt 0 view .LVU178
+ 629 0014 074F     		ldr	r7, .L65
+ 630 0016 B868     		ldr	r0, [r7, #8]
+ 631              	.LVL59:
+ 632              		.loc 1 155 6 view .LVU179
+ 633 0018 2A46     		mov	r2, r5
+ 634 001a 3146     		mov	r1, r6
+ 635 001c 2044     		add	r0, r0, r4
+ 636 001e FFF7FEFF 		bl	mymemcpy
+ 637              	.LVL60:
+ 156:../bsp/malloc.c ****         myfree(ptr);  											  	//释放旧内存
+ 638              		.loc 1 156 9 is_stmt 1 view .LVU180
+ 639 0022 3046     		mov	r0, r6
+ 640 0024 FFF7FEFF 		bl	myfree
+ 641              	.LVL61:
+ 157:../bsp/malloc.c ****         return (void*)((u32)mallco_dev.membase+offset);  			//返回新内存首地址
+ 642              		.loc 1 157 9 view .LVU181
+ 643              		.loc 1 157 39 is_stmt 0 view .LVU182
+ 644 0028 B868     		ldr	r0, [r7, #8]
+ 645              		.loc 1 157 47 view .LVU183
+ 646 002a 2044     		add	r0, r0, r4
+ 647              	.LVL62:
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 16
+
+
+ 648              	.L61:
+ 158:../bsp/malloc.c ****     }  
+ 159:../bsp/malloc.c **** }
+ 649              		.loc 1 159 1 view .LVU184
+ 650 002c F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 651              	.LVL63:
+ 652              	.L63:
+ 152:../bsp/malloc.c ****     else  
+ 653              		.loc 1 152 34 view .LVU185
+ 654 002e 0020     		movs	r0, #0
+ 655              	.LVL64:
+ 152:../bsp/malloc.c ****     else  
+ 656              		.loc 1 152 34 view .LVU186
+ 657 0030 FCE7     		b	.L61
+ 658              	.L66:
+ 659 0032 00BF     		.align	2
+ 660              	.L65:
+ 661 0034 00000000 		.word	.LANCHOR0
+ 662              		.cfi_endproc
+ 663              	.LFE37:
+ 665              		.global	mallco_dev
+ 666              		.global	memsize
+ 667              		.global	memblksize
+ 668              		.global	memtblsize
+ 669              		.global	memmapbase
+ 670              		.global	membase
+ 671              		.section	.bss.membase,"aw",%nobits
+ 672              		.align	2
+ 675              	membase:
+ 676 0000 00000000 		.space	35840
+ 676      00000000 
+ 676      00000000 
+ 676      00000000 
+ 676      00000000 
+ 677              		.section	.bss.memmapbase,"aw",%nobits
+ 678              		.align	2
+ 681              	memmapbase:
+ 682 0000 00000000 		.space	2240
+ 682      00000000 
+ 682      00000000 
+ 682      00000000 
+ 682      00000000 
+ 683              		.section	.data.mallco_dev,"aw"
+ 684              		.align	2
+ 685              		.set	.LANCHOR0,. + 0
+ 688              	mallco_dev:
+ 689 0000 00000000 		.word	mem_init
+ 690 0004 00000000 		.word	mem_perused
+ 691 0008 00000000 		.word	membase
+ 692 000c 00000000 		.word	memmapbase
+ 693 0010 00       		.byte	0
+ 694 0011 000000   		.space	3
+ 695              		.section	.rodata.memblksize,"a"
+ 696              		.align	2
+ 699              	memblksize:
+ 700 0000 20000000 		.word	32
+ 701              		.section	.rodata.memsize,"a"
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 17
+
+
+ 702              		.align	2
+ 705              	memsize:
+ 706 0000 008C0000 		.word	35840
+ 707              		.section	.rodata.memtblsize,"a"
+ 708              		.align	2
+ 711              	memtblsize:
+ 712 0000 60040000 		.word	1120
+ 713              		.text
+ 714              	.Letext0:
+ 715              		.file 2 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\machi
+ 716              		.file 3 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\sys\\
+ 717              		.file 4 "../user/stm32f10x.h"
+ 718              		.file 5 "../bsp/malloc.h"
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccNwU83f.s 			page 18
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 malloc.c
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:18     .text.mem_perused:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:24     .text.mem_perused:00000000 mem_perused
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:85     .text.mem_perused:00000030 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:91     .text.mymemcpy:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:97     .text.mymemcpy:00000000 mymemcpy
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:136    .text.mymemset:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:142    .text.mymemset:00000000 mymemset
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:177    .text.mem_init:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:183    .text.mem_init:00000000 mem_init
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:218    .text.mem_init:00000024 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:223    .text.mem_malloc:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:229    .text.mem_malloc:00000000 mem_malloc
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:372    .text.mem_malloc:00000070 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:377    .text.mem_free:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:383    .text.mem_free:00000000 mem_free
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:478    .text.mem_free:00000044 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:483    .text.myfree:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:489    .text.myfree:00000000 myfree
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:531    .text.myfree:00000014 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:536    .text.mymalloc:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:542    .text.mymalloc:00000000 mymalloc
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:584    .text.mymalloc:00000018 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:589    .text.myrealloc:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:595    .text.myrealloc:00000000 myrealloc
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:661    .text.myrealloc:00000034 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:688    .data.mallco_dev:00000000 mallco_dev
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:705    .rodata.memsize:00000000 memsize
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:699    .rodata.memblksize:00000000 memblksize
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:711    .rodata.memtblsize:00000000 memtblsize
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:681    .bss.memmapbase:00000000 memmapbase
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:675    .bss.membase:00000000 membase
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:672    .bss.membase:00000000 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:678    .bss.memmapbase:00000000 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:684    .data.mallco_dev:00000000 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:696    .rodata.memblksize:00000000 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:702    .rodata.memsize:00000000 $d
+C:\Users\28470\AppData\Local\Temp\ccNwU83f.s:708    .rodata.memtblsize:00000000 $d
+
+NO UNDEFINED SYMBOLS

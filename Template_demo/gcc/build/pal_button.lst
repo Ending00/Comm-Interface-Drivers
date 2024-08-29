@@ -1,0 +1,756 @@
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"pal_button.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.dev_dkey_read_pin_level,"ax",%progbits
+  18              		.align	1
+  19              		.global	dev_dkey_read_pin_level
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	dev_dkey_read_pin_level:
+  25              	.LFB32:
+  26              		.file 1 "../driver/pal_button.c"
+   1:../driver/pal_button.c **** #include "pal_button.h"
+   2:../driver/pal_button.c **** #include "pal_rgb.h"
+   3:../driver/pal_button.c **** #include "button_drv.h"
+   4:../driver/pal_button.c **** #include "usart.h"
+   5:../driver/pal_button.c **** #include "bsp_usart2.h"
+   6:../driver/pal_button.c **** #define DEBUG_Log		printf  
+   7:../driver/pal_button.c **** 
+   8:../driver/pal_button.c **** /**@brief 按键定义 */
+   9:../driver/pal_button.c **** BUTTON_t g_stdKey; 
+  10:../driver/pal_button.c **** BUTTON_t g_stdKey1;
+  11:../driver/pal_button.c **** 
+  12:../driver/pal_button.c **** uint8_t dev_dkey_read_pin_level(void)
+  13:../driver/pal_button.c **** {
+  27              		.loc 1 13 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 08B5     		push	{r3, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  14:../driver/pal_button.c ****     return KEY0;
+  36              		.loc 1 14 5 view .LVU1
+  37              		.loc 1 14 12 is_stmt 0 view .LVU2
+  38 0002 2021     		movs	r1, #32
+  39 0004 0148     		ldr	r0, .L3
+  40 0006 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+  41              	.LVL0:
+  15:../driver/pal_button.c **** }
+  42              		.loc 1 15 1 view .LVU3
+  43 000a 08BD     		pop	{r3, pc}
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 2
+
+
+  44              	.L4:
+  45              		.align	2
+  46              	.L3:
+  47 000c 00100140 		.word	1073811456
+  48              		.cfi_endproc
+  49              	.LFE32:
+  51              		.section	.text.dev_dkey1_read_pin_level,"ax",%progbits
+  52              		.align	1
+  53              		.global	dev_dkey1_read_pin_level
+  54              		.syntax unified
+  55              		.thumb
+  56              		.thumb_func
+  58              	dev_dkey1_read_pin_level:
+  59              	.LFB33:
+  16:../driver/pal_button.c **** 
+  17:../driver/pal_button.c **** uint8_t dev_dkey1_read_pin_level(void)
+  18:../driver/pal_button.c **** {
+  60              		.loc 1 18 1 is_stmt 1 view -0
+  61              		.cfi_startproc
+  62              		@ args = 0, pretend = 0, frame = 0
+  63              		@ frame_needed = 0, uses_anonymous_args = 0
+  64 0000 08B5     		push	{r3, lr}
+  65              	.LCFI1:
+  66              		.cfi_def_cfa_offset 8
+  67              		.cfi_offset 3, -8
+  68              		.cfi_offset 14, -4
+  19:../driver/pal_button.c ****     return KEY1;
+  69              		.loc 1 19 5 view .LVU5
+  70              		.loc 1 19 12 is_stmt 0 view .LVU6
+  71 0002 4FF40041 		mov	r1, #32768
+  72 0006 0248     		ldr	r0, .L7
+  73 0008 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+  74              	.LVL1:
+  20:../driver/pal_button.c **** }
+  75              		.loc 1 20 1 view .LVU7
+  76 000c 08BD     		pop	{r3, pc}
+  77              	.L8:
+  78 000e 00BF     		.align	2
+  79              	.L7:
+  80 0010 00080140 		.word	1073809408
+  81              		.cfi_endproc
+  82              	.LFE33:
+  84              		.section	.text.button_callback,"ax",%progbits
+  85              		.align	1
+  86              		.global	button_callback
+  87              		.syntax unified
+  88              		.thumb
+  89              		.thumb_func
+  91              	button_callback:
+  92              	.LVL2:
+  93              	.LFB34:
+  21:../driver/pal_button.c **** 
+  22:../driver/pal_button.c **** 
+  23:../driver/pal_button.c **** void button_callback(void *pArg)
+  24:../driver/pal_button.c **** {
+  94              		.loc 1 24 1 is_stmt 1 view -0
+  95              		.cfi_startproc
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 3
+
+
+  96              		@ args = 0, pretend = 0, frame = 0
+  97              		@ frame_needed = 0, uses_anonymous_args = 0
+  98              		.loc 1 24 1 is_stmt 0 view .LVU9
+  99 0000 08B5     		push	{r3, lr}
+ 100              	.LCFI2:
+ 101              		.cfi_def_cfa_offset 8
+ 102              		.cfi_offset 3, -8
+ 103              		.cfi_offset 14, -4
+  25:../driver/pal_button.c **** 	int i = 0;
+ 104              		.loc 1 25 2 is_stmt 1 view .LVU10
+ 105              	.LVL3:
+  26:../driver/pal_button.c ****     switch(button_get_event((BUTTON_t *)pArg))
+ 106              		.loc 1 26 5 view .LVU11
+ 107              		.loc 1 26 12 is_stmt 0 view .LVU12
+ 108 0002 FFF7FEFF 		bl	button_get_event
+ 109              	.LVL4:
+ 110              		.loc 1 26 5 view .LVU13
+ 111 0006 0328     		cmp	r0, #3
+ 112 0008 2AD0     		beq	.L10
+ 113 000a 0428     		cmp	r0, #4
+ 114 000c 4FD0     		beq	.L11
+ 115 000e 0228     		cmp	r0, #2
+ 116 0010 00D0     		beq	.L18
+ 117              	.LVL5:
+ 118              	.L9:
+  27:../driver/pal_button.c ****     {
+  28:../driver/pal_button.c ****         case BTN_EVT_UP:
+  29:../driver/pal_button.c ****             {
+  30:../driver/pal_button.c **** 
+  31:../driver/pal_button.c ****             }
+  32:../driver/pal_button.c ****             break;
+  33:../driver/pal_button.c **** 
+  34:../driver/pal_button.c ****         case BTN_EVT_DOWN:
+  35:../driver/pal_button.c ****             {
+  36:../driver/pal_button.c **** 
+  37:../driver/pal_button.c ****             }
+  38:../driver/pal_button.c ****             break;
+  39:../driver/pal_button.c **** 
+  40:../driver/pal_button.c ****         case BTN_EVT_LONG_HOLD:
+  41:../driver/pal_button.c ****             {
+  42:../driver/pal_button.c **** 
+  43:../driver/pal_button.c ****             }
+  44:../driver/pal_button.c **** 
+  45:../driver/pal_button.c ****             break;
+  46:../driver/pal_button.c **** 
+  47:../driver/pal_button.c ****         case BTN_EVT_SINGLE:
+  48:../driver/pal_button.c ****             {
+  49:../driver/pal_button.c ****                 stdRgb.State = 0x01;
+  50:../driver/pal_button.c **** 				globalColor.r = 0x27;
+  51:../driver/pal_button.c **** 				globalColor.g = 0xD8;
+  52:../driver/pal_button.c **** 				globalColor.b = 0x27;
+  53:../driver/pal_button.c **** 				for (i = stdRgb.start_index; i < stdRgb.start_index + stdRgb.length && i < num_leds; i++) {
+  54:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+  55:../driver/pal_button.c **** 				}
+  56:../driver/pal_button.c ****             }
+  57:../driver/pal_button.c ****             break;
+  58:../driver/pal_button.c **** 			
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 4
+
+
+  59:../driver/pal_button.c ****         case BTN_EVT_DOUBLE:
+  60:../driver/pal_button.c ****             {
+  61:../driver/pal_button.c ****                 stdRgb.State = 0x01;
+  62:../driver/pal_button.c **** 				globalColor.r = 0xD3;
+  63:../driver/pal_button.c **** 				globalColor.g = 0x1B;
+  64:../driver/pal_button.c **** 				globalColor.b = 0xEA;	
+  65:../driver/pal_button.c **** 				for (i = stdRgb.start_index; i < stdRgb.start_index + stdRgb.length && i < num_leds; i++) {
+  66:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+  67:../driver/pal_button.c **** 				}				
+  68:../driver/pal_button.c ****             }
+  69:../driver/pal_button.c ****             break;
+  70:../driver/pal_button.c **** 			
+  71:../driver/pal_button.c ****         case BTN_EVT_LONG:
+  72:../driver/pal_button.c ****             {
+  73:../driver/pal_button.c **** 				stdRgb1.State = 0x02;
+  74:../driver/pal_button.c ****             }
+  75:../driver/pal_button.c ****             break;
+  76:../driver/pal_button.c **** 
+  77:../driver/pal_button.c ****         default:
+  78:../driver/pal_button.c ****             break;
+  79:../driver/pal_button.c **** 
+  80:../driver/pal_button.c ****     }	
+  81:../driver/pal_button.c **** }
+ 119              		.loc 1 81 1 view .LVU14
+ 120 0012 08BD     		pop	{r3, pc}
+ 121              	.LVL6:
+ 122              	.L18:
+  49:../driver/pal_button.c **** 				globalColor.r = 0x27;
+ 123              		.loc 1 49 17 is_stmt 1 view .LVU15
+  49:../driver/pal_button.c **** 				globalColor.r = 0x27;
+ 124              		.loc 1 49 30 is_stmt 0 view .LVU16
+ 125 0014 294B     		ldr	r3, .L19
+ 126 0016 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 127 0018 0121     		movs	r1, #1
+ 128 001a 61F30712 		bfi	r2, r1, #4, #4
+ 129 001e DA70     		strb	r2, [r3, #3]
+  50:../driver/pal_button.c **** 				globalColor.g = 0xD8;
+ 130              		.loc 1 50 5 is_stmt 1 view .LVU17
+  50:../driver/pal_button.c **** 				globalColor.g = 0xD8;
+ 131              		.loc 1 50 19 is_stmt 0 view .LVU18
+ 132 0020 274A     		ldr	r2, .L19+4
+ 133 0022 2721     		movs	r1, #39
+ 134 0024 1170     		strb	r1, [r2]
+  51:../driver/pal_button.c **** 				globalColor.b = 0x27;
+ 135              		.loc 1 51 5 is_stmt 1 view .LVU19
+  51:../driver/pal_button.c **** 				globalColor.b = 0x27;
+ 136              		.loc 1 51 19 is_stmt 0 view .LVU20
+ 137 0026 D820     		movs	r0, #216
+ 138 0028 5070     		strb	r0, [r2, #1]
+  52:../driver/pal_button.c **** 				for (i = stdRgb.start_index; i < stdRgb.start_index + stdRgb.length && i < num_leds; i++) {
+ 139              		.loc 1 52 5 is_stmt 1 view .LVU21
+  52:../driver/pal_button.c **** 				for (i = stdRgb.start_index; i < stdRgb.start_index + stdRgb.length && i < num_leds; i++) {
+ 140              		.loc 1 52 19 is_stmt 0 view .LVU22
+ 141 002a 9170     		strb	r1, [r2, #2]
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 142              		.loc 1 53 5 is_stmt 1 view .LVU23
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 5
+
+
+ 143              		.loc 1 53 20 is_stmt 0 view .LVU24
+ 144 002c 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 145              	.LVL7:
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 146              		.loc 1 53 5 view .LVU25
+ 147 002e 0EE0     		b	.L13
+ 148              	.L14:
+  54:../driver/pal_button.c **** 				}
+ 149              		.loc 1 54 6 is_stmt 1 discriminator 4 view .LVU26
+  54:../driver/pal_button.c **** 				}
+ 150              		.loc 1 54 12 is_stmt 0 discriminator 4 view .LVU27
+ 151 0030 224A     		ldr	r2, .L19
+ 152 0032 5168     		ldr	r1, [r2, #4]
+  54:../driver/pal_button.c **** 				}
+ 153              		.loc 1 54 23 discriminator 4 view .LVU28
+ 154 0034 03EB4302 		add	r2, r3, r3, lsl #1
+ 155 0038 01EB020C 		add	ip, r1, r2
+  54:../driver/pal_button.c **** 				}
+ 156              		.loc 1 54 27 discriminator 4 view .LVU29
+ 157 003c 2048     		ldr	r0, .L19+4
+ 158 003e B0F800E0 		ldrh	lr, [r0]	@ unaligned
+ 159 0042 8078     		ldrb	r0, [r0, #2]	@ zero_extendqisi2
+ 160 0044 21F802E0 		strh	lr, [r1, r2]	@ unaligned
+ 161 0048 8CF80200 		strb	r0, [ip, #2]
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 162              		.loc 1 53 90 is_stmt 1 discriminator 4 view .LVU30
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 163              		.loc 1 53 91 is_stmt 0 discriminator 4 view .LVU31
+ 164 004c 0133     		adds	r3, r3, #1
+ 165              	.LVL8:
+ 166              	.L13:
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 167              		.loc 1 53 34 is_stmt 1 discriminator 1 view .LVU32
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 168              		.loc 1 53 44 is_stmt 0 discriminator 1 view .LVU33
+ 169 004e 1B49     		ldr	r1, .L19
+ 170 0050 4A78     		ldrb	r2, [r1, #1]	@ zero_extendqisi2
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 171              		.loc 1 53 65 discriminator 1 view .LVU34
+ 172 0052 8978     		ldrb	r1, [r1, #2]	@ zero_extendqisi2
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 173              		.loc 1 53 57 discriminator 1 view .LVU35
+ 174 0054 0A44     		add	r2, r2, r1
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 175              		.loc 1 53 5 discriminator 1 view .LVU36
+ 176 0056 9A42     		cmp	r2, r3
+ 177 0058 DBDD     		ble	.L9
+  53:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 178              		.loc 1 53 73 discriminator 3 view .LVU37
+ 179 005a 0F2B     		cmp	r3, #15
+ 180 005c E8DD     		ble	.L14
+ 181 005e D8E7     		b	.L9
+ 182              	.LVL9:
+ 183              	.L10:
+  61:../driver/pal_button.c **** 				globalColor.r = 0xD3;
+ 184              		.loc 1 61 17 is_stmt 1 view .LVU38
+  61:../driver/pal_button.c **** 				globalColor.r = 0xD3;
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 6
+
+
+ 185              		.loc 1 61 30 is_stmt 0 view .LVU39
+ 186 0060 164B     		ldr	r3, .L19
+ 187 0062 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 188 0064 0121     		movs	r1, #1
+ 189 0066 61F30712 		bfi	r2, r1, #4, #4
+ 190 006a DA70     		strb	r2, [r3, #3]
+  62:../driver/pal_button.c **** 				globalColor.g = 0x1B;
+ 191              		.loc 1 62 5 is_stmt 1 view .LVU40
+  62:../driver/pal_button.c **** 				globalColor.g = 0x1B;
+ 192              		.loc 1 62 19 is_stmt 0 view .LVU41
+ 193 006c 144A     		ldr	r2, .L19+4
+ 194 006e D321     		movs	r1, #211
+ 195 0070 1170     		strb	r1, [r2]
+  63:../driver/pal_button.c **** 				globalColor.b = 0xEA;	
+ 196              		.loc 1 63 5 is_stmt 1 view .LVU42
+  63:../driver/pal_button.c **** 				globalColor.b = 0xEA;	
+ 197              		.loc 1 63 19 is_stmt 0 view .LVU43
+ 198 0072 1B21     		movs	r1, #27
+ 199 0074 5170     		strb	r1, [r2, #1]
+  64:../driver/pal_button.c **** 				for (i = stdRgb.start_index; i < stdRgb.start_index + stdRgb.length && i < num_leds; i++) {
+ 200              		.loc 1 64 5 is_stmt 1 view .LVU44
+  64:../driver/pal_button.c **** 				for (i = stdRgb.start_index; i < stdRgb.start_index + stdRgb.length && i < num_leds; i++) {
+ 201              		.loc 1 64 19 is_stmt 0 view .LVU45
+ 202 0076 EA21     		movs	r1, #234
+ 203 0078 9170     		strb	r1, [r2, #2]
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 204              		.loc 1 65 5 is_stmt 1 view .LVU46
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 205              		.loc 1 65 20 is_stmt 0 view .LVU47
+ 206 007a 5B78     		ldrb	r3, [r3, #1]	@ zero_extendqisi2
+ 207              	.LVL10:
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 208              		.loc 1 65 5 view .LVU48
+ 209 007c 0EE0     		b	.L15
+ 210              	.L16:
+  66:../driver/pal_button.c **** 				}				
+ 211              		.loc 1 66 6 is_stmt 1 discriminator 4 view .LVU49
+  66:../driver/pal_button.c **** 				}				
+ 212              		.loc 1 66 12 is_stmt 0 discriminator 4 view .LVU50
+ 213 007e 0F4A     		ldr	r2, .L19
+ 214 0080 5168     		ldr	r1, [r2, #4]
+  66:../driver/pal_button.c **** 				}				
+ 215              		.loc 1 66 23 discriminator 4 view .LVU51
+ 216 0082 03EB4302 		add	r2, r3, r3, lsl #1
+ 217 0086 01EB020C 		add	ip, r1, r2
+  66:../driver/pal_button.c **** 				}				
+ 218              		.loc 1 66 27 discriminator 4 view .LVU52
+ 219 008a 0D48     		ldr	r0, .L19+4
+ 220 008c B0F800E0 		ldrh	lr, [r0]	@ unaligned
+ 221 0090 8078     		ldrb	r0, [r0, #2]	@ zero_extendqisi2
+ 222 0092 21F802E0 		strh	lr, [r1, r2]	@ unaligned
+ 223 0096 8CF80200 		strb	r0, [ip, #2]
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 224              		.loc 1 65 90 is_stmt 1 discriminator 4 view .LVU53
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 225              		.loc 1 65 91 is_stmt 0 discriminator 4 view .LVU54
+ 226 009a 0133     		adds	r3, r3, #1
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 7
+
+
+ 227              	.LVL11:
+ 228              	.L15:
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 229              		.loc 1 65 34 is_stmt 1 discriminator 1 view .LVU55
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 230              		.loc 1 65 44 is_stmt 0 discriminator 1 view .LVU56
+ 231 009c 0749     		ldr	r1, .L19
+ 232 009e 4A78     		ldrb	r2, [r1, #1]	@ zero_extendqisi2
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 233              		.loc 1 65 65 discriminator 1 view .LVU57
+ 234 00a0 8978     		ldrb	r1, [r1, #2]	@ zero_extendqisi2
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 235              		.loc 1 65 57 discriminator 1 view .LVU58
+ 236 00a2 0A44     		add	r2, r2, r1
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 237              		.loc 1 65 5 discriminator 1 view .LVU59
+ 238 00a4 9A42     		cmp	r2, r3
+ 239 00a6 B4DD     		ble	.L9
+  65:../driver/pal_button.c **** 					stdRgb.led_colors[i] = globalColor;
+ 240              		.loc 1 65 73 discriminator 3 view .LVU60
+ 241 00a8 0F2B     		cmp	r3, #15
+ 242 00aa E8DD     		ble	.L16
+ 243 00ac B1E7     		b	.L9
+ 244              	.LVL12:
+ 245              	.L11:
+  73:../driver/pal_button.c ****             }
+ 246              		.loc 1 73 5 is_stmt 1 view .LVU61
+  73:../driver/pal_button.c ****             }
+ 247              		.loc 1 73 19 is_stmt 0 view .LVU62
+ 248 00ae 054B     		ldr	r3, .L19+8
+ 249 00b0 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 250 00b2 0221     		movs	r1, #2
+ 251 00b4 61F30712 		bfi	r2, r1, #4, #4
+ 252 00b8 DA70     		strb	r2, [r3, #3]
+  75:../driver/pal_button.c **** 
+ 253              		.loc 1 75 13 is_stmt 1 view .LVU63
+ 254              		.loc 1 81 1 is_stmt 0 view .LVU64
+ 255 00ba AAE7     		b	.L9
+ 256              	.L20:
+ 257              		.align	2
+ 258              	.L19:
+ 259 00bc 00000000 		.word	stdRgb
+ 260 00c0 00000000 		.word	globalColor
+ 261 00c4 00000000 		.word	stdRgb1
+ 262              		.cfi_endproc
+ 263              	.LFE34:
+ 265              		.section	.text.button_callback1,"ax",%progbits
+ 266              		.align	1
+ 267              		.global	button_callback1
+ 268              		.syntax unified
+ 269              		.thumb
+ 270              		.thumb_func
+ 272              	button_callback1:
+ 273              	.LVL13:
+ 274              	.LFB35:
+  82:../driver/pal_button.c **** 
+  83:../driver/pal_button.c **** void button_callback1(void *pArg)
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 8
+
+
+  84:../driver/pal_button.c **** {
+ 275              		.loc 1 84 1 is_stmt 1 view -0
+ 276              		.cfi_startproc
+ 277              		@ args = 0, pretend = 0, frame = 0
+ 278              		@ frame_needed = 0, uses_anonymous_args = 0
+ 279              		.loc 1 84 1 is_stmt 0 view .LVU66
+ 280 0000 08B5     		push	{r3, lr}
+ 281              	.LCFI3:
+ 282              		.cfi_def_cfa_offset 8
+ 283              		.cfi_offset 3, -8
+ 284              		.cfi_offset 14, -4
+  85:../driver/pal_button.c **** //	int i = 0;
+  86:../driver/pal_button.c ****     switch(button_get_event((BUTTON_t *)pArg))
+ 285              		.loc 1 86 5 is_stmt 1 view .LVU67
+ 286              		.loc 1 86 12 is_stmt 0 view .LVU68
+ 287 0002 FFF7FEFF 		bl	button_get_event
+ 288              	.LVL14:
+ 289              		.loc 1 86 5 view .LVU69
+ 290 0006 0328     		cmp	r0, #3
+ 291 0008 11D0     		beq	.L22
+ 292 000a 0428     		cmp	r0, #4
+ 293 000c 1BD0     		beq	.L23
+ 294 000e 0228     		cmp	r0, #2
+ 295 0010 00D0     		beq	.L26
+ 296              	.L21:
+  87:../driver/pal_button.c ****     {
+  88:../driver/pal_button.c ****         case BTN_EVT_SINGLE:
+  89:../driver/pal_button.c ****             {
+  90:../driver/pal_button.c **** 				stdRgb2.State = 0x03;
+  91:../driver/pal_button.c **** 				stdRgb2.red_weight = 0;
+  92:../driver/pal_button.c **** 				stdRgb2.green_weight = 0.5;
+  93:../driver/pal_button.c **** 				stdRgb2.blue_weight = 0.5;
+  94:../driver/pal_button.c ****             }
+  95:../driver/pal_button.c ****             break;
+  96:../driver/pal_button.c ****         case BTN_EVT_DOUBLE:
+  97:../driver/pal_button.c ****             {
+  98:../driver/pal_button.c ****                 stdRgb3.State = 0x04;	
+  99:../driver/pal_button.c **** 				stdRgb3.red_weight = 0.34;
+ 100:../driver/pal_button.c **** 				stdRgb3.green_weight = 0.33;
+ 101:../driver/pal_button.c **** 				stdRgb3.blue_weight = 0.33;				
+ 102:../driver/pal_button.c ****             }
+ 103:../driver/pal_button.c ****             break;
+ 104:../driver/pal_button.c **** 	   case BTN_EVT_LONG:
+ 105:../driver/pal_button.c ****             {
+ 106:../driver/pal_button.c **** 				stdRgb4.State = 0x05;
+ 107:../driver/pal_button.c ****             }
+ 108:../driver/pal_button.c ****             break;
+ 109:../driver/pal_button.c ****         default:
+ 110:../driver/pal_button.c ****             break;
+ 111:../driver/pal_button.c **** 
+ 112:../driver/pal_button.c ****     }	
+ 113:../driver/pal_button.c **** }
+ 297              		.loc 1 113 1 view .LVU70
+ 298 0012 08BD     		pop	{r3, pc}
+ 299              	.L26:
+  90:../driver/pal_button.c **** 				stdRgb2.red_weight = 0;
+ 300              		.loc 1 90 5 is_stmt 1 view .LVU71
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 9
+
+
+  90:../driver/pal_button.c **** 				stdRgb2.red_weight = 0;
+ 301              		.loc 1 90 19 is_stmt 0 view .LVU72
+ 302 0014 0F4B     		ldr	r3, .L27
+ 303 0016 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 304 0018 0321     		movs	r1, #3
+ 305 001a 61F30712 		bfi	r2, r1, #4, #4
+ 306 001e DA70     		strb	r2, [r3, #3]
+  91:../driver/pal_button.c **** 				stdRgb2.green_weight = 0.5;
+ 307              		.loc 1 91 5 is_stmt 1 view .LVU73
+  91:../driver/pal_button.c **** 				stdRgb2.green_weight = 0.5;
+ 308              		.loc 1 91 24 is_stmt 0 view .LVU74
+ 309 0020 0022     		movs	r2, #0
+ 310 0022 9A60     		str	r2, [r3, #8]	@ float
+  92:../driver/pal_button.c **** 				stdRgb2.blue_weight = 0.5;
+ 311              		.loc 1 92 5 is_stmt 1 view .LVU75
+  92:../driver/pal_button.c **** 				stdRgb2.blue_weight = 0.5;
+ 312              		.loc 1 92 26 is_stmt 0 view .LVU76
+ 313 0024 4FF07C52 		mov	r2, #1056964608
+ 314 0028 DA60     		str	r2, [r3, #12]	@ float
+  93:../driver/pal_button.c ****             }
+ 315              		.loc 1 93 5 is_stmt 1 view .LVU77
+  93:../driver/pal_button.c ****             }
+ 316              		.loc 1 93 25 is_stmt 0 view .LVU78
+ 317 002a 1A61     		str	r2, [r3, #16]	@ float
+  95:../driver/pal_button.c ****         case BTN_EVT_DOUBLE:
+ 318              		.loc 1 95 13 is_stmt 1 view .LVU79
+ 319 002c F1E7     		b	.L21
+ 320              	.L22:
+  98:../driver/pal_button.c **** 				stdRgb3.red_weight = 0.34;
+ 321              		.loc 1 98 17 view .LVU80
+  98:../driver/pal_button.c **** 				stdRgb3.red_weight = 0.34;
+ 322              		.loc 1 98 31 is_stmt 0 view .LVU81
+ 323 002e 0A4B     		ldr	r3, .L27+4
+ 324 0030 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 325 0032 0421     		movs	r1, #4
+ 326 0034 61F30712 		bfi	r2, r1, #4, #4
+ 327 0038 DA70     		strb	r2, [r3, #3]
+  99:../driver/pal_button.c **** 				stdRgb3.green_weight = 0.33;
+ 328              		.loc 1 99 5 is_stmt 1 view .LVU82
+  99:../driver/pal_button.c **** 				stdRgb3.green_weight = 0.33;
+ 329              		.loc 1 99 24 is_stmt 0 view .LVU83
+ 330 003a 084A     		ldr	r2, .L27+8
+ 331 003c 9A60     		str	r2, [r3, #8]	@ float
+ 100:../driver/pal_button.c **** 				stdRgb3.blue_weight = 0.33;				
+ 332              		.loc 1 100 5 is_stmt 1 view .LVU84
+ 100:../driver/pal_button.c **** 				stdRgb3.blue_weight = 0.33;				
+ 333              		.loc 1 100 26 is_stmt 0 view .LVU85
+ 334 003e 084A     		ldr	r2, .L27+12
+ 335 0040 DA60     		str	r2, [r3, #12]	@ float
+ 101:../driver/pal_button.c ****             }
+ 336              		.loc 1 101 5 is_stmt 1 view .LVU86
+ 101:../driver/pal_button.c ****             }
+ 337              		.loc 1 101 25 is_stmt 0 view .LVU87
+ 338 0042 1A61     		str	r2, [r3, #16]	@ float
+ 103:../driver/pal_button.c **** 	   case BTN_EVT_LONG:
+ 339              		.loc 1 103 13 is_stmt 1 view .LVU88
+ 340 0044 E5E7     		b	.L21
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 10
+
+
+ 341              	.L23:
+ 106:../driver/pal_button.c ****             }
+ 342              		.loc 1 106 5 view .LVU89
+ 106:../driver/pal_button.c ****             }
+ 343              		.loc 1 106 19 is_stmt 0 view .LVU90
+ 344 0046 074B     		ldr	r3, .L27+16
+ 345 0048 DA78     		ldrb	r2, [r3, #3]	@ zero_extendqisi2
+ 346 004a 0521     		movs	r1, #5
+ 347 004c 61F30712 		bfi	r2, r1, #4, #4
+ 348 0050 DA70     		strb	r2, [r3, #3]
+ 108:../driver/pal_button.c ****         default:
+ 349              		.loc 1 108 13 is_stmt 1 view .LVU91
+ 350              		.loc 1 113 1 is_stmt 0 view .LVU92
+ 351 0052 DEE7     		b	.L21
+ 352              	.L28:
+ 353              		.align	2
+ 354              	.L27:
+ 355 0054 00000000 		.word	stdRgb2
+ 356 0058 00000000 		.word	stdRgb3
+ 357 005c 7B14AE3E 		.word	1051595899
+ 358 0060 C3F5A83E 		.word	1051260355
+ 359 0064 00000000 		.word	stdRgb4
+ 360              		.cfi_endproc
+ 361              	.LFE35:
+ 363              		.section	.text.dev_key_attach_init,"ax",%progbits
+ 364              		.align	1
+ 365              		.global	dev_key_attach_init
+ 366              		.syntax unified
+ 367              		.thumb
+ 368              		.thumb_func
+ 370              	dev_key_attach_init:
+ 371              	.LFB36:
+ 114:../driver/pal_button.c **** void dev_key_attach_init(void)
+ 115:../driver/pal_button.c **** {
+ 372              		.loc 1 115 1 is_stmt 1 view -0
+ 373              		.cfi_startproc
+ 374              		@ args = 0, pretend = 0, frame = 0
+ 375              		@ frame_needed = 0, uses_anonymous_args = 0
+ 376 0000 38B5     		push	{r3, r4, r5, lr}
+ 377              	.LCFI4:
+ 378              		.cfi_def_cfa_offset 16
+ 379              		.cfi_offset 3, -16
+ 380              		.cfi_offset 4, -12
+ 381              		.cfi_offset 5, -8
+ 382              		.cfi_offset 14, -4
+ 116:../driver/pal_button.c ****     /* 按键实体功能绑定 */
+ 117:../driver/pal_button.c ****     button_init(&g_stdKey, dev_dkey_read_pin_level, BTN_ACTIVE_LEVEL_LOW);
+ 383              		.loc 1 117 5 view .LVU94
+ 384 0002 1D4C     		ldr	r4, .L31
+ 385 0004 0022     		movs	r2, #0
+ 386 0006 1D49     		ldr	r1, .L31+4
+ 387 0008 2046     		mov	r0, r4
+ 388 000a FFF7FEFF 		bl	button_init
+ 389              	.LVL15:
+ 118:../driver/pal_button.c **** //	button_attach(&g_stdKey, BTN_EVT_DOWN, button_callback);	
+ 119:../driver/pal_button.c **** //	button_attach(&g_stdKey, BTN_EVT_UP, button_callback);		
+ 120:../driver/pal_button.c **** 	button_attach(&g_stdKey, BTN_EVT_SINGLE, button_callback);	
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 11
+
+
+ 390              		.loc 1 120 2 view .LVU95
+ 391 000e 1C4D     		ldr	r5, .L31+8
+ 392 0010 2A46     		mov	r2, r5
+ 393 0012 0221     		movs	r1, #2
+ 394 0014 2046     		mov	r0, r4
+ 395 0016 FFF7FEFF 		bl	button_attach
+ 396              	.LVL16:
+ 121:../driver/pal_button.c **** 	button_attach(&g_stdKey, BTN_EVT_DOUBLE, button_callback);		
+ 397              		.loc 1 121 2 view .LVU96
+ 398 001a 2A46     		mov	r2, r5
+ 399 001c 0321     		movs	r1, #3
+ 400 001e 2046     		mov	r0, r4
+ 401 0020 FFF7FEFF 		bl	button_attach
+ 402              	.LVL17:
+ 122:../driver/pal_button.c **** 	button_attach(&g_stdKey, BTN_EVT_LONG, button_callback);	
+ 403              		.loc 1 122 2 view .LVU97
+ 404 0024 2A46     		mov	r2, r5
+ 405 0026 0421     		movs	r1, #4
+ 406 0028 2046     		mov	r0, r4
+ 407 002a FFF7FEFF 		bl	button_attach
+ 408              	.LVL18:
+ 123:../driver/pal_button.c **** //	button_attach(&g_stdKey, BTN_EVT_LONG_HOLD, button_callback);	
+ 124:../driver/pal_button.c **** 	button_set_time_param(&g_stdKey, 100, 600, 200);
+ 409              		.loc 1 124 2 view .LVU98
+ 410 002e C823     		movs	r3, #200
+ 411 0030 4FF41672 		mov	r2, #600
+ 412 0034 6421     		movs	r1, #100
+ 413 0036 2046     		mov	r0, r4
+ 414 0038 FFF7FEFF 		bl	button_set_time_param
+ 415              	.LVL19:
+ 125:../driver/pal_button.c **** 	
+ 126:../driver/pal_button.c ****     button_init(&g_stdKey1, dev_dkey1_read_pin_level, BTN_ACTIVE_LEVEL_LOW);		
+ 416              		.loc 1 126 5 view .LVU99
+ 417 003c 114C     		ldr	r4, .L31+12
+ 418 003e 0022     		movs	r2, #0
+ 419 0040 1149     		ldr	r1, .L31+16
+ 420 0042 2046     		mov	r0, r4
+ 421 0044 FFF7FEFF 		bl	button_init
+ 422              	.LVL20:
+ 127:../driver/pal_button.c **** 	button_attach(&g_stdKey1, BTN_EVT_SINGLE, button_callback1);
+ 423              		.loc 1 127 2 view .LVU100
+ 424 0048 104D     		ldr	r5, .L31+20
+ 425 004a 2A46     		mov	r2, r5
+ 426 004c 0221     		movs	r1, #2
+ 427 004e 2046     		mov	r0, r4
+ 428 0050 FFF7FEFF 		bl	button_attach
+ 429              	.LVL21:
+ 128:../driver/pal_button.c **** 	button_attach(&g_stdKey1, BTN_EVT_DOUBLE, button_callback1);	
+ 430              		.loc 1 128 2 view .LVU101
+ 431 0054 2A46     		mov	r2, r5
+ 432 0056 0321     		movs	r1, #3
+ 433 0058 2046     		mov	r0, r4
+ 434 005a FFF7FEFF 		bl	button_attach
+ 435              	.LVL22:
+ 129:../driver/pal_button.c **** 	button_attach(&g_stdKey1, BTN_EVT_LONG, button_callback1);
+ 436              		.loc 1 129 2 view .LVU102
+ 437 005e 2A46     		mov	r2, r5
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 12
+
+
+ 438 0060 0421     		movs	r1, #4
+ 439 0062 2046     		mov	r0, r4
+ 440 0064 FFF7FEFF 		bl	button_attach
+ 441              	.LVL23:
+ 130:../driver/pal_button.c **** 	button_set_time_param(&g_stdKey1, 100, 600, 200);
+ 442              		.loc 1 130 2 view .LVU103
+ 443 0068 C823     		movs	r3, #200
+ 444 006a 4FF41672 		mov	r2, #600
+ 445 006e 6421     		movs	r1, #100
+ 446 0070 2046     		mov	r0, r4
+ 447 0072 FFF7FEFF 		bl	button_set_time_param
+ 448              	.LVL24:
+ 131:../driver/pal_button.c **** }
+ 449              		.loc 1 131 1 is_stmt 0 view .LVU104
+ 450 0076 38BD     		pop	{r3, r4, r5, pc}
+ 451              	.L32:
+ 452              		.align	2
+ 453              	.L31:
+ 454 0078 00000000 		.word	.LANCHOR0
+ 455 007c 00000000 		.word	dev_dkey_read_pin_level
+ 456 0080 00000000 		.word	button_callback
+ 457 0084 00000000 		.word	.LANCHOR1
+ 458 0088 00000000 		.word	dev_dkey1_read_pin_level
+ 459 008c 00000000 		.word	button_callback1
+ 460              		.cfi_endproc
+ 461              	.LFE36:
+ 463              		.global	g_stdKey1
+ 464              		.global	g_stdKey
+ 465              		.section	.bss.g_stdKey,"aw",%nobits
+ 466              		.align	2
+ 467              		.set	.LANCHOR0,. + 0
+ 470              	g_stdKey:
+ 471 0000 00000000 		.space	40
+ 471      00000000 
+ 471      00000000 
+ 471      00000000 
+ 471      00000000 
+ 472              		.section	.bss.g_stdKey1,"aw",%nobits
+ 473              		.align	2
+ 474              		.set	.LANCHOR1,. + 0
+ 477              	g_stdKey1:
+ 478 0000 00000000 		.space	40
+ 478      00000000 
+ 478      00000000 
+ 478      00000000 
+ 478      00000000 
+ 479              		.text
+ 480              	.Letext0:
+ 481              		.file 2 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\machi
+ 482              		.file 3 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\sys\\
+ 483              		.file 4 "../user/stm32f10x.h"
+ 484              		.file 5 "../driver/general_type.h"
+ 485              		.file 6 "../driver/button_drv.h"
+ 486              		.file 7 "../driver/rgb_drv.h"
+ 487              		.file 8 "../driver/pal_rgb.h"
+ 488              		.file 9 "../stm32f10x_fwlib/inc/stm32f10x_gpio.h"
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 pal_button.c
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:18     .text.dev_dkey_read_pin_level:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:24     .text.dev_dkey_read_pin_level:00000000 dev_dkey_read_pin_level
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:47     .text.dev_dkey_read_pin_level:0000000c $d
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:52     .text.dev_dkey1_read_pin_level:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:58     .text.dev_dkey1_read_pin_level:00000000 dev_dkey1_read_pin_level
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:80     .text.dev_dkey1_read_pin_level:00000010 $d
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:85     .text.button_callback:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:91     .text.button_callback:00000000 button_callback
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:259    .text.button_callback:000000bc $d
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:266    .text.button_callback1:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:272    .text.button_callback1:00000000 button_callback1
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:355    .text.button_callback1:00000054 $d
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:364    .text.dev_key_attach_init:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:370    .text.dev_key_attach_init:00000000 dev_key_attach_init
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:454    .text.dev_key_attach_init:00000078 $d
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:477    .bss.g_stdKey1:00000000 g_stdKey1
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:470    .bss.g_stdKey:00000000 g_stdKey
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:466    .bss.g_stdKey:00000000 $d
+C:\Users\28470\AppData\Local\Temp\ccAjSFpV.s:473    .bss.g_stdKey1:00000000 $d
+
+UNDEFINED SYMBOLS
+GPIO_ReadInputDataBit
+button_get_event
+stdRgb
+globalColor
+stdRgb1
+stdRgb2
+stdRgb3
+stdRgb4
+button_init
+button_attach
+button_set_time_param

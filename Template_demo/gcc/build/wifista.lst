@@ -1,0 +1,542 @@
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"wifista.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.rodata.atk_8266_wifista_test.str1.4,"aMS",%progbits,1
+  18              		.align	2
+  19              	.LC0:
+  20 0000 4F4B00   		.ascii	"OK\000"
+  21 0003 00       		.align	2
+  22              	.LC1:
+  23 0004 41542B43 		.ascii	"AT+CWMODE=1\000"
+  23      574D4F44 
+  23      453D3100 
+  24              		.align	2
+  25              	.LC2:
+  26 0010 41542B52 		.ascii	"AT+RST\000"
+  26      535400
+  27 0017 00       		.align	2
+  28              	.LC3:
+  29 0018 41542B43 		.ascii	"AT+CWJAP=\"%s\",\"%s\"\000"
+  29      574A4150 
+  29      3D222573 
+  29      222C2225 
+  29      732200
+  30 002b 00       		.align	2
+  31              	.LC4:
+  32 002c 57494649 		.ascii	"WIFI GOT IP\000"
+  32      20474F54 
+  32      20495000 
+  33              		.align	2
+  34              	.LC5:
+  35 0038 41544B2D 		.ascii	"ATK-ESP WIFI-STA \262\342\312\324\015\000"
+  35      45535020 
+  35      57494649 
+  35      2D535441 
+  35      20B2E2CA 
+  36 004f 00       		.align	2
+  37              	.LC6:
+  38 0050 D5FDD4DA 		.ascii	"\325\375\324\332\305\344\326\303ATK-ESP\304\243\277"
+  38      C5E4D6C3 
+  38      41544B2D 
+  38      455350C4 
+  38      A3BF
+  39 0062 E92CC7EB 		.ascii	"\351,\307\353\311\324\265\310...\015\000"
+  39      C9D4B5C8 
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 2
+
+
+  39      2E2E2E0D 
+  39      00
+  40 006f 00       		.align	2
+  41              	.LC7:
+  42 0070 57494649 		.ascii	"WIFI-STA \324\266\266\313IP\311\350\326\303\000"
+  42      2D535441 
+  42      20D4B6B6 
+  42      CB4950C9 
+  42      E8D6C300 
+  43              		.align	2
+  44              	.LC8:
+  45 0084 41542B43 		.ascii	"AT+CIPMUX=0\000"
+  45      49504D55 
+  45      583D3000 
+  46              		.align	2
+  47              	.LC9:
+  48 0090 38303836 		.ascii	"8086\000"
+  48      00
+  49 0095 000000   		.align	2
+  50              	.LC10:
+  51 0098 3139322E 		.ascii	"192.168.20.102\000"
+  51      3136382E 
+  51      32302E31 
+  51      303200
+  52 00a7 00       		.align	2
+  53              	.LC11:
+  54 00a8 41542B43 		.ascii	"AT+CIPSTART=\"TCP\",\"%s\",%s\000"
+  54      49505354 
+  54      4152543D 
+  54      22544350 
+  54      222C2225 
+  55 00c2 0000     		.align	2
+  56              	.LC12:
+  57 00c4 41544B2D 		.ascii	"ATK-ESP \301\254\275\323TCP\312\247\260\334\015\000"
+  57      45535020 
+  57      C1ACBDD3 
+  57      544350CA 
+  57      A7B0DC0D 
+  58 00d9 000000   		.align	2
+  59              	.LC13:
+  60 00dc 41542B43 		.ascii	"AT+CIPMODE=1\000"
+  60      49504D4F 
+  60      44453D31 
+  60      00
+  61 00e9 000000   		.align	2
+  62              	.LC14:
+  63 00ec C1ACBDD3 		.ascii	"\301\254\275\323\263\311\271\246..................."
+  63      B3C9B9A6 
+  63      2E2E2E2E 
+  63      2E2E2E2E 
+  63      2E2E2E2E 
+  64 0107 2E2E2E2E 		.ascii	"................\015\000"
+  64      2E2E2E2E 
+  64      2E2E2E2E 
+  64      2E2E2E2E 
+  64      0D00
+  65 0119 000000   		.align	2
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 3
+
+
+  66              	.LC15:
+  67 011c C1ACBDD3 		.ascii	"\301\254\275\323\327\264\314\254: %s\015\012\000"
+  67      D7B4CCAC 
+  67      3A202573 
+  67      0D0A00
+  68 012b 00       		.align	2
+  69              	.LC16:
+  70 012c 41542B43 		.ascii	"AT+CIPSEND\000"
+  70      49505345 
+  70      4E4400
+  71 0137 00       		.align	2
+  72              	.LC17:
+  73 0138 CAD5B5BD 		.ascii	"\312\325\265\275%d\327\326\275\332,\304\332\310\335"
+  73      2564D7D6 
+  73      BDDA2CC4 
+  73      DAC8DD
+  74 0147 C8E7CFC2 		.ascii	"\310\347\317\302\015\012%s\000"
+  74      0D0A2573 
+  74      00
+  75              		.align	2
+  76              	.LC18:
+  77 0150 257300   		.ascii	"%s\000"
+  78              		.section	.text.atk_8266_wifista_test,"ax",%progbits
+  79              		.align	1
+  80              		.global	atk_8266_wifista_test
+  81              		.syntax unified
+  82              		.thumb
+  83              		.thumb_func
+  85              	atk_8266_wifista_test:
+  86              	.LFB32:
+  87              		.file 1 "../app/ESP8266/wifista.c"
+   1:../app/ESP8266/wifista.c **** #include "common.h"
+   2:../app/ESP8266/wifista.c **** #include "stdlib.h"
+   3:../app/ESP8266/wifista.c **** 
+   4:../app/ESP8266/wifista.c **** //ATK-ESP8266 WIFI STA测试
+   5:../app/ESP8266/wifista.c **** //用于测试TCP/UDP连接
+   6:../app/ESP8266/wifista.c **** //返回值:0,正常
+   7:../app/ESP8266/wifista.c **** //    其他,错误代码
+   8:../app/ESP8266/wifista.c **** u8 netpro=0;	//网络模式
+   9:../app/ESP8266/wifista.c **** u8 atk_8266_wifista_test(void)
+  10:../app/ESP8266/wifista.c **** {
+  88              		.loc 1 10 1 view -0
+  89              		.cfi_startproc
+  90              		@ args = 0, pretend = 0, frame = 16
+  91              		@ frame_needed = 0, uses_anonymous_args = 0
+  92 0000 30B5     		push	{r4, r5, lr}
+  93              	.LCFI0:
+  94              		.cfi_def_cfa_offset 12
+  95              		.cfi_offset 4, -12
+  96              		.cfi_offset 5, -8
+  97              		.cfi_offset 14, -4
+  98 0002 85B0     		sub	sp, sp, #20
+  99              	.LCFI1:
+ 100              		.cfi_def_cfa_offset 32
+  11:../app/ESP8266/wifista.c **** 	u8 ipbuf[16]; 	//IP缓存
+ 101              		.loc 1 11 2 view .LVU1
+  12:../app/ESP8266/wifista.c **** //	u16 t=999;
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 4
+
+
+  13:../app/ESP8266/wifista.c **** 	u8 *p;
+ 102              		.loc 1 13 2 view .LVU2
+  14:../app/ESP8266/wifista.c **** 	u16 rlen=0, i = 0;
+ 103              		.loc 1 14 2 view .LVU3
+ 104              	.LVL0:
+  15:../app/ESP8266/wifista.c **** 	p=mymalloc(32);							//申请32字节内存
+ 105              		.loc 1 15 2 view .LVU4
+ 106              		.loc 1 15 4 is_stmt 0 view .LVU5
+ 107 0004 2020     		movs	r0, #32
+ 108 0006 FFF7FEFF 		bl	mymalloc
+ 109              	.LVL1:
+ 110 000a 0546     		mov	r5, r0
+ 111              	.LVL2:
+  16:../app/ESP8266/wifista.c **** 	atk_8266_send_cmd("AT+CWMODE=1","OK",50);		//设置WIFI STA模式
+ 112              		.loc 1 16 2 is_stmt 1 view .LVU6
+ 113 000c 494C     		ldr	r4, .L10
+ 114 000e 3222     		movs	r2, #50
+ 115 0010 2146     		mov	r1, r4
+ 116 0012 4948     		ldr	r0, .L10+4
+ 117              	.LVL3:
+ 118              		.loc 1 16 2 is_stmt 0 view .LVU7
+ 119 0014 FFF7FEFF 		bl	atk_8266_send_cmd
+ 120              	.LVL4:
+  17:../app/ESP8266/wifista.c **** 	atk_8266_send_cmd("AT+RST","OK",20);		//DHCP服务器关闭(仅AP模式有效) 
+ 121              		.loc 1 17 2 is_stmt 1 view .LVU8
+ 122 0018 1422     		movs	r2, #20
+ 123 001a 2146     		mov	r1, r4
+ 124 001c 4748     		ldr	r0, .L10+8
+ 125 001e FFF7FEFF 		bl	atk_8266_send_cmd
+ 126              	.LVL5:
+  18:../app/ESP8266/wifista.c **** 	delay_ms(1000);         //延时3S等待重启成功
+ 127              		.loc 1 18 2 view .LVU9
+ 128 0022 4FF47A70 		mov	r0, #1000
+ 129 0026 FFF7FEFF 		bl	delay_ms
+ 130              	.LVL6:
+  19:../app/ESP8266/wifista.c **** 	delay_ms(1000);
+ 131              		.loc 1 19 2 view .LVU10
+ 132 002a 4FF47A70 		mov	r0, #1000
+ 133 002e FFF7FEFF 		bl	delay_ms
+ 134              	.LVL7:
+  20:../app/ESP8266/wifista.c **** 	delay_ms(1000);
+ 135              		.loc 1 20 2 view .LVU11
+ 136 0032 4FF47A70 		mov	r0, #1000
+ 137 0036 FFF7FEFF 		bl	delay_ms
+ 138              	.LVL8:
+  21:../app/ESP8266/wifista.c **** 	delay_ms(1000);
+ 139              		.loc 1 21 2 view .LVU12
+ 140 003a 4FF47A70 		mov	r0, #1000
+ 141 003e FFF7FEFF 		bl	delay_ms
+ 142              	.LVL9:
+  22:../app/ESP8266/wifista.c **** 	//设置连接到的WIFI网络名称/加密方式/密码,这几个参数需要根据您自己的路由器设置进行修改!! 
+  23:../app/ESP8266/wifista.c **** 	sprintf((char*)p,"AT+CWJAP=\"%s\",\"%s\"",wifista_ssid,wifista_password);//设置无线参数:ssid,密码
+ 143              		.loc 1 23 2 view .LVU13
+ 144 0042 3F4B     		ldr	r3, .L10+12
+ 145 0044 1B68     		ldr	r3, [r3]
+ 146 0046 3F4A     		ldr	r2, .L10+16
+ 147 0048 1268     		ldr	r2, [r2]
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 5
+
+
+ 148 004a 3F49     		ldr	r1, .L10+20
+ 149 004c 2846     		mov	r0, r5
+ 150 004e FFF7FEFF 		bl	sprintf
+ 151              	.LVL10:
+  24:../app/ESP8266/wifista.c **** 	while(atk_8266_send_cmd(p,"WIFI GOT IP",300));					//连接目标路由器,并且获得IP
+ 152              		.loc 1 24 2 view .LVU14
+ 153              	.L2:
+ 154              		.loc 1 24 47 discriminator 1 view .LVU15
+ 155              		.loc 1 24 7 discriminator 1 view .LVU16
+ 156              		.loc 1 24 8 is_stmt 0 discriminator 1 view .LVU17
+ 157 0052 4FF49672 		mov	r2, #300
+ 158 0056 3D49     		ldr	r1, .L10+24
+ 159 0058 2846     		mov	r0, r5
+ 160 005a FFF7FEFF 		bl	atk_8266_send_cmd
+ 161              	.LVL11:
+ 162              		.loc 1 24 7 discriminator 1 view .LVU18
+ 163 005e 0028     		cmp	r0, #0
+ 164 0060 F7D1     		bne	.L2
+ 165              	.L3:
+  25:../app/ESP8266/wifista.c **** PRESTA:
+  26:../app/ESP8266/wifista.c **** 	netpro|=atk_8266_netpro_sel((char*)ATK_ESP8266_CWMODE_TBL[0]);	//选择网络模式
+ 166              		.loc 1 26 2 is_stmt 1 discriminator 2 view .LVU19
+ 167              		.loc 1 26 10 is_stmt 0 discriminator 2 view .LVU20
+ 168 0062 3B4B     		ldr	r3, .L10+28
+ 169 0064 1868     		ldr	r0, [r3]
+ 170 0066 FFF7FEFF 		bl	atk_8266_netpro_sel
+ 171              	.LVL12:
+ 172              		.loc 1 26 8 discriminator 2 view .LVU21
+ 173 006a 3A4B     		ldr	r3, .L10+32
+ 174 006c 1A78     		ldrb	r2, [r3]	@ zero_extendqisi2
+ 175 006e 1043     		orrs	r0, r0, r2
+ 176 0070 1870     		strb	r0, [r3]
+  27:../app/ESP8266/wifista.c **** 
+  28:../app/ESP8266/wifista.c **** 	//TCP Client    透传模式测试
+  29:../app/ESP8266/wifista.c **** 	printf("ATK-ESP WIFI-STA 测试\r\n"); 
+ 177              		.loc 1 29 2 is_stmt 1 discriminator 2 view .LVU22
+ 178 0072 3948     		ldr	r0, .L10+36
+ 179 0074 FFF7FEFF 		bl	puts
+ 180              	.LVL13:
+  30:../app/ESP8266/wifista.c **** 	printf("正在配置ATK-ESP模块,请稍等...\r\n");
+ 181              		.loc 1 30 2 discriminator 2 view .LVU23
+ 182 0078 3848     		ldr	r0, .L10+40
+ 183 007a FFF7FEFF 		bl	puts
+ 184              	.LVL14:
+  31:../app/ESP8266/wifista.c **** 	if(atk_8266_ip_set("WIFI-STA 远端IP设置",(u8*)ATK_ESP8266_WORKMODE_TBL[1],(u8*)portnum,ipbuf))goto
+ 185              		.loc 1 31 2 discriminator 2 view .LVU24
+ 186              		.loc 1 31 5 is_stmt 0 discriminator 2 view .LVU25
+ 187 007e 6B46     		mov	r3, sp
+ 188 0080 374A     		ldr	r2, .L10+44
+ 189 0082 1268     		ldr	r2, [r2]
+ 190 0084 3749     		ldr	r1, .L10+48
+ 191 0086 4968     		ldr	r1, [r1, #4]
+ 192 0088 3748     		ldr	r0, .L10+52
+ 193 008a FFF7FEFF 		bl	atk_8266_ip_set
+ 194              	.LVL15:
+ 195              		.loc 1 31 4 discriminator 2 view .LVU26
+ 196 008e 0028     		cmp	r0, #0
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 6
+
+
+ 197 0090 E7D1     		bne	.L3
+  32:../app/ESP8266/wifista.c **** 	atk_8266_send_cmd("AT+CIPMUX=0","OK",20);   //0：单连接，1：多连接
+ 198              		.loc 1 32 2 is_stmt 1 view .LVU27
+ 199 0092 284C     		ldr	r4, .L10
+ 200 0094 1422     		movs	r2, #20
+ 201 0096 2146     		mov	r1, r4
+ 202 0098 3448     		ldr	r0, .L10+56
+ 203 009a FFF7FEFF 		bl	atk_8266_send_cmd
+ 204              	.LVL16:
+  33:../app/ESP8266/wifista.c **** 	sprintf((char*)p,"AT+CIPSTART=\"TCP\",\"%s\",%s","192.168.20.102","8086"); 
+ 205              		.loc 1 33 2 view .LVU28
+ 206 009e 344B     		ldr	r3, .L10+60
+ 207 00a0 344A     		ldr	r2, .L10+64
+ 208 00a2 3549     		ldr	r1, .L10+68
+ 209 00a4 2846     		mov	r0, r5
+ 210 00a6 FFF7FEFF 		bl	sprintf
+ 211              	.LVL17:
+  34:../app/ESP8266/wifista.c ****     delay_ms(1000);
+ 212              		.loc 1 34 5 view .LVU29
+ 213 00aa 4FF47A70 		mov	r0, #1000
+ 214 00ae FFF7FEFF 		bl	delay_ms
+ 215              	.LVL18:
+  35:../app/ESP8266/wifista.c **** 	
+  36:../app/ESP8266/wifista.c **** 	while(atk_8266_send_cmd(p,"OK",200))
+ 216              		.loc 1 36 2 view .LVU30
+ 217              		.loc 1 36 7 view .LVU31
+ 218              		.loc 1 36 8 is_stmt 0 view .LVU32
+ 219 00b2 C822     		movs	r2, #200
+ 220 00b4 2146     		mov	r1, r4
+ 221 00b6 2846     		mov	r0, r5
+ 222 00b8 FFF7FEFF 		bl	atk_8266_send_cmd
+ 223              	.LVL19:
+ 224              		.loc 1 36 7 view .LVU33
+ 225 00bc 18B1     		cbz	r0, .L5
+  37:../app/ESP8266/wifista.c **** 	{
+  38:../app/ESP8266/wifista.c **** 			printf("ATK-ESP 连接TCP失败\r\n"); 
+ 226              		.loc 1 38 4 is_stmt 1 view .LVU34
+ 227 00be 2F48     		ldr	r0, .L10+72
+ 228 00c0 FFF7FEFF 		bl	puts
+ 229              	.LVL20:
+  39:../app/ESP8266/wifista.c **** 			goto PRESTA;
+ 230              		.loc 1 39 4 view .LVU35
+ 231              	.L4:
+ 232 00c4 CDE7     		b	.L3
+ 233              	.L5:
+  40:../app/ESP8266/wifista.c **** 	}	
+  41:../app/ESP8266/wifista.c **** 	atk_8266_send_cmd("AT+CIPMODE=1","OK",200);      //传输模式为：透传			
+ 234              		.loc 1 41 2 view .LVU36
+ 235 00c6 1B4C     		ldr	r4, .L10
+ 236 00c8 C822     		movs	r2, #200
+ 237 00ca 2146     		mov	r1, r4
+ 238 00cc 2C48     		ldr	r0, .L10+76
+ 239 00ce FFF7FEFF 		bl	atk_8266_send_cmd
+ 240              	.LVL21:
+  42:../app/ESP8266/wifista.c **** 
+  43:../app/ESP8266/wifista.c **** 	printf("连接成功...................................\r\n"); 
+ 241              		.loc 1 43 2 view .LVU37
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 7
+
+
+ 242 00d2 2C48     		ldr	r0, .L10+80
+ 243 00d4 FFF7FEFF 		bl	puts
+ 244              	.LVL22:
+  44:../app/ESP8266/wifista.c **** 	printf("正在配置ATK-ESP模块,请稍等...\r\n");			
+ 245              		.loc 1 44 2 view .LVU38
+ 246 00d8 2048     		ldr	r0, .L10+40
+ 247 00da FFF7FEFF 		bl	puts
+ 248              	.LVL23:
+  45:../app/ESP8266/wifista.c **** 	atk_8266_get_wanip(ipbuf);//服务器模式,获取WAN IP
+ 249              		.loc 1 45 2 view .LVU39
+ 250 00de 6846     		mov	r0, sp
+ 251 00e0 FFF7FEFF 		bl	atk_8266_get_wanip
+ 252              	.LVL24:
+  46:../app/ESP8266/wifista.c **** 
+  47:../app/ESP8266/wifista.c **** 	printf("连接状态: %s\r\n",(u8*)ATK_ESP8266_WORKMODE_TBL[1]);
+ 253              		.loc 1 47 2 view .LVU40
+ 254 00e4 1F4B     		ldr	r3, .L10+48
+ 255 00e6 5968     		ldr	r1, [r3, #4]
+ 256 00e8 2748     		ldr	r0, .L10+84
+ 257 00ea FFF7FEFF 		bl	printf
+ 258              	.LVL25:
+  48:../app/ESP8266/wifista.c **** 	USART2_RX_STA=0;
+ 259              		.loc 1 48 2 view .LVU41
+ 260              		.loc 1 48 15 is_stmt 0 view .LVU42
+ 261 00ee 274B     		ldr	r3, .L10+88
+ 262 00f0 0022     		movs	r2, #0
+ 263 00f2 1A80     		strh	r2, [r3]	@ movhi
+  49:../app/ESP8266/wifista.c **** 	atk_8266_send_cmd("AT+CIPSEND","OK",20);         //开始透传 
+ 264              		.loc 1 49 2 is_stmt 1 view .LVU43
+ 265 00f4 1422     		movs	r2, #20
+ 266 00f6 2146     		mov	r1, r4
+ 267 00f8 2548     		ldr	r0, .L10+92
+ 268 00fa FFF7FEFF 		bl	atk_8266_send_cmd
+ 269              	.LVL26:
+ 270 00fe 11E0     		b	.L7
+ 271              	.LVL27:
+ 272              	.L9:
+  50:../app/ESP8266/wifista.c **** 	while(1)
+  51:../app/ESP8266/wifista.c **** 	{		
+  52:../app/ESP8266/wifista.c **** 		if(USART2_RX_STA&0X8000)		//接收到一次数据了
+  53:../app/ESP8266/wifista.c **** 		{ 
+  54:../app/ESP8266/wifista.c **** 			rlen=USART2_RX_STA&0X7FFF;	//得到本次接收到的数据长度
+ 273              		.loc 1 54 4 view .LVU44
+ 274              		.loc 1 54 8 is_stmt 0 view .LVU45
+ 275 0100 C2F30E02 		ubfx	r2, r2, #0, #15
+ 276              	.LVL28:
+  55:../app/ESP8266/wifista.c **** 			USART2_RX_BUF[rlen]=0;		//添加结束符 
+ 277              		.loc 1 55 4 is_stmt 1 view .LVU46
+ 278              		.loc 1 55 23 is_stmt 0 view .LVU47
+ 279 0104 234B     		ldr	r3, .L10+96
+ 280 0106 0024     		movs	r4, #0
+ 281 0108 9C54     		strb	r4, [r3, r2]
+  56:../app/ESP8266/wifista.c **** 			
+  57:../app/ESP8266/wifista.c **** 			sprintf((char*)p,"收到%d字节,内容如下\r\n%s",rlen,USART2_RX_BUF);//接收到的字节数 
+ 282              		.loc 1 57 4 is_stmt 1 view .LVU48
+ 283 010a 2349     		ldr	r1, .L10+100
+ 284 010c 2846     		mov	r0, r5
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 8
+
+
+ 285 010e FFF7FEFF 		bl	sprintf
+ 286              	.LVL29:
+  58:../app/ESP8266/wifista.c **** 			u2_printf("%s",p);
+ 287              		.loc 1 58 4 view .LVU49
+ 288 0112 2946     		mov	r1, r5
+ 289 0114 2148     		ldr	r0, .L10+104
+ 290 0116 FFF7FEFF 		bl	u2_printf
+ 291              	.LVL30:
+  59:../app/ESP8266/wifista.c **** 			USART2_RX_STA=0;
+ 292              		.loc 1 59 4 view .LVU50
+ 293              		.loc 1 59 17 is_stmt 0 view .LVU51
+ 294 011a 1C4B     		ldr	r3, .L10+88
+ 295 011c 1C80     		strh	r4, [r3]	@ movhi
+ 296              	.L6:
+  60:../app/ESP8266/wifista.c **** 		}  
+  61:../app/ESP8266/wifista.c **** 		atk_8266_at_response(1);
+ 297              		.loc 1 61 3 is_stmt 1 view .LVU52
+ 298 011e 0120     		movs	r0, #1
+ 299 0120 FFF7FEFF 		bl	atk_8266_at_response
+ 300              	.LVL31:
+  50:../app/ESP8266/wifista.c **** 	{		
+ 301              		.loc 1 50 7 view .LVU53
+ 302              	.L7:
+  50:../app/ESP8266/wifista.c **** 	{		
+ 303              		.loc 1 50 2 view .LVU54
+  52:../app/ESP8266/wifista.c **** 		{ 
+ 304              		.loc 1 52 3 view .LVU55
+  52:../app/ESP8266/wifista.c **** 		{ 
+ 305              		.loc 1 52 6 is_stmt 0 view .LVU56
+ 306 0124 194B     		ldr	r3, .L10+88
+ 307 0126 1A88     		ldrh	r2, [r3]
+ 308 0128 B3F90030 		ldrsh	r3, [r3]
+  52:../app/ESP8266/wifista.c **** 		{ 
+ 309              		.loc 1 52 5 view .LVU57
+ 310 012c 002B     		cmp	r3, #0
+ 311 012e E7DB     		blt	.L9
+ 312 0130 F5E7     		b	.L6
+ 313              	.L11:
+ 314 0132 00BF     		.align	2
+ 315              	.L10:
+ 316 0134 00000000 		.word	.LC0
+ 317 0138 04000000 		.word	.LC1
+ 318 013c 10000000 		.word	.LC2
+ 319 0140 00000000 		.word	wifista_password
+ 320 0144 00000000 		.word	wifista_ssid
+ 321 0148 18000000 		.word	.LC3
+ 322 014c 2C000000 		.word	.LC4
+ 323 0150 00000000 		.word	ATK_ESP8266_CWMODE_TBL
+ 324 0154 00000000 		.word	.LANCHOR0
+ 325 0158 38000000 		.word	.LC5
+ 326 015c 50000000 		.word	.LC6
+ 327 0160 00000000 		.word	portnum
+ 328 0164 00000000 		.word	ATK_ESP8266_WORKMODE_TBL
+ 329 0168 70000000 		.word	.LC7
+ 330 016c 84000000 		.word	.LC8
+ 331 0170 90000000 		.word	.LC9
+ 332 0174 98000000 		.word	.LC10
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 9
+
+
+ 333 0178 A8000000 		.word	.LC11
+ 334 017c C4000000 		.word	.LC12
+ 335 0180 DC000000 		.word	.LC13
+ 336 0184 EC000000 		.word	.LC14
+ 337 0188 1C010000 		.word	.LC15
+ 338 018c 00000000 		.word	USART2_RX_STA
+ 339 0190 2C010000 		.word	.LC16
+ 340 0194 00000000 		.word	USART2_RX_BUF
+ 341 0198 38010000 		.word	.LC17
+ 342 019c 50010000 		.word	.LC18
+ 343              		.cfi_endproc
+ 344              	.LFE32:
+ 346              		.global	netpro
+ 347              		.section	.bss.netpro,"aw",%nobits
+ 348              		.set	.LANCHOR0,. + 0
+ 351              	netpro:
+ 352 0000 00       		.space	1
+ 353              		.text
+ 354              	.Letext0:
+ 355              		.file 2 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\machi
+ 356              		.file 3 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\sys\\
+ 357              		.file 4 "../user/stm32f10x.h"
+ 358              		.file 5 "../bsp/bsp_usart2.h"
+ 359              		.file 6 "../app/ESP8266/common.h"
+ 360              		.file 7 "../bsp/malloc.h"
+ 361              		.file 8 "../system/delay/delay.h"
+ 362              		.file 9 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\stdio
+ 363              		.file 10 "<built-in>"
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccsH674t.s 			page 10
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 wifista.c
+C:\Users\28470\AppData\Local\Temp\ccsH674t.s:18     .rodata.atk_8266_wifista_test.str1.4:00000000 $d
+C:\Users\28470\AppData\Local\Temp\ccsH674t.s:79     .text.atk_8266_wifista_test:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccsH674t.s:85     .text.atk_8266_wifista_test:00000000 atk_8266_wifista_test
+C:\Users\28470\AppData\Local\Temp\ccsH674t.s:316    .text.atk_8266_wifista_test:00000134 $d
+C:\Users\28470\AppData\Local\Temp\ccsH674t.s:351    .bss.netpro:00000000 netpro
+C:\Users\28470\AppData\Local\Temp\ccsH674t.s:352    .bss.netpro:00000000 $d
+
+UNDEFINED SYMBOLS
+mymalloc
+atk_8266_send_cmd
+delay_ms
+sprintf
+atk_8266_netpro_sel
+puts
+atk_8266_ip_set
+atk_8266_get_wanip
+printf
+u2_printf
+atk_8266_at_response
+wifista_password
+wifista_ssid
+ATK_ESP8266_CWMODE_TBL
+portnum
+ATK_ESP8266_WORKMODE_TBL
+USART2_RX_STA
+USART2_RX_BUF

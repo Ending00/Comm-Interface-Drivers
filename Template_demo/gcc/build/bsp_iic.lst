@@ -1,0 +1,1033 @@
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"bsp_iic.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.IIC_Init,"ax",%progbits
+  18              		.align	1
+  19              		.global	IIC_Init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	IIC_Init:
+  25              	.LFB29:
+  26              		.file 1 "../bsp/bsp_iic.c"
+   1:../bsp/bsp_iic.c **** #include "bsp_iic.h"
+   2:../bsp/bsp_iic.c **** #include "delay.h"
+   3:../bsp/bsp_iic.c **** //////////////////////////////////////////////////////////////////////////////////	 
+   4:../bsp/bsp_iic.c **** //本程序只供学习使用，未经作者许可，不得用于其它任何用途
+   5:../bsp/bsp_iic.c **** //Mini STM32开发板
+   6:../bsp/bsp_iic.c **** //IIC 驱动函数	   
+   7:../bsp/bsp_iic.c **** //正点原子@ALIENTEK
+   8:../bsp/bsp_iic.c **** //技术论坛:www.openedv.com
+   9:../bsp/bsp_iic.c **** //修改日期:2010/6/10 
+  10:../bsp/bsp_iic.c **** //版本：V1.0
+  11:../bsp/bsp_iic.c **** //版权所有，盗版必究。
+  12:../bsp/bsp_iic.c **** //Copyright(C) 正点原子 2009-2019
+  13:../bsp/bsp_iic.c **** //All rights reserved
+  14:../bsp/bsp_iic.c **** ////////////////////////////////////////////////////////////////////////////////// 	  
+  15:../bsp/bsp_iic.c **** 
+  16:../bsp/bsp_iic.c **** //初始化IIC
+  17:../bsp/bsp_iic.c **** void IIC_Init(void)
+  18:../bsp/bsp_iic.c **** {					     
+  27              		.loc 1 18 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 8
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 00B5     		push	{lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 4
+  34              		.cfi_offset 14, -4
+  35 0002 83B0     		sub	sp, sp, #12
+  36              	.LCFI1:
+  37              		.cfi_def_cfa_offset 16
+  19:../bsp/bsp_iic.c **** 	GPIO_InitTypeDef GPIO_InitStructure;
+  38              		.loc 1 19 2 view .LVU1
+  20:../bsp/bsp_iic.c **** 	//RCC->APB2ENR|=1<<4;//先使能外设IO PORTC时钟 
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 2
+
+
+  21:../bsp/bsp_iic.c **** 	RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOC, ENABLE );	
+  39              		.loc 1 21 2 view .LVU2
+  40 0004 0121     		movs	r1, #1
+  41 0006 1020     		movs	r0, #16
+  42 0008 FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  43              	.LVL0:
+  22:../bsp/bsp_iic.c **** 	   
+  23:../bsp/bsp_iic.c **** 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_11;
+  44              		.loc 1 23 2 view .LVU3
+  45              		.loc 1 23 30 is_stmt 0 view .LVU4
+  46 000c 4FF4C053 		mov	r3, #6144
+  47 0010 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  24:../bsp/bsp_iic.c **** 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;   //推挽输出
+  48              		.loc 1 24 2 is_stmt 1 view .LVU5
+  49              		.loc 1 24 31 is_stmt 0 view .LVU6
+  50 0014 1023     		movs	r3, #16
+  51 0016 8DF80730 		strb	r3, [sp, #7]
+  25:../bsp/bsp_iic.c **** 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  52              		.loc 1 25 2 is_stmt 1 view .LVU7
+  53              		.loc 1 25 32 is_stmt 0 view .LVU8
+  54 001a 0323     		movs	r3, #3
+  55 001c 8DF80630 		strb	r3, [sp, #6]
+  26:../bsp/bsp_iic.c **** 	GPIO_Init(GPIOC, &GPIO_InitStructure);
+  56              		.loc 1 26 2 is_stmt 1 view .LVU9
+  57 0020 01A9     		add	r1, sp, #4
+  58 0022 0648     		ldr	r0, .L3
+  59 0024 FFF7FEFF 		bl	GPIO_Init
+  60              	.LVL1:
+  27:../bsp/bsp_iic.c ****  
+  28:../bsp/bsp_iic.c **** 	IIC_SCL=1;
+  61              		.loc 1 28 2 view .LVU10
+  62              		.loc 1 28 9 is_stmt 0 view .LVU11
+  63 0028 054B     		ldr	r3, .L3+4
+  64 002a 0122     		movs	r2, #1
+  65 002c C3F8B021 		str	r2, [r3, #432]
+  29:../bsp/bsp_iic.c **** 	IIC_SDA=1;
+  66              		.loc 1 29 2 is_stmt 1 view .LVU12
+  67              		.loc 1 29 9 is_stmt 0 view .LVU13
+  68 0030 C3F8AC21 		str	r2, [r3, #428]
+  30:../bsp/bsp_iic.c **** 
+  31:../bsp/bsp_iic.c **** }
+  69              		.loc 1 31 1 view .LVU14
+  70 0034 03B0     		add	sp, sp, #12
+  71              	.LCFI2:
+  72              		.cfi_def_cfa_offset 4
+  73              		@ sp needed
+  74 0036 5DF804FB 		ldr	pc, [sp], #4
+  75              	.L4:
+  76 003a 00BF     		.align	2
+  77              	.L3:
+  78 003c 00100140 		.word	1073811456
+  79 0040 00002242 		.word	1109524480
+  80              		.cfi_endproc
+  81              	.LFE29:
+  83              		.section	.text.IIC_Start,"ax",%progbits
+  84              		.align	1
+  85              		.global	IIC_Start
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 3
+
+
+  86              		.syntax unified
+  87              		.thumb
+  88              		.thumb_func
+  90              	IIC_Start:
+  91              	.LFB30:
+  32:../bsp/bsp_iic.c **** //产生IIC起始信号
+  33:../bsp/bsp_iic.c **** void IIC_Start(void)
+  34:../bsp/bsp_iic.c **** {
+  92              		.loc 1 34 1 is_stmt 1 view -0
+  93              		.cfi_startproc
+  94              		@ args = 0, pretend = 0, frame = 0
+  95              		@ frame_needed = 0, uses_anonymous_args = 0
+  96 0000 38B5     		push	{r3, r4, r5, lr}
+  97              	.LCFI3:
+  98              		.cfi_def_cfa_offset 16
+  99              		.cfi_offset 3, -16
+ 100              		.cfi_offset 4, -12
+ 101              		.cfi_offset 5, -8
+ 102              		.cfi_offset 14, -4
+  35:../bsp/bsp_iic.c **** 	SDA_OUT();     //sda线输出
+ 103              		.loc 1 35 2 view .LVU16
+ 104 0002 0D4B     		ldr	r3, .L7
+ 105 0004 5A68     		ldr	r2, [r3, #4]
+ 106 0006 22F47042 		bic	r2, r2, #61440
+ 107 000a 5A60     		str	r2, [r3, #4]
+ 108              		.loc 1 35 2 view .LVU17
+ 109 000c 5A68     		ldr	r2, [r3, #4]
+ 110 000e 42F44052 		orr	r2, r2, #12288
+ 111 0012 5A60     		str	r2, [r3, #4]
+ 112              		.loc 1 35 11 view .LVU18
+  36:../bsp/bsp_iic.c **** 	IIC_SDA=1;	  	  
+ 113              		.loc 1 36 2 view .LVU19
+ 114              		.loc 1 36 9 is_stmt 0 view .LVU20
+ 115 0014 094C     		ldr	r4, .L7+4
+ 116 0016 0123     		movs	r3, #1
+ 117 0018 C4F8AC31 		str	r3, [r4, #428]
+  37:../bsp/bsp_iic.c **** 	IIC_SCL=1;
+ 118              		.loc 1 37 2 is_stmt 1 view .LVU21
+ 119              		.loc 1 37 9 is_stmt 0 view .LVU22
+ 120 001c C4F8B031 		str	r3, [r4, #432]
+  38:../bsp/bsp_iic.c **** 	delay_us(4);
+ 121              		.loc 1 38 2 is_stmt 1 view .LVU23
+ 122 0020 0420     		movs	r0, #4
+ 123 0022 FFF7FEFF 		bl	delay_us
+ 124              	.LVL2:
+  39:../bsp/bsp_iic.c ****  	IIC_SDA=0;//START:when CLK is high,DATA change form high to low 
+ 125              		.loc 1 39 3 view .LVU24
+ 126              		.loc 1 39 10 is_stmt 0 view .LVU25
+ 127 0026 0025     		movs	r5, #0
+ 128 0028 C4F8AC51 		str	r5, [r4, #428]
+  40:../bsp/bsp_iic.c **** 	delay_us(4);
+ 129              		.loc 1 40 2 is_stmt 1 view .LVU26
+ 130 002c 0420     		movs	r0, #4
+ 131 002e FFF7FEFF 		bl	delay_us
+ 132              	.LVL3:
+  41:../bsp/bsp_iic.c **** 	IIC_SCL=0;//钳住I2C总线，准备发送或接收数据 
+ 133              		.loc 1 41 2 view .LVU27
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 4
+
+
+ 134              		.loc 1 41 9 is_stmt 0 view .LVU28
+ 135 0032 C4F8B051 		str	r5, [r4, #432]
+  42:../bsp/bsp_iic.c **** }	  
+ 136              		.loc 1 42 1 view .LVU29
+ 137 0036 38BD     		pop	{r3, r4, r5, pc}
+ 138              	.L8:
+ 139              		.align	2
+ 140              	.L7:
+ 141 0038 00100140 		.word	1073811456
+ 142 003c 00002242 		.word	1109524480
+ 143              		.cfi_endproc
+ 144              	.LFE30:
+ 146              		.section	.text.IIC_Stop,"ax",%progbits
+ 147              		.align	1
+ 148              		.global	IIC_Stop
+ 149              		.syntax unified
+ 150              		.thumb
+ 151              		.thumb_func
+ 153              	IIC_Stop:
+ 154              	.LFB31:
+  43:../bsp/bsp_iic.c **** //产生IIC停止信号
+  44:../bsp/bsp_iic.c **** void IIC_Stop(void)
+  45:../bsp/bsp_iic.c **** {
+ 155              		.loc 1 45 1 is_stmt 1 view -0
+ 156              		.cfi_startproc
+ 157              		@ args = 0, pretend = 0, frame = 0
+ 158              		@ frame_needed = 0, uses_anonymous_args = 0
+ 159 0000 10B5     		push	{r4, lr}
+ 160              	.LCFI4:
+ 161              		.cfi_def_cfa_offset 8
+ 162              		.cfi_offset 4, -8
+ 163              		.cfi_offset 14, -4
+  46:../bsp/bsp_iic.c **** 	SDA_OUT();//sda线输出
+ 164              		.loc 1 46 2 view .LVU31
+ 165 0002 0D4B     		ldr	r3, .L11
+ 166 0004 5A68     		ldr	r2, [r3, #4]
+ 167 0006 22F47042 		bic	r2, r2, #61440
+ 168 000a 5A60     		str	r2, [r3, #4]
+ 169              		.loc 1 46 2 view .LVU32
+ 170 000c 5A68     		ldr	r2, [r3, #4]
+ 171 000e 42F44052 		orr	r2, r2, #12288
+ 172 0012 5A60     		str	r2, [r3, #4]
+ 173              		.loc 1 46 11 view .LVU33
+  47:../bsp/bsp_iic.c **** 	IIC_SCL=0;
+ 174              		.loc 1 47 2 view .LVU34
+ 175              		.loc 1 47 9 is_stmt 0 view .LVU35
+ 176 0014 094C     		ldr	r4, .L11+4
+ 177 0016 0023     		movs	r3, #0
+ 178 0018 C4F8B031 		str	r3, [r4, #432]
+  48:../bsp/bsp_iic.c **** 	IIC_SDA=0;//STOP:when CLK is high DATA change form low to high
+ 179              		.loc 1 48 2 is_stmt 1 view .LVU36
+ 180              		.loc 1 48 9 is_stmt 0 view .LVU37
+ 181 001c C4F8AC31 		str	r3, [r4, #428]
+  49:../bsp/bsp_iic.c ****  	delay_us(4);
+ 182              		.loc 1 49 3 is_stmt 1 view .LVU38
+ 183 0020 0420     		movs	r0, #4
+ 184 0022 FFF7FEFF 		bl	delay_us
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 5
+
+
+ 185              	.LVL4:
+  50:../bsp/bsp_iic.c **** 	IIC_SCL=1; 
+ 186              		.loc 1 50 2 view .LVU39
+ 187              		.loc 1 50 9 is_stmt 0 view .LVU40
+ 188 0026 0123     		movs	r3, #1
+ 189 0028 C4F8B031 		str	r3, [r4, #432]
+  51:../bsp/bsp_iic.c **** 	IIC_SDA=1;//发送I2C总线结束信号
+ 190              		.loc 1 51 2 is_stmt 1 view .LVU41
+ 191              		.loc 1 51 9 is_stmt 0 view .LVU42
+ 192 002c C4F8AC31 		str	r3, [r4, #428]
+  52:../bsp/bsp_iic.c **** 	delay_us(4);							   	
+ 193              		.loc 1 52 2 is_stmt 1 view .LVU43
+ 194 0030 0420     		movs	r0, #4
+ 195 0032 FFF7FEFF 		bl	delay_us
+ 196              	.LVL5:
+  53:../bsp/bsp_iic.c **** }
+ 197              		.loc 1 53 1 is_stmt 0 view .LVU44
+ 198 0036 10BD     		pop	{r4, pc}
+ 199              	.L12:
+ 200              		.align	2
+ 201              	.L11:
+ 202 0038 00100140 		.word	1073811456
+ 203 003c 00002242 		.word	1109524480
+ 204              		.cfi_endproc
+ 205              	.LFE31:
+ 207              		.section	.text.IIC_Wait_Ack,"ax",%progbits
+ 208              		.align	1
+ 209              		.global	IIC_Wait_Ack
+ 210              		.syntax unified
+ 211              		.thumb
+ 212              		.thumb_func
+ 214              	IIC_Wait_Ack:
+ 215              	.LFB32:
+  54:../bsp/bsp_iic.c **** //等待应答信号到来
+  55:../bsp/bsp_iic.c **** //返回值：1，接收应答失败
+  56:../bsp/bsp_iic.c **** //        0，接收应答成功
+  57:../bsp/bsp_iic.c **** u8 IIC_Wait_Ack(void)
+  58:../bsp/bsp_iic.c **** {
+ 216              		.loc 1 58 1 is_stmt 1 view -0
+ 217              		.cfi_startproc
+ 218              		@ args = 0, pretend = 0, frame = 0
+ 219              		@ frame_needed = 0, uses_anonymous_args = 0
+ 220 0000 38B5     		push	{r3, r4, r5, lr}
+ 221              	.LCFI5:
+ 222              		.cfi_def_cfa_offset 16
+ 223              		.cfi_offset 3, -16
+ 224              		.cfi_offset 4, -12
+ 225              		.cfi_offset 5, -8
+ 226              		.cfi_offset 14, -4
+  59:../bsp/bsp_iic.c **** 	u8 ucErrTime=0;
+ 227              		.loc 1 59 2 view .LVU46
+ 228              	.LVL6:
+  60:../bsp/bsp_iic.c **** 	SDA_IN();      //SDA设置为输入  
+ 229              		.loc 1 60 2 view .LVU47
+ 230 0002 134B     		ldr	r3, .L19
+ 231 0004 5A68     		ldr	r2, [r3, #4]
+ 232 0006 22F47042 		bic	r2, r2, #61440
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 6
+
+
+ 233 000a 5A60     		str	r2, [r3, #4]
+ 234              		.loc 1 60 2 view .LVU48
+ 235 000c 5A68     		ldr	r2, [r3, #4]
+ 236 000e 42F40042 		orr	r2, r2, #32768
+ 237 0012 5A60     		str	r2, [r3, #4]
+ 238              		.loc 1 60 10 view .LVU49
+  61:../bsp/bsp_iic.c **** 	IIC_SDA=1;delay_us(1);	   
+ 239              		.loc 1 61 2 view .LVU50
+ 240              		.loc 1 61 9 is_stmt 0 view .LVU51
+ 241 0014 0F4D     		ldr	r5, .L19+4
+ 242 0016 0124     		movs	r4, #1
+ 243 0018 C5F8AC41 		str	r4, [r5, #428]
+ 244              		.loc 1 61 12 is_stmt 1 view .LVU52
+ 245 001c 2046     		mov	r0, r4
+ 246 001e FFF7FEFF 		bl	delay_us
+ 247              	.LVL7:
+  62:../bsp/bsp_iic.c **** 	IIC_SCL=1;delay_us(1);	 
+ 248              		.loc 1 62 2 view .LVU53
+ 249              		.loc 1 62 9 is_stmt 0 view .LVU54
+ 250 0022 C5F8B041 		str	r4, [r5, #432]
+ 251              		.loc 1 62 12 is_stmt 1 view .LVU55
+ 252 0026 2046     		mov	r0, r4
+ 253 0028 FFF7FEFF 		bl	delay_us
+ 254              	.LVL8:
+  63:../bsp/bsp_iic.c **** 	while(READ_SDA)
+ 255              		.loc 1 63 2 view .LVU56
+  59:../bsp/bsp_iic.c **** 	SDA_IN();      //SDA设置为输入  
+ 256              		.loc 1 59 5 is_stmt 0 view .LVU57
+ 257 002c 0023     		movs	r3, #0
+ 258              	.LVL9:
+ 259              	.L14:
+ 260              		.loc 1 63 7 is_stmt 1 view .LVU58
+ 261              		.loc 1 63 8 is_stmt 0 view .LVU59
+ 262 002e 094A     		ldr	r2, .L19+4
+ 263 0030 D2F82C21 		ldr	r2, [r2, #300]
+ 264              		.loc 1 63 7 view .LVU60
+ 265 0034 3AB1     		cbz	r2, .L18
+  64:../bsp/bsp_iic.c **** 	{
+  65:../bsp/bsp_iic.c **** 		ucErrTime++;
+ 266              		.loc 1 65 3 is_stmt 1 view .LVU61
+ 267              		.loc 1 65 12 is_stmt 0 view .LVU62
+ 268 0036 0133     		adds	r3, r3, #1
+ 269              	.LVL10:
+ 270              		.loc 1 65 12 view .LVU63
+ 271 0038 DBB2     		uxtb	r3, r3
+ 272              	.LVL11:
+  66:../bsp/bsp_iic.c **** 		if(ucErrTime>250)
+ 273              		.loc 1 66 3 is_stmt 1 view .LVU64
+ 274              		.loc 1 66 5 is_stmt 0 view .LVU65
+ 275 003a FA2B     		cmp	r3, #250
+ 276 003c F7D9     		bls	.L14
+  67:../bsp/bsp_iic.c **** 		{
+  68:../bsp/bsp_iic.c **** 			IIC_Stop();
+ 277              		.loc 1 68 4 is_stmt 1 view .LVU66
+ 278 003e FFF7FEFF 		bl	IIC_Stop
+ 279              	.LVL12:
+  69:../bsp/bsp_iic.c **** 			return 1;
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 7
+
+
+ 280              		.loc 1 69 4 view .LVU67
+ 281              		.loc 1 69 11 is_stmt 0 view .LVU68
+ 282 0042 0120     		movs	r0, #1
+ 283 0044 03E0     		b	.L15
+ 284              	.LVL13:
+ 285              	.L18:
+  70:../bsp/bsp_iic.c **** 		}
+  71:../bsp/bsp_iic.c **** 	}
+  72:../bsp/bsp_iic.c **** 	IIC_SCL=0;//时钟输出0 	   
+ 286              		.loc 1 72 2 is_stmt 1 view .LVU69
+ 287              		.loc 1 72 9 is_stmt 0 view .LVU70
+ 288 0046 0020     		movs	r0, #0
+ 289 0048 024B     		ldr	r3, .L19+4
+ 290              	.LVL14:
+ 291              		.loc 1 72 9 view .LVU71
+ 292 004a C3F8B001 		str	r0, [r3, #432]
+  73:../bsp/bsp_iic.c **** 	return 0;  
+ 293              		.loc 1 73 2 is_stmt 1 view .LVU72
+ 294              	.L15:
+  74:../bsp/bsp_iic.c **** } 
+ 295              		.loc 1 74 1 is_stmt 0 view .LVU73
+ 296 004e 38BD     		pop	{r3, r4, r5, pc}
+ 297              	.L20:
+ 298              		.align	2
+ 299              	.L19:
+ 300 0050 00100140 		.word	1073811456
+ 301 0054 00002242 		.word	1109524480
+ 302              		.cfi_endproc
+ 303              	.LFE32:
+ 305              		.section	.text.IIC_Ack,"ax",%progbits
+ 306              		.align	1
+ 307              		.global	IIC_Ack
+ 308              		.syntax unified
+ 309              		.thumb
+ 310              		.thumb_func
+ 312              	IIC_Ack:
+ 313              	.LFB33:
+  75:../bsp/bsp_iic.c **** //产生ACK应答
+  76:../bsp/bsp_iic.c **** void IIC_Ack(void)
+  77:../bsp/bsp_iic.c **** {
+ 314              		.loc 1 77 1 is_stmt 1 view -0
+ 315              		.cfi_startproc
+ 316              		@ args = 0, pretend = 0, frame = 0
+ 317              		@ frame_needed = 0, uses_anonymous_args = 0
+ 318 0000 38B5     		push	{r3, r4, r5, lr}
+ 319              	.LCFI6:
+ 320              		.cfi_def_cfa_offset 16
+ 321              		.cfi_offset 3, -16
+ 322              		.cfi_offset 4, -12
+ 323              		.cfi_offset 5, -8
+ 324              		.cfi_offset 14, -4
+  78:../bsp/bsp_iic.c **** 	IIC_SCL=0;
+ 325              		.loc 1 78 2 view .LVU75
+ 326              		.loc 1 78 9 is_stmt 0 view .LVU76
+ 327 0002 0D4C     		ldr	r4, .L23
+ 328 0004 0025     		movs	r5, #0
+ 329 0006 C4F8B051 		str	r5, [r4, #432]
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 8
+
+
+  79:../bsp/bsp_iic.c **** 	SDA_OUT();
+ 330              		.loc 1 79 2 is_stmt 1 view .LVU77
+ 331 000a 0C4B     		ldr	r3, .L23+4
+ 332 000c 5A68     		ldr	r2, [r3, #4]
+ 333 000e 22F47042 		bic	r2, r2, #61440
+ 334 0012 5A60     		str	r2, [r3, #4]
+ 335              		.loc 1 79 2 view .LVU78
+ 336 0014 5A68     		ldr	r2, [r3, #4]
+ 337 0016 42F44052 		orr	r2, r2, #12288
+ 338 001a 5A60     		str	r2, [r3, #4]
+ 339              		.loc 1 79 11 view .LVU79
+  80:../bsp/bsp_iic.c **** 	IIC_SDA=0;
+ 340              		.loc 1 80 2 view .LVU80
+ 341              		.loc 1 80 9 is_stmt 0 view .LVU81
+ 342 001c C4F8AC51 		str	r5, [r4, #428]
+  81:../bsp/bsp_iic.c **** 	delay_us(2);
+ 343              		.loc 1 81 2 is_stmt 1 view .LVU82
+ 344 0020 0220     		movs	r0, #2
+ 345 0022 FFF7FEFF 		bl	delay_us
+ 346              	.LVL15:
+  82:../bsp/bsp_iic.c **** 	IIC_SCL=1;
+ 347              		.loc 1 82 2 view .LVU83
+ 348              		.loc 1 82 9 is_stmt 0 view .LVU84
+ 349 0026 0123     		movs	r3, #1
+ 350 0028 C4F8B031 		str	r3, [r4, #432]
+  83:../bsp/bsp_iic.c **** 	delay_us(2);
+ 351              		.loc 1 83 2 is_stmt 1 view .LVU85
+ 352 002c 0220     		movs	r0, #2
+ 353 002e FFF7FEFF 		bl	delay_us
+ 354              	.LVL16:
+  84:../bsp/bsp_iic.c **** 	IIC_SCL=0;
+ 355              		.loc 1 84 2 view .LVU86
+ 356              		.loc 1 84 9 is_stmt 0 view .LVU87
+ 357 0032 C4F8B051 		str	r5, [r4, #432]
+  85:../bsp/bsp_iic.c **** }
+ 358              		.loc 1 85 1 view .LVU88
+ 359 0036 38BD     		pop	{r3, r4, r5, pc}
+ 360              	.L24:
+ 361              		.align	2
+ 362              	.L23:
+ 363 0038 00002242 		.word	1109524480
+ 364 003c 00100140 		.word	1073811456
+ 365              		.cfi_endproc
+ 366              	.LFE33:
+ 368              		.section	.text.IIC_NAck,"ax",%progbits
+ 369              		.align	1
+ 370              		.global	IIC_NAck
+ 371              		.syntax unified
+ 372              		.thumb
+ 373              		.thumb_func
+ 375              	IIC_NAck:
+ 376              	.LFB34:
+  86:../bsp/bsp_iic.c **** //不产生ACK应答		    
+  87:../bsp/bsp_iic.c **** void IIC_NAck(void)
+  88:../bsp/bsp_iic.c **** {
+ 377              		.loc 1 88 1 is_stmt 1 view -0
+ 378              		.cfi_startproc
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 9
+
+
+ 379              		@ args = 0, pretend = 0, frame = 0
+ 380              		@ frame_needed = 0, uses_anonymous_args = 0
+ 381 0000 70B5     		push	{r4, r5, r6, lr}
+ 382              	.LCFI7:
+ 383              		.cfi_def_cfa_offset 16
+ 384              		.cfi_offset 4, -16
+ 385              		.cfi_offset 5, -12
+ 386              		.cfi_offset 6, -8
+ 387              		.cfi_offset 14, -4
+  89:../bsp/bsp_iic.c **** 	IIC_SCL=0;
+ 388              		.loc 1 89 2 view .LVU90
+ 389              		.loc 1 89 9 is_stmt 0 view .LVU91
+ 390 0002 0D4C     		ldr	r4, .L27
+ 391 0004 0025     		movs	r5, #0
+ 392 0006 C4F8B051 		str	r5, [r4, #432]
+  90:../bsp/bsp_iic.c **** 	SDA_OUT();
+ 393              		.loc 1 90 2 is_stmt 1 view .LVU92
+ 394 000a 0C4B     		ldr	r3, .L27+4
+ 395 000c 5A68     		ldr	r2, [r3, #4]
+ 396 000e 22F47042 		bic	r2, r2, #61440
+ 397 0012 5A60     		str	r2, [r3, #4]
+ 398              		.loc 1 90 2 view .LVU93
+ 399 0014 5A68     		ldr	r2, [r3, #4]
+ 400 0016 42F44052 		orr	r2, r2, #12288
+ 401 001a 5A60     		str	r2, [r3, #4]
+ 402              		.loc 1 90 11 view .LVU94
+  91:../bsp/bsp_iic.c **** 	IIC_SDA=1;
+ 403              		.loc 1 91 2 view .LVU95
+ 404              		.loc 1 91 9 is_stmt 0 view .LVU96
+ 405 001c 0126     		movs	r6, #1
+ 406 001e C4F8AC61 		str	r6, [r4, #428]
+  92:../bsp/bsp_iic.c **** 	delay_us(2);
+ 407              		.loc 1 92 2 is_stmt 1 view .LVU97
+ 408 0022 0220     		movs	r0, #2
+ 409 0024 FFF7FEFF 		bl	delay_us
+ 410              	.LVL17:
+  93:../bsp/bsp_iic.c **** 	IIC_SCL=1;
+ 411              		.loc 1 93 2 view .LVU98
+ 412              		.loc 1 93 9 is_stmt 0 view .LVU99
+ 413 0028 C4F8B061 		str	r6, [r4, #432]
+  94:../bsp/bsp_iic.c **** 	delay_us(2);
+ 414              		.loc 1 94 2 is_stmt 1 view .LVU100
+ 415 002c 0220     		movs	r0, #2
+ 416 002e FFF7FEFF 		bl	delay_us
+ 417              	.LVL18:
+  95:../bsp/bsp_iic.c **** 	IIC_SCL=0;
+ 418              		.loc 1 95 2 view .LVU101
+ 419              		.loc 1 95 9 is_stmt 0 view .LVU102
+ 420 0032 C4F8B051 		str	r5, [r4, #432]
+  96:../bsp/bsp_iic.c **** }					 				     
+ 421              		.loc 1 96 1 view .LVU103
+ 422 0036 70BD     		pop	{r4, r5, r6, pc}
+ 423              	.L28:
+ 424              		.align	2
+ 425              	.L27:
+ 426 0038 00002242 		.word	1109524480
+ 427 003c 00100140 		.word	1073811456
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 10
+
+
+ 428              		.cfi_endproc
+ 429              	.LFE34:
+ 431              		.section	.text.IIC_Send_Byte,"ax",%progbits
+ 432              		.align	1
+ 433              		.global	IIC_Send_Byte
+ 434              		.syntax unified
+ 435              		.thumb
+ 436              		.thumb_func
+ 438              	IIC_Send_Byte:
+ 439              	.LVL19:
+ 440              	.LFB35:
+  97:../bsp/bsp_iic.c **** //IIC发送一个字节
+  98:../bsp/bsp_iic.c **** //返回从机有无应答
+  99:../bsp/bsp_iic.c **** //1，有应答
+ 100:../bsp/bsp_iic.c **** //0，无应答			  
+ 101:../bsp/bsp_iic.c **** void IIC_Send_Byte(u8 txd)
+ 102:../bsp/bsp_iic.c **** {                        
+ 441              		.loc 1 102 1 is_stmt 1 view -0
+ 442              		.cfi_startproc
+ 443              		@ args = 0, pretend = 0, frame = 0
+ 444              		@ frame_needed = 0, uses_anonymous_args = 0
+ 445              		.loc 1 102 1 is_stmt 0 view .LVU105
+ 446 0000 70B5     		push	{r4, r5, r6, lr}
+ 447              	.LCFI8:
+ 448              		.cfi_def_cfa_offset 16
+ 449              		.cfi_offset 4, -16
+ 450              		.cfi_offset 5, -12
+ 451              		.cfi_offset 6, -8
+ 452              		.cfi_offset 14, -4
+ 453 0002 0546     		mov	r5, r0
+ 103:../bsp/bsp_iic.c ****     u8 t;   
+ 454              		.loc 1 103 5 is_stmt 1 view .LVU106
+ 104:../bsp/bsp_iic.c **** 	SDA_OUT(); 	    
+ 455              		.loc 1 104 2 view .LVU107
+ 456 0004 134B     		ldr	r3, .L33
+ 457 0006 5A68     		ldr	r2, [r3, #4]
+ 458 0008 22F47042 		bic	r2, r2, #61440
+ 459 000c 5A60     		str	r2, [r3, #4]
+ 460              		.loc 1 104 2 view .LVU108
+ 461 000e 5A68     		ldr	r2, [r3, #4]
+ 462 0010 42F44052 		orr	r2, r2, #12288
+ 463 0014 5A60     		str	r2, [r3, #4]
+ 464              		.loc 1 104 11 view .LVU109
+ 105:../bsp/bsp_iic.c ****     IIC_SCL=0;//拉低时钟开始数据传输
+ 465              		.loc 1 105 5 view .LVU110
+ 466              		.loc 1 105 12 is_stmt 0 view .LVU111
+ 467 0016 0024     		movs	r4, #0
+ 468 0018 0F4B     		ldr	r3, .L33+4
+ 469 001a C3F8B041 		str	r4, [r3, #432]
+ 106:../bsp/bsp_iic.c ****     for(t=0;t<8;t++)
+ 470              		.loc 1 106 5 is_stmt 1 view .LVU112
+ 471              	.LVL20:
+ 472              		.loc 1 106 5 is_stmt 0 view .LVU113
+ 473 001e 16E0     		b	.L30
+ 474              	.LVL21:
+ 475              	.L31:
+ 107:../bsp/bsp_iic.c ****     {              
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 11
+
+
+ 108:../bsp/bsp_iic.c ****         IIC_SDA=(txd&0x80)>>7;
+ 476              		.loc 1 108 9 is_stmt 1 discriminator 3 view .LVU114
+ 477              		.loc 1 108 27 is_stmt 0 discriminator 3 view .LVU115
+ 478 0020 EB09     		lsrs	r3, r5, #7
+ 479              		.loc 1 108 16 discriminator 3 view .LVU116
+ 480 0022 0D4E     		ldr	r6, .L33+4
+ 481 0024 C6F8AC31 		str	r3, [r6, #428]
+ 109:../bsp/bsp_iic.c ****         txd<<=1; 	  
+ 482              		.loc 1 109 9 is_stmt 1 discriminator 3 view .LVU117
+ 483              		.loc 1 109 12 is_stmt 0 discriminator 3 view .LVU118
+ 484 0028 6D00     		lsls	r5, r5, #1
+ 485              	.LVL22:
+ 486              		.loc 1 109 12 discriminator 3 view .LVU119
+ 487 002a EDB2     		uxtb	r5, r5
+ 488              	.LVL23:
+ 110:../bsp/bsp_iic.c **** 		delay_us(2);   //对TEA5767这三个延时都是必须的
+ 489              		.loc 1 110 3 is_stmt 1 discriminator 3 view .LVU120
+ 490 002c 0220     		movs	r0, #2
+ 491 002e FFF7FEFF 		bl	delay_us
+ 492              	.LVL24:
+ 111:../bsp/bsp_iic.c **** 		IIC_SCL=1;
+ 493              		.loc 1 111 3 discriminator 3 view .LVU121
+ 494              		.loc 1 111 10 is_stmt 0 discriminator 3 view .LVU122
+ 495 0032 0123     		movs	r3, #1
+ 496 0034 C6F8B031 		str	r3, [r6, #432]
+ 112:../bsp/bsp_iic.c **** 		delay_us(2); 
+ 497              		.loc 1 112 3 is_stmt 1 discriminator 3 view .LVU123
+ 498 0038 0220     		movs	r0, #2
+ 499 003a FFF7FEFF 		bl	delay_us
+ 500              	.LVL25:
+ 113:../bsp/bsp_iic.c **** 		IIC_SCL=0;	
+ 501              		.loc 1 113 3 discriminator 3 view .LVU124
+ 502              		.loc 1 113 10 is_stmt 0 discriminator 3 view .LVU125
+ 503 003e 0023     		movs	r3, #0
+ 504 0040 C6F8B031 		str	r3, [r6, #432]
+ 114:../bsp/bsp_iic.c **** 		delay_us(2);
+ 505              		.loc 1 114 3 is_stmt 1 discriminator 3 view .LVU126
+ 506 0044 0220     		movs	r0, #2
+ 507 0046 FFF7FEFF 		bl	delay_us
+ 508              	.LVL26:
+ 106:../bsp/bsp_iic.c ****     {              
+ 509              		.loc 1 106 17 discriminator 3 view .LVU127
+ 106:../bsp/bsp_iic.c ****     {              
+ 510              		.loc 1 106 18 is_stmt 0 discriminator 3 view .LVU128
+ 511 004a 0134     		adds	r4, r4, #1
+ 512              	.LVL27:
+ 106:../bsp/bsp_iic.c ****     {              
+ 513              		.loc 1 106 18 discriminator 3 view .LVU129
+ 514 004c E4B2     		uxtb	r4, r4
+ 515              	.LVL28:
+ 516              	.L30:
+ 106:../bsp/bsp_iic.c ****     {              
+ 517              		.loc 1 106 13 is_stmt 1 discriminator 1 view .LVU130
+ 106:../bsp/bsp_iic.c ****     {              
+ 518              		.loc 1 106 5 is_stmt 0 discriminator 1 view .LVU131
+ 519 004e 072C     		cmp	r4, #7
+ 520 0050 E6D9     		bls	.L31
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 12
+
+
+ 115:../bsp/bsp_iic.c ****     }	 
+ 116:../bsp/bsp_iic.c **** } 	    
+ 521              		.loc 1 116 1 view .LVU132
+ 522 0052 70BD     		pop	{r4, r5, r6, pc}
+ 523              	.LVL29:
+ 524              	.L34:
+ 525              		.loc 1 116 1 view .LVU133
+ 526              		.align	2
+ 527              	.L33:
+ 528 0054 00100140 		.word	1073811456
+ 529 0058 00002242 		.word	1109524480
+ 530              		.cfi_endproc
+ 531              	.LFE35:
+ 533              		.section	.text.IIC_Read_Byte,"ax",%progbits
+ 534              		.align	1
+ 535              		.global	IIC_Read_Byte
+ 536              		.syntax unified
+ 537              		.thumb
+ 538              		.thumb_func
+ 540              	IIC_Read_Byte:
+ 541              	.LVL30:
+ 542              	.LFB36:
+ 117:../bsp/bsp_iic.c **** //读1个字节，ack=1时，发送ACK，ack=0，发送nACK   
+ 118:../bsp/bsp_iic.c **** u8 IIC_Read_Byte(unsigned char ack)
+ 119:../bsp/bsp_iic.c **** {
+ 543              		.loc 1 119 1 is_stmt 1 view -0
+ 544              		.cfi_startproc
+ 545              		@ args = 0, pretend = 0, frame = 0
+ 546              		@ frame_needed = 0, uses_anonymous_args = 0
+ 547              		.loc 1 119 1 is_stmt 0 view .LVU135
+ 548 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 549              	.LCFI9:
+ 550              		.cfi_def_cfa_offset 24
+ 551              		.cfi_offset 3, -24
+ 552              		.cfi_offset 4, -20
+ 553              		.cfi_offset 5, -16
+ 554              		.cfi_offset 6, -12
+ 555              		.cfi_offset 7, -8
+ 556              		.cfi_offset 14, -4
+ 557 0002 0746     		mov	r7, r0
+ 120:../bsp/bsp_iic.c **** 	unsigned char i,receive=0;
+ 558              		.loc 1 120 2 is_stmt 1 view .LVU136
+ 559              	.LVL31:
+ 121:../bsp/bsp_iic.c **** 	SDA_IN();//SDA设置为输入
+ 560              		.loc 1 121 2 view .LVU137
+ 561 0004 164B     		ldr	r3, .L43
+ 562 0006 5A68     		ldr	r2, [r3, #4]
+ 563 0008 22F47042 		bic	r2, r2, #61440
+ 564 000c 5A60     		str	r2, [r3, #4]
+ 565              		.loc 1 121 2 view .LVU138
+ 566 000e 5A68     		ldr	r2, [r3, #4]
+ 567 0010 42F40042 		orr	r2, r2, #32768
+ 568 0014 5A60     		str	r2, [r3, #4]
+ 569              		.loc 1 121 10 view .LVU139
+ 122:../bsp/bsp_iic.c ****     for(i=0;i<8;i++ )
+ 570              		.loc 1 122 5 view .LVU140
+ 571              	.LVL32:
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 13
+
+
+ 120:../bsp/bsp_iic.c **** 	unsigned char i,receive=0;
+ 572              		.loc 1 120 18 is_stmt 0 view .LVU141
+ 573 0016 0024     		movs	r4, #0
+ 574              		.loc 1 122 10 view .LVU142
+ 575 0018 2546     		mov	r5, r4
+ 576              		.loc 1 122 5 view .LVU143
+ 577 001a 04E0     		b	.L36
+ 578              	.LVL33:
+ 579              	.L37:
+ 123:../bsp/bsp_iic.c **** 	{
+ 124:../bsp/bsp_iic.c ****         IIC_SCL=0; 
+ 125:../bsp/bsp_iic.c ****         delay_us(2);
+ 126:../bsp/bsp_iic.c **** 		IIC_SCL=1;
+ 127:../bsp/bsp_iic.c ****         receive<<=1;
+ 128:../bsp/bsp_iic.c ****         if(READ_SDA)receive++;   
+ 129:../bsp/bsp_iic.c **** 		delay_us(1); 
+ 580              		.loc 1 129 3 is_stmt 1 discriminator 2 view .LVU144
+ 581 001c 0120     		movs	r0, #1
+ 582 001e FFF7FEFF 		bl	delay_us
+ 583              	.LVL34:
+ 122:../bsp/bsp_iic.c ****     for(i=0;i<8;i++ )
+ 584              		.loc 1 122 17 discriminator 2 view .LVU145
+ 122:../bsp/bsp_iic.c ****     for(i=0;i<8;i++ )
+ 585              		.loc 1 122 18 is_stmt 0 discriminator 2 view .LVU146
+ 586 0022 0135     		adds	r5, r5, #1
+ 587              	.LVL35:
+ 122:../bsp/bsp_iic.c ****     for(i=0;i<8;i++ )
+ 588              		.loc 1 122 18 discriminator 2 view .LVU147
+ 589 0024 EDB2     		uxtb	r5, r5
+ 590              	.LVL36:
+ 591              	.L36:
+ 122:../bsp/bsp_iic.c ****     for(i=0;i<8;i++ )
+ 592              		.loc 1 122 13 is_stmt 1 discriminator 1 view .LVU148
+ 122:../bsp/bsp_iic.c ****     for(i=0;i<8;i++ )
+ 593              		.loc 1 122 5 is_stmt 0 discriminator 1 view .LVU149
+ 594 0026 072D     		cmp	r5, #7
+ 595 0028 12D8     		bhi	.L42
+ 124:../bsp/bsp_iic.c ****         delay_us(2);
+ 596              		.loc 1 124 9 is_stmt 1 view .LVU150
+ 124:../bsp/bsp_iic.c ****         delay_us(2);
+ 597              		.loc 1 124 16 is_stmt 0 view .LVU151
+ 598 002a 0E4E     		ldr	r6, .L43+4
+ 599 002c 0023     		movs	r3, #0
+ 600 002e C6F8B031 		str	r3, [r6, #432]
+ 125:../bsp/bsp_iic.c **** 		IIC_SCL=1;
+ 601              		.loc 1 125 9 is_stmt 1 view .LVU152
+ 602 0032 0220     		movs	r0, #2
+ 603 0034 FFF7FEFF 		bl	delay_us
+ 604              	.LVL37:
+ 126:../bsp/bsp_iic.c ****         receive<<=1;
+ 605              		.loc 1 126 3 view .LVU153
+ 126:../bsp/bsp_iic.c ****         receive<<=1;
+ 606              		.loc 1 126 10 is_stmt 0 view .LVU154
+ 607 0038 0123     		movs	r3, #1
+ 608 003a C6F8B031 		str	r3, [r6, #432]
+ 127:../bsp/bsp_iic.c ****         if(READ_SDA)receive++;   
+ 609              		.loc 1 127 9 is_stmt 1 view .LVU155
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 14
+
+
+ 127:../bsp/bsp_iic.c ****         if(READ_SDA)receive++;   
+ 610              		.loc 1 127 16 is_stmt 0 view .LVU156
+ 611 003e 9C40     		lsls	r4, r4, r3
+ 612              	.LVL38:
+ 127:../bsp/bsp_iic.c ****         if(READ_SDA)receive++;   
+ 613              		.loc 1 127 16 view .LVU157
+ 614 0040 E4B2     		uxtb	r4, r4
+ 615              	.LVL39:
+ 128:../bsp/bsp_iic.c **** 		delay_us(1); 
+ 616              		.loc 1 128 9 is_stmt 1 view .LVU158
+ 128:../bsp/bsp_iic.c **** 		delay_us(1); 
+ 617              		.loc 1 128 12 is_stmt 0 view .LVU159
+ 618 0042 D6F82C31 		ldr	r3, [r6, #300]
+ 128:../bsp/bsp_iic.c **** 		delay_us(1); 
+ 619              		.loc 1 128 11 view .LVU160
+ 620 0046 002B     		cmp	r3, #0
+ 621 0048 E8D0     		beq	.L37
+ 128:../bsp/bsp_iic.c **** 		delay_us(1); 
+ 622              		.loc 1 128 21 is_stmt 1 discriminator 1 view .LVU161
+ 128:../bsp/bsp_iic.c **** 		delay_us(1); 
+ 623              		.loc 1 128 28 is_stmt 0 discriminator 1 view .LVU162
+ 624 004a 0134     		adds	r4, r4, #1
+ 625              	.LVL40:
+ 128:../bsp/bsp_iic.c **** 		delay_us(1); 
+ 626              		.loc 1 128 28 discriminator 1 view .LVU163
+ 627 004c E4B2     		uxtb	r4, r4
+ 628              	.LVL41:
+ 128:../bsp/bsp_iic.c **** 		delay_us(1); 
+ 629              		.loc 1 128 28 discriminator 1 view .LVU164
+ 630 004e E5E7     		b	.L37
+ 631              	.L42:
+ 130:../bsp/bsp_iic.c ****     }					 
+ 131:../bsp/bsp_iic.c ****     if (!ack)
+ 632              		.loc 1 131 5 is_stmt 1 view .LVU165
+ 633              		.loc 1 131 8 is_stmt 0 view .LVU166
+ 634 0050 1FB9     		cbnz	r7, .L39
+ 132:../bsp/bsp_iic.c ****         IIC_NAck();//发送nACK
+ 635              		.loc 1 132 9 is_stmt 1 view .LVU167
+ 636 0052 FFF7FEFF 		bl	IIC_NAck
+ 637              	.LVL42:
+ 638              	.L40:
+ 133:../bsp/bsp_iic.c ****     else
+ 134:../bsp/bsp_iic.c ****         IIC_Ack(); //发送ACK   
+ 135:../bsp/bsp_iic.c ****     return receive;
+ 639              		.loc 1 135 5 view .LVU168
+ 136:../bsp/bsp_iic.c **** }
+ 640              		.loc 1 136 1 is_stmt 0 view .LVU169
+ 641 0056 2046     		mov	r0, r4
+ 642 0058 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 643              	.LVL43:
+ 644              	.L39:
+ 134:../bsp/bsp_iic.c ****     return receive;
+ 645              		.loc 1 134 9 is_stmt 1 view .LVU170
+ 646 005a FFF7FEFF 		bl	IIC_Ack
+ 647              	.LVL44:
+ 648 005e FAE7     		b	.L40
+ 649              	.L44:
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 15
+
+
+ 650              		.align	2
+ 651              	.L43:
+ 652 0060 00100140 		.word	1073811456
+ 653 0064 00002242 		.word	1109524480
+ 654              		.cfi_endproc
+ 655              	.LFE36:
+ 657              		.section	.text.Write_IIC_Command,"ax",%progbits
+ 658              		.align	1
+ 659              		.global	Write_IIC_Command
+ 660              		.syntax unified
+ 661              		.thumb
+ 662              		.thumb_func
+ 664              	Write_IIC_Command:
+ 665              	.LVL45:
+ 666              	.LFB37:
+ 137:../bsp/bsp_iic.c **** 
+ 138:../bsp/bsp_iic.c **** /**********************************************
+ 139:../bsp/bsp_iic.c **** // IIC Write Command
+ 140:../bsp/bsp_iic.c **** **********************************************/
+ 141:../bsp/bsp_iic.c **** void Write_IIC_Command(unsigned char IIC_Command)
+ 142:../bsp/bsp_iic.c **** {
+ 667              		.loc 1 142 1 view -0
+ 668              		.cfi_startproc
+ 669              		@ args = 0, pretend = 0, frame = 0
+ 670              		@ frame_needed = 0, uses_anonymous_args = 0
+ 671              		.loc 1 142 1 is_stmt 0 view .LVU172
+ 672 0000 10B5     		push	{r4, lr}
+ 673              	.LCFI10:
+ 674              		.cfi_def_cfa_offset 8
+ 675              		.cfi_offset 4, -8
+ 676              		.cfi_offset 14, -4
+ 677 0002 0446     		mov	r4, r0
+ 143:../bsp/bsp_iic.c **** 	IIC_Start();
+ 678              		.loc 1 143 2 is_stmt 1 view .LVU173
+ 679 0004 FFF7FEFF 		bl	IIC_Start
+ 680              	.LVL46:
+ 144:../bsp/bsp_iic.c **** 	IIC_Send_Byte(0x78);            //Slave address,SA0=0
+ 681              		.loc 1 144 2 view .LVU174
+ 682 0008 7820     		movs	r0, #120
+ 683 000a FFF7FEFF 		bl	IIC_Send_Byte
+ 684              	.LVL47:
+ 145:../bsp/bsp_iic.c **** 	IIC_Wait_Ack();	
+ 685              		.loc 1 145 2 view .LVU175
+ 686 000e FFF7FEFF 		bl	IIC_Wait_Ack
+ 687              	.LVL48:
+ 146:../bsp/bsp_iic.c **** 	IIC_Send_Byte(0x00);			//write command
+ 688              		.loc 1 146 2 view .LVU176
+ 689 0012 0020     		movs	r0, #0
+ 690 0014 FFF7FEFF 		bl	IIC_Send_Byte
+ 691              	.LVL49:
+ 147:../bsp/bsp_iic.c **** 	IIC_Wait_Ack();	
+ 692              		.loc 1 147 2 view .LVU177
+ 693 0018 FFF7FEFF 		bl	IIC_Wait_Ack
+ 694              	.LVL50:
+ 148:../bsp/bsp_iic.c **** 	IIC_Send_Byte(IIC_Command); 
+ 695              		.loc 1 148 2 view .LVU178
+ 696 001c 2046     		mov	r0, r4
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 16
+
+
+ 697 001e FFF7FEFF 		bl	IIC_Send_Byte
+ 698              	.LVL51:
+ 149:../bsp/bsp_iic.c **** 	IIC_Wait_Ack();	
+ 699              		.loc 1 149 2 view .LVU179
+ 700 0022 FFF7FEFF 		bl	IIC_Wait_Ack
+ 701              	.LVL52:
+ 150:../bsp/bsp_iic.c **** 	IIC_Stop();
+ 702              		.loc 1 150 2 view .LVU180
+ 703 0026 FFF7FEFF 		bl	IIC_Stop
+ 704              	.LVL53:
+ 151:../bsp/bsp_iic.c **** }
+ 705              		.loc 1 151 1 is_stmt 0 view .LVU181
+ 706 002a 10BD     		pop	{r4, pc}
+ 707              		.cfi_endproc
+ 708              	.LFE37:
+ 710              		.section	.text.Write_IIC_Data,"ax",%progbits
+ 711              		.align	1
+ 712              		.global	Write_IIC_Data
+ 713              		.syntax unified
+ 714              		.thumb
+ 715              		.thumb_func
+ 717              	Write_IIC_Data:
+ 718              	.LVL54:
+ 719              	.LFB38:
+ 152:../bsp/bsp_iic.c **** 
+ 153:../bsp/bsp_iic.c **** /**********************************************
+ 154:../bsp/bsp_iic.c **** // IIC Write Data
+ 155:../bsp/bsp_iic.c **** **********************************************/
+ 156:../bsp/bsp_iic.c **** void Write_IIC_Data(unsigned char IIC_Data)
+ 157:../bsp/bsp_iic.c **** {
+ 720              		.loc 1 157 1 is_stmt 1 view -0
+ 721              		.cfi_startproc
+ 722              		@ args = 0, pretend = 0, frame = 0
+ 723              		@ frame_needed = 0, uses_anonymous_args = 0
+ 724              		.loc 1 157 1 is_stmt 0 view .LVU183
+ 725 0000 10B5     		push	{r4, lr}
+ 726              	.LCFI11:
+ 727              		.cfi_def_cfa_offset 8
+ 728              		.cfi_offset 4, -8
+ 729              		.cfi_offset 14, -4
+ 730 0002 0446     		mov	r4, r0
+ 158:../bsp/bsp_iic.c **** 	IIC_Start();
+ 731              		.loc 1 158 2 is_stmt 1 view .LVU184
+ 732 0004 FFF7FEFF 		bl	IIC_Start
+ 733              	.LVL55:
+ 159:../bsp/bsp_iic.c **** 	IIC_Send_Byte(0x78);			//D/C#=0; R/W#=0
+ 734              		.loc 1 159 2 view .LVU185
+ 735 0008 7820     		movs	r0, #120
+ 736 000a FFF7FEFF 		bl	IIC_Send_Byte
+ 737              	.LVL56:
+ 160:../bsp/bsp_iic.c **** 	IIC_Wait_Ack();	
+ 738              		.loc 1 160 2 view .LVU186
+ 739 000e FFF7FEFF 		bl	IIC_Wait_Ack
+ 740              	.LVL57:
+ 161:../bsp/bsp_iic.c **** 	IIC_Send_Byte(0x40);			//write data
+ 741              		.loc 1 161 2 view .LVU187
+ 742 0012 4020     		movs	r0, #64
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 17
+
+
+ 743 0014 FFF7FEFF 		bl	IIC_Send_Byte
+ 744              	.LVL58:
+ 162:../bsp/bsp_iic.c **** 	IIC_Wait_Ack();	
+ 745              		.loc 1 162 2 view .LVU188
+ 746 0018 FFF7FEFF 		bl	IIC_Wait_Ack
+ 747              	.LVL59:
+ 163:../bsp/bsp_iic.c **** 	IIC_Send_Byte(IIC_Data);
+ 748              		.loc 1 163 2 view .LVU189
+ 749 001c 2046     		mov	r0, r4
+ 750 001e FFF7FEFF 		bl	IIC_Send_Byte
+ 751              	.LVL60:
+ 164:../bsp/bsp_iic.c **** 	IIC_Wait_Ack();	
+ 752              		.loc 1 164 2 view .LVU190
+ 753 0022 FFF7FEFF 		bl	IIC_Wait_Ack
+ 754              	.LVL61:
+ 165:../bsp/bsp_iic.c **** 	IIC_Stop();
+ 755              		.loc 1 165 2 view .LVU191
+ 756 0026 FFF7FEFF 		bl	IIC_Stop
+ 757              	.LVL62:
+ 166:../bsp/bsp_iic.c **** }
+ 758              		.loc 1 166 1 is_stmt 0 view .LVU192
+ 759 002a 10BD     		pop	{r4, pc}
+ 760              		.cfi_endproc
+ 761              	.LFE38:
+ 763              		.text
+ 764              	.Letext0:
+ 765              		.file 2 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\machi
+ 766              		.file 3 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\sys\\
+ 767              		.file 4 "../user/stm32f10x.h"
+ 768              		.file 5 "../stm32f10x_fwlib/inc/stm32f10x_gpio.h"
+ 769              		.file 6 "../system/delay/delay.h"
+ 770              		.file 7 "../stm32f10x_fwlib/inc/stm32f10x_rcc.h"
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s 			page 18
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 bsp_iic.c
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:18     .text.IIC_Init:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:24     .text.IIC_Init:00000000 IIC_Init
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:78     .text.IIC_Init:0000003c $d
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:84     .text.IIC_Start:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:90     .text.IIC_Start:00000000 IIC_Start
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:141    .text.IIC_Start:00000038 $d
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:147    .text.IIC_Stop:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:153    .text.IIC_Stop:00000000 IIC_Stop
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:202    .text.IIC_Stop:00000038 $d
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:208    .text.IIC_Wait_Ack:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:214    .text.IIC_Wait_Ack:00000000 IIC_Wait_Ack
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:300    .text.IIC_Wait_Ack:00000050 $d
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:306    .text.IIC_Ack:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:312    .text.IIC_Ack:00000000 IIC_Ack
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:363    .text.IIC_Ack:00000038 $d
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:369    .text.IIC_NAck:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:375    .text.IIC_NAck:00000000 IIC_NAck
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:426    .text.IIC_NAck:00000038 $d
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:432    .text.IIC_Send_Byte:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:438    .text.IIC_Send_Byte:00000000 IIC_Send_Byte
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:528    .text.IIC_Send_Byte:00000054 $d
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:534    .text.IIC_Read_Byte:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:540    .text.IIC_Read_Byte:00000000 IIC_Read_Byte
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:652    .text.IIC_Read_Byte:00000060 $d
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:658    .text.Write_IIC_Command:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:664    .text.Write_IIC_Command:00000000 Write_IIC_Command
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:711    .text.Write_IIC_Data:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccSB6D0l.s:717    .text.Write_IIC_Data:00000000 Write_IIC_Data
+
+UNDEFINED SYMBOLS
+RCC_APB2PeriphClockCmd
+GPIO_Init
+delay_us

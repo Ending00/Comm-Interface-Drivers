@@ -1,0 +1,1362 @@
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"button_drv.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.BUTTON_Handler,"ax",%progbits
+  18              		.align	1
+  19              		.syntax unified
+  20              		.thumb
+  21              		.thumb_func
+  23              	BUTTON_Handler:
+  24              	.LVL0:
+  25              	.LFB4:
+  26              		.file 1 "../driver/button_drv.c"
+   1:../driver/button_drv.c **** #include "button_drv.h"
+   2:../driver/button_drv.c **** 
+   3:../driver/button_drv.c **** #define EVENT_CALLBACK_EXECUTE(pstBtn, Event)       		\
+   4:../driver/button_drv.c ****     do                                         				\
+   5:../driver/button_drv.c ****     {                                          				\
+   6:../driver/button_drv.c ****         if (pstBtn->CallBack[Event])                      	\
+   7:../driver/button_drv.c **** 		{													\
+   8:../driver/button_drv.c ****             pstBtn->CallBack[Event]((BUTTON_t *)pstBtn);  	\
+   9:../driver/button_drv.c **** 		}													\
+  10:../driver/button_drv.c ****     } while(0)
+  11:../driver/button_drv.c **** 
+  12:../driver/button_drv.c **** /**@brief 按键链表头指针定义 */    
+  13:../driver/button_drv.c **** static BUTTON_t *s_pstBtnListHead = NULL;
+  14:../driver/button_drv.c **** 
+  15:../driver/button_drv.c **** /**@brief 按键初始化
+  16:../driver/button_drv.c ****  *
+  17:../driver/button_drv.c ****  * @param[in] pstBtn       指向按键实体
+  18:../driver/button_drv.c ****  * @param[in] GetPinLevel  指向获取按键引脚电平回调函数
+  19:../driver/button_drv.c ****  * @param[in] ActiveLevel  指明按键触发的有效电平 @ref BUTTON_ActiveLevel_t
+  20:../driver/button_drv.c ****  *
+  21:../driver/button_drv.c ****  * @retval 0   -按键已初始化
+  22:../driver/button_drv.c ****  * @retval 1   -按键初始化成功
+  23:../driver/button_drv.c ****  */
+  24:../driver/button_drv.c **** INT8U button_init(BUTTON_t *pstBtn, INT8U(*GetPinLevel)(void), BUTTON_ActiveLevel_t ActiveLevel)
+  25:../driver/button_drv.c **** {
+  26:../driver/button_drv.c **** 	BUTTON_t * pstCurrBtn = s_pstBtnListHead;
+  27:../driver/button_drv.c **** 	
+  28:../driver/button_drv.c ****     /* 遍历按键链表，查找当前按键是否已初始化 */
+  29:../driver/button_drv.c ****     while (pstCurrBtn) 
+  30:../driver/button_drv.c ****     {
+  31:../driver/button_drv.c ****         if (pstCurrBtn == pstBtn) 
+  32:../driver/button_drv.c ****         {
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 2
+
+
+  33:../driver/button_drv.c **** 			/* 按键已初始化 */
+  34:../driver/button_drv.c ****             return 0;  
+  35:../driver/button_drv.c ****         }
+  36:../driver/button_drv.c ****         pstCurrBtn = pstCurrBtn->Next;
+  37:../driver/button_drv.c ****     }
+  38:../driver/button_drv.c ****     
+  39:../driver/button_drv.c **** 	memset(pstBtn, 0, sizeof(BUTTON_t));
+  40:../driver/button_drv.c ****     pstBtn->Event          = (INT8U)BTN_EVT_NONE;
+  41:../driver/button_drv.c ****     pstBtn->GetPinLevel    = GetPinLevel;
+  42:../driver/button_drv.c ****     pstBtn->LastLevel      = pstBtn->GetPinLevel();
+  43:../driver/button_drv.c ****     pstBtn->ActiveLevel    = (BUTTON_ActiveLevel_t)ActiveLevel;
+  44:../driver/button_drv.c **** 	pstBtn->ShortTicks     = 30;
+  45:../driver/button_drv.c **** 	pstBtn->LongTicks      = 50;
+  46:../driver/button_drv.c **** 	pstBtn->LongHoldPeriod = 20;
+  47:../driver/button_drv.c **** 	
+  48:../driver/button_drv.c **** 	pstBtn->Next = s_pstBtnListHead;
+  49:../driver/button_drv.c **** 	s_pstBtnListHead = pstBtn;
+  50:../driver/button_drv.c **** 	
+  51:../driver/button_drv.c **** 	return 1;
+  52:../driver/button_drv.c **** }
+  53:../driver/button_drv.c **** 
+  54:../driver/button_drv.c **** /**@brief 设置按键单击、长击、连击事件的触发时间参数
+  55:../driver/button_drv.c ****  *
+  56:../driver/button_drv.c ****  * @note 所有按键初始化时有统一默认值，除却某按键需要，
+  57:../driver/button_drv.c ****  *       可在button_init之后调用本接口进行重新设置外，
+  58:../driver/button_drv.c ****  *       无需调用
+  59:../driver/button_drv.c ****  *
+  60:../driver/button_drv.c ****  * @param[in] pstBtn          指向按键实体
+  61:../driver/button_drv.c ****  * @param[in] ShortTicks      指明单击触发（或多击间隔）时间
+  62:../driver/button_drv.c ****  * @param[in] LongTicks       指明长击触发时间
+  63:../driver/button_drv.c ****  * @param[in] LongHoldPeriod  指明连击触发周期
+  64:../driver/button_drv.c ****  *
+  65:../driver/button_drv.c ****  * @retval 无
+  66:../driver/button_drv.c ****  */
+  67:../driver/button_drv.c **** void button_set_time_param(BUTTON_t *pstBtn, INT8U ShortTicks, INT16U LongTicks, INT8U LongHoldPeri
+  68:../driver/button_drv.c **** {
+  69:../driver/button_drv.c **** 	if (ShortTicks)
+  70:../driver/button_drv.c **** 	{
+  71:../driver/button_drv.c **** 		pstBtn->ShortTicks = ShortTicks;
+  72:../driver/button_drv.c **** 	}
+  73:../driver/button_drv.c **** 	
+  74:../driver/button_drv.c **** 	if (LongTicks)
+  75:../driver/button_drv.c **** 	{
+  76:../driver/button_drv.c **** 		pstBtn->LongTicks = LongTicks;
+  77:../driver/button_drv.c **** 	}
+  78:../driver/button_drv.c **** 	
+  79:../driver/button_drv.c **** 	if (LongHoldPeriod)
+  80:../driver/button_drv.c **** 	{
+  81:../driver/button_drv.c **** 		pstBtn->LongHoldPeriod = LongHoldPeriod;
+  82:../driver/button_drv.c **** 	}
+  83:../driver/button_drv.c **** }
+  84:../driver/button_drv.c **** 
+  85:../driver/button_drv.c **** /**@brief 绑定按键事件功能回调
+  86:../driver/button_drv.c ****  *
+  87:../driver/button_drv.c ****  * @param[in] pstBtn    指向按键实体
+  88:../driver/button_drv.c ****  * @param[in] Event     指明按键事件 @ref BUTTON_Event_t
+  89:../driver/button_drv.c ****  * @param[in] CallBack  指向按键事件处理回调函数
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 3
+
+
+  90:../driver/button_drv.c ****  *
+  91:../driver/button_drv.c ****  * @retval 无
+  92:../driver/button_drv.c ****  */
+  93:../driver/button_drv.c **** void button_attach(BUTTON_t *pstBtn, BUTTON_Event_t Event, BtnCallback CallBack)
+  94:../driver/button_drv.c **** {
+  95:../driver/button_drv.c ****     pstBtn->CallBack[Event] = CallBack;
+  96:../driver/button_drv.c **** }
+  97:../driver/button_drv.c **** 
+  98:../driver/button_drv.c **** /**@brief 获取按键事件
+  99:../driver/button_drv.c ****  *
+ 100:../driver/button_drv.c ****  * @param[in] pstBtn  指向按键实体
+ 101:../driver/button_drv.c ****  *
+ 102:../driver/button_drv.c ****  * @retval 返回按键事件 @ref BUTTON_Event_t 
+ 103:../driver/button_drv.c ****  */
+ 104:../driver/button_drv.c **** BUTTON_Event_t button_get_event(BUTTON_t *pstBtn)
+ 105:../driver/button_drv.c **** {
+ 106:../driver/button_drv.c ****     return (BUTTON_Event_t)(pstBtn->Event);
+ 107:../driver/button_drv.c **** }
+ 108:../driver/button_drv.c **** 
+ 109:../driver/button_drv.c **** 
+ 110:../driver/button_drv.c **** /**@brief 单个按键处理
+ 111:../driver/button_drv.c ****  *
+ 112:../driver/button_drv.c ****  * @param[in] pstBtn  指向按键实体
+ 113:../driver/button_drv.c ****  *
+ 114:../driver/button_drv.c ****  * @retval 无
+ 115:../driver/button_drv.c ****  */
+ 116:../driver/button_drv.c **** static void BUTTON_Handler(BUTTON_t *pstBtn)
+ 117:../driver/button_drv.c **** {
+  27              		.loc 1 117 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31              		.loc 1 117 1 is_stmt 0 view .LVU1
+  32 0000 10B5     		push	{r4, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 4, -8
+  36              		.cfi_offset 14, -4
+  37 0002 0446     		mov	r4, r0
+ 118:../driver/button_drv.c ****     INT8U BtnPinLevel = pstBtn->GetPinLevel();
+  38              		.loc 1 118 5 is_stmt 1 view .LVU2
+  39              		.loc 1 118 31 is_stmt 0 view .LVU3
+  40 0004 8368     		ldr	r3, [r0, #8]
+  41              		.loc 1 118 25 view .LVU4
+  42 0006 9847     		blx	r3
+  43              	.LVL1:
+ 119:../driver/button_drv.c **** 
+ 120:../driver/button_drv.c ****     /* 有键按下则嘀嗒计数器累加 */
+ 121:../driver/button_drv.c ****     if ((pstBtn->State) > 0) 
+  44              		.loc 1 121 5 is_stmt 1 view .LVU5
+  45              		.loc 1 121 25 is_stmt 0 view .LVU6
+  46 0008 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+  47              		.loc 1 121 8 view .LVU7
+  48 000a 13F0070F 		tst	r3, #7
+  49 000e 02D0     		beq	.L2
+ 122:../driver/button_drv.c ****     {
+ 123:../driver/button_drv.c ****         pstBtn->Ticks++;
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 4
+
+
+  50              		.loc 1 123 9 is_stmt 1 view .LVU8
+  51              		.loc 1 123 15 is_stmt 0 view .LVU9
+  52 0010 2388     		ldrh	r3, [r4]
+  53              		.loc 1 123 22 view .LVU10
+  54 0012 0133     		adds	r3, r3, #1
+  55 0014 2380     		strh	r3, [r4]	@ movhi
+  56              	.L2:
+ 124:../driver/button_drv.c ****     }
+ 125:../driver/button_drv.c **** 
+ 126:../driver/button_drv.c **** 	/**@note 按键消抖处理
+ 127:../driver/button_drv.c **** 	 *
+ 128:../driver/button_drv.c **** 	 * 与上次按键电平不同则重复读取DEBOUNCE_TICKS次，
+ 129:../driver/button_drv.c **** 	 *
+ 130:../driver/button_drv.c **** 	 * 状态不变则存储当前按键电平，否则清消抖计数器 
+ 131:../driver/button_drv.c **** 	 */
+ 132:../driver/button_drv.c ****     if (BtnPinLevel != pstBtn->LastLevel)
+  57              		.loc 1 132 5 is_stmt 1 view .LVU11
+  58              		.loc 1 132 30 is_stmt 0 view .LVU12
+  59 0016 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+  60              		.loc 1 132 8 view .LVU13
+  61 0018 B0EBD31F 		cmp	r0, r3, lsr #7
+  62 001c 1CD0     		beq	.L3
+ 133:../driver/button_drv.c ****     { 
+ 134:../driver/button_drv.c ****         if (++pstBtn->DebounceCnt >= 2) 
+  63              		.loc 1 134 9 is_stmt 1 view .LVU14
+  64              		.loc 1 134 21 is_stmt 0 view .LVU15
+  65 001e 1A46     		mov	r2, r3
+  66 0020 C3F3C203 		ubfx	r3, r3, #3, #3
+  67              		.loc 1 134 13 view .LVU16
+  68 0024 0133     		adds	r3, r3, #1
+  69 0026 03F00703 		and	r3, r3, #7
+  70              		.loc 1 134 12 view .LVU17
+  71 002a 63F3C502 		bfi	r2, r3, #3, #3
+  72 002e E271     		strb	r2, [r4, #7]
+  73 0030 012B     		cmp	r3, #1
+  74 0032 07D9     		bls	.L4
+ 135:../driver/button_drv.c ****         {
+ 136:../driver/button_drv.c ****             pstBtn->LastLevel = BtnPinLevel;
+  75              		.loc 1 136 13 is_stmt 1 view .LVU18
+  76              		.loc 1 136 31 is_stmt 0 view .LVU19
+  77 0034 D3B2     		uxtb	r3, r2
+  78 0036 60F3C713 		bfi	r3, r0, #7, #1
+  79              	.LVL2:
+  80              		.loc 1 136 31 view .LVU20
+  81 003a E371     		strb	r3, [r4, #7]
+ 137:../driver/button_drv.c ****             pstBtn->DebounceCnt = 0;
+  82              		.loc 1 137 13 is_stmt 1 view .LVU21
+  83              		.loc 1 137 33 is_stmt 0 view .LVU22
+  84 003c DBB2     		uxtb	r3, r3
+  85 003e 6FF3C503 		bfc	r3, #3, #3
+  86 0042 E371     		strb	r3, [r4, #7]
+  87              	.L4:
+ 138:../driver/button_drv.c ****         }
+ 139:../driver/button_drv.c ****     } 
+ 140:../driver/button_drv.c ****     else 
+ 141:../driver/button_drv.c ****     { 
+ 142:../driver/button_drv.c ****         pstBtn->DebounceCnt = 0;
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 5
+
+
+ 143:../driver/button_drv.c ****     }
+ 144:../driver/button_drv.c **** 
+ 145:../driver/button_drv.c ****     /* 按键处理状态机 */
+ 146:../driver/button_drv.c ****     switch (pstBtn->State) 
+  88              		.loc 1 146 5 is_stmt 1 view .LVU23
+  89              		.loc 1 146 19 is_stmt 0 view .LVU24
+  90 0044 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+  91 0046 03F00703 		and	r3, r3, #7
+  92              		.loc 1 146 5 view .LVU25
+  93 004a 042B     		cmp	r3, #4
+  94 004c 14D8     		bhi	.L1
+  95 004e DFE803F0 		tbb	[pc, r3]
+  96              	.L7:
+  97 0052 08       		.byte	(.L11-.L7)/2
+  98 0053 28       		.byte	(.L10-.L7)/2
+  99 0054 54       		.byte	(.L9-.L7)/2
+ 100 0055 97       		.byte	(.L8-.L7)/2
+ 101 0056 B8       		.byte	(.L6-.L7)/2
+ 102              	.LVL3:
+ 103 0057 00       		.p2align 1
+ 104              	.L3:
+ 142:../driver/button_drv.c ****     }
+ 105              		.loc 1 142 9 is_stmt 1 view .LVU26
+ 142:../driver/button_drv.c ****     }
+ 106              		.loc 1 142 29 is_stmt 0 view .LVU27
+ 107 0058 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 108 005a 6FF3C503 		bfc	r3, #3, #3
+ 109 005e E371     		strb	r3, [r4, #7]
+ 110 0060 F0E7     		b	.L4
+ 111              	.LVL4:
+ 112              	.L11:
+ 147:../driver/button_drv.c ****     {
+ 148:../driver/button_drv.c **** 		case 0:
+ 149:../driver/button_drv.c **** 			if (pstBtn->LastLevel == pstBtn->ActiveLevel) 
+ 113              		.loc 1 149 4 is_stmt 1 view .LVU28
+ 114              		.loc 1 149 14 is_stmt 0 view .LVU29
+ 115 0062 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 116              		.loc 1 149 35 view .LVU30
+ 117 0064 C3F38012 		ubfx	r2, r3, #6, #1
+ 118              		.loc 1 149 7 view .LVU31
+ 119 0068 B2EBD31F 		cmp	r2, r3, lsr #7
+ 120 006c 05D0     		beq	.L26
+ 150:../driver/button_drv.c **** 			{ 
+ 151:../driver/button_drv.c **** 				pstBtn->Event = (INT8U)BTN_EVT_DOWN;
+ 152:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_DOWN);
+ 153:../driver/button_drv.c **** 				pstBtn->Ticks  = 0;
+ 154:../driver/button_drv.c **** 				pstBtn->Repeat = 1;
+ 155:../driver/button_drv.c **** 				pstBtn->State  = 1; 
+ 156:../driver/button_drv.c **** 			} 
+ 157:../driver/button_drv.c **** 			else 
+ 158:../driver/button_drv.c **** 			{
+ 159:../driver/button_drv.c **** 				pstBtn->Event = (INT8U)BTN_EVT_NONE;
+ 121              		.loc 1 159 5 is_stmt 1 view .LVU32
+ 122              		.loc 1 159 19 is_stmt 0 view .LVU33
+ 123 006e A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 124 0070 0722     		movs	r2, #7
+ 125 0072 62F30713 		bfi	r3, r2, #4, #4
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 6
+
+
+ 126 0076 A371     		strb	r3, [r4, #6]
+ 127              	.L1:
+ 160:../driver/button_drv.c **** 			}
+ 161:../driver/button_drv.c **** 			break;
+ 162:../driver/button_drv.c **** 
+ 163:../driver/button_drv.c **** 		case 1:
+ 164:../driver/button_drv.c **** 			if (pstBtn->LastLevel != pstBtn->ActiveLevel)
+ 165:../driver/button_drv.c **** 			{ 
+ 166:../driver/button_drv.c **** 				pstBtn->Event = (INT8U)BTN_EVT_UP;
+ 167:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_UP);
+ 168:../driver/button_drv.c **** 				pstBtn->Ticks = 0;
+ 169:../driver/button_drv.c **** 				pstBtn->State = 2;
+ 170:../driver/button_drv.c **** 			} 
+ 171:../driver/button_drv.c **** 			else if (pstBtn->LongTicks > 0)
+ 172:../driver/button_drv.c **** 			{
+ 173:../driver/button_drv.c ****                 if (pstBtn->Ticks > pstBtn->LongTicks)
+ 174:../driver/button_drv.c ****                 {
+ 175:../driver/button_drv.c ****                     pstBtn->Event = (INT8U)BTN_EVT_LONG;
+ 176:../driver/button_drv.c ****                     EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_LONG);
+ 177:../driver/button_drv.c ****                     pstBtn->State = 4; 
+ 178:../driver/button_drv.c ****                 }
+ 179:../driver/button_drv.c **** 			}
+ 180:../driver/button_drv.c **** 			break;
+ 181:../driver/button_drv.c **** 
+ 182:../driver/button_drv.c **** 		case 2:
+ 183:../driver/button_drv.c **** 			if (pstBtn->LastLevel == pstBtn->ActiveLevel) 
+ 184:../driver/button_drv.c **** 			{ 
+ 185:../driver/button_drv.c **** 				pstBtn->Event = (INT8U)BTN_EVT_DOWN;
+ 186:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_DOWN);
+ 187:../driver/button_drv.c **** 				pstBtn->Repeat++;
+ 188:../driver/button_drv.c **** 				pstBtn->Ticks = 0;
+ 189:../driver/button_drv.c **** 				pstBtn->State = 3;
+ 190:../driver/button_drv.c **** 			} 
+ 191:../driver/button_drv.c **** 			else if (pstBtn->Ticks > pstBtn->ShortTicks) 
+ 192:../driver/button_drv.c **** 			{ 
+ 193:../driver/button_drv.c **** 				if (pstBtn->Repeat == 1) 
+ 194:../driver/button_drv.c **** 				{
+ 195:../driver/button_drv.c **** 					pstBtn->Event = (INT8U)BTN_EVT_SINGLE;
+ 196:../driver/button_drv.c **** 					EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_SINGLE);
+ 197:../driver/button_drv.c **** 				} 
+ 198:../driver/button_drv.c **** 				else if (pstBtn->Repeat == 2) 
+ 199:../driver/button_drv.c **** 				{
+ 200:../driver/button_drv.c **** 					pstBtn->Event = (INT8U)BTN_EVT_DOUBLE;
+ 201:../driver/button_drv.c **** 					EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_DOUBLE); 
+ 202:../driver/button_drv.c **** 				}
+ 203:../driver/button_drv.c **** 				pstBtn->State = 0;
+ 204:../driver/button_drv.c **** 			}
+ 205:../driver/button_drv.c **** 			break;
+ 206:../driver/button_drv.c **** 
+ 207:../driver/button_drv.c **** 		case 3:
+ 208:../driver/button_drv.c **** 			if (pstBtn->LastLevel != pstBtn->ActiveLevel) 
+ 209:../driver/button_drv.c **** 			{
+ 210:../driver/button_drv.c **** 				pstBtn->Event = (INT8U)BTN_EVT_UP;
+ 211:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_UP);
+ 212:../driver/button_drv.c **** 				
+ 213:../driver/button_drv.c **** 				if (pstBtn->Ticks < pstBtn->ShortTicks) 
+ 214:../driver/button_drv.c **** 				{
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 7
+
+
+ 215:../driver/button_drv.c **** 					pstBtn->Ticks = 0;
+ 216:../driver/button_drv.c **** 					pstBtn->State = 2; 
+ 217:../driver/button_drv.c **** 				} 
+ 218:../driver/button_drv.c **** 				else 
+ 219:../driver/button_drv.c **** 				{
+ 220:../driver/button_drv.c **** 					pstBtn->State = 0;
+ 221:../driver/button_drv.c **** 				}
+ 222:../driver/button_drv.c **** 			}
+ 223:../driver/button_drv.c **** 			break;
+ 224:../driver/button_drv.c **** 
+ 225:../driver/button_drv.c **** 		case 4:
+ 226:../driver/button_drv.c **** 			if (pstBtn->LastLevel == pstBtn->ActiveLevel) 
+ 227:../driver/button_drv.c **** 			{
+ 228:../driver/button_drv.c **** 				if (pstBtn->LongHoldPeriod > 0)
+ 229:../driver/button_drv.c **** 				{
+ 230:../driver/button_drv.c **** 					if (pstBtn->Ticks % pstBtn->LongHoldPeriod == 0)
+ 231:../driver/button_drv.c **** 					{
+ 232:../driver/button_drv.c ****                         pstBtn->Event = (INT8U)BTN_EVT_LONG_HOLD;
+ 233:../driver/button_drv.c **** 						EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_LONG_HOLD);
+ 234:../driver/button_drv.c **** 					}
+ 235:../driver/button_drv.c **** 				}
+ 236:../driver/button_drv.c **** 			} 
+ 237:../driver/button_drv.c **** 			else 
+ 238:../driver/button_drv.c **** 			{
+ 239:../driver/button_drv.c **** 				pstBtn->Event = (INT8U)BTN_EVT_UP;
+ 240:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_UP);
+ 241:../driver/button_drv.c **** 				
+ 242:../driver/button_drv.c **** 				pstBtn->State = 0; 
+ 243:../driver/button_drv.c **** 			}
+ 244:../driver/button_drv.c **** 			break;
+ 245:../driver/button_drv.c ****     }
+ 246:../driver/button_drv.c **** }
+ 128              		.loc 1 246 1 view .LVU34
+ 129 0078 10BD     		pop	{r4, pc}
+ 130              	.LVL5:
+ 131              	.L26:
+ 151:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_DOWN);
+ 132              		.loc 1 151 5 is_stmt 1 view .LVU35
+ 151:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_DOWN);
+ 133              		.loc 1 151 19 is_stmt 0 view .LVU36
+ 134 007a A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 135 007c 6FF30713 		bfc	r3, #4, #4
+ 136 0080 A371     		strb	r3, [r4, #6]
+ 152:../driver/button_drv.c **** 				pstBtn->Ticks  = 0;
+ 137              		.loc 1 152 5 is_stmt 1 view .LVU37
+ 152:../driver/button_drv.c **** 				pstBtn->Ticks  = 0;
+ 138              		.loc 1 152 5 view .LVU38
+ 139 0082 E368     		ldr	r3, [r4, #12]
+ 140 0084 0BB1     		cbz	r3, .L13
+ 152:../driver/button_drv.c **** 				pstBtn->Ticks  = 0;
+ 141              		.loc 1 152 5 discriminator 1 view .LVU39
+ 142 0086 2046     		mov	r0, r4
+ 143 0088 9847     		blx	r3
+ 144              	.LVL6:
+ 145              	.L13:
+ 152:../driver/button_drv.c **** 				pstBtn->Ticks  = 0;
+ 146              		.loc 1 152 5 discriminator 3 view .LVU40
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 8
+
+
+ 153:../driver/button_drv.c **** 				pstBtn->Repeat = 1;
+ 147              		.loc 1 153 5 discriminator 3 view .LVU41
+ 153:../driver/button_drv.c **** 				pstBtn->Repeat = 1;
+ 148              		.loc 1 153 20 is_stmt 0 discriminator 3 view .LVU42
+ 149 008a 0023     		movs	r3, #0
+ 150 008c 2380     		strh	r3, [r4]	@ movhi
+ 154:../driver/button_drv.c **** 				pstBtn->State  = 1; 
+ 151              		.loc 1 154 5 is_stmt 1 discriminator 3 view .LVU43
+ 154:../driver/button_drv.c **** 				pstBtn->State  = 1; 
+ 152              		.loc 1 154 20 is_stmt 0 discriminator 3 view .LVU44
+ 153 008e A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 154 0090 0122     		movs	r2, #1
+ 155 0092 62F30303 		bfi	r3, r2, #0, #4
+ 156 0096 A371     		strb	r3, [r4, #6]
+ 155:../driver/button_drv.c **** 			} 
+ 157              		.loc 1 155 5 is_stmt 1 discriminator 3 view .LVU45
+ 155:../driver/button_drv.c **** 			} 
+ 158              		.loc 1 155 20 is_stmt 0 discriminator 3 view .LVU46
+ 159 0098 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 160 009a 62F30203 		bfi	r3, r2, #0, #3
+ 161 009e E371     		strb	r3, [r4, #7]
+ 162 00a0 EAE7     		b	.L1
+ 163              	.L10:
+ 164:../driver/button_drv.c **** 			{ 
+ 164              		.loc 1 164 4 is_stmt 1 view .LVU47
+ 164:../driver/button_drv.c **** 			{ 
+ 165              		.loc 1 164 14 is_stmt 0 view .LVU48
+ 166 00a2 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 164:../driver/button_drv.c **** 			{ 
+ 167              		.loc 1 164 35 view .LVU49
+ 168 00a4 C3F38012 		ubfx	r2, r3, #6, #1
+ 164:../driver/button_drv.c **** 			{ 
+ 169              		.loc 1 164 7 view .LVU50
+ 170 00a8 B2EBD31F 		cmp	r2, r3, lsr #7
+ 171 00ac 10D0     		beq	.L14
+ 166:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_UP);
+ 172              		.loc 1 166 5 is_stmt 1 view .LVU51
+ 166:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_UP);
+ 173              		.loc 1 166 19 is_stmt 0 view .LVU52
+ 174 00ae A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 175 00b0 0122     		movs	r2, #1
+ 176 00b2 62F30713 		bfi	r3, r2, #4, #4
+ 177 00b6 A371     		strb	r3, [r4, #6]
+ 167:../driver/button_drv.c **** 				pstBtn->Ticks = 0;
+ 178              		.loc 1 167 5 is_stmt 1 view .LVU53
+ 167:../driver/button_drv.c **** 				pstBtn->Ticks = 0;
+ 179              		.loc 1 167 5 view .LVU54
+ 180 00b8 2369     		ldr	r3, [r4, #16]
+ 181 00ba 0BB1     		cbz	r3, .L15
+ 167:../driver/button_drv.c **** 				pstBtn->Ticks = 0;
+ 182              		.loc 1 167 5 discriminator 1 view .LVU55
+ 183 00bc 2046     		mov	r0, r4
+ 184 00be 9847     		blx	r3
+ 185              	.LVL7:
+ 186              	.L15:
+ 167:../driver/button_drv.c **** 				pstBtn->Ticks = 0;
+ 187              		.loc 1 167 5 discriminator 3 view .LVU56
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 9
+
+
+ 168:../driver/button_drv.c **** 				pstBtn->State = 2;
+ 188              		.loc 1 168 5 discriminator 3 view .LVU57
+ 168:../driver/button_drv.c **** 				pstBtn->State = 2;
+ 189              		.loc 1 168 19 is_stmt 0 discriminator 3 view .LVU58
+ 190 00c0 0023     		movs	r3, #0
+ 191 00c2 2380     		strh	r3, [r4]	@ movhi
+ 169:../driver/button_drv.c **** 			} 
+ 192              		.loc 1 169 5 is_stmt 1 discriminator 3 view .LVU59
+ 169:../driver/button_drv.c **** 			} 
+ 193              		.loc 1 169 19 is_stmt 0 discriminator 3 view .LVU60
+ 194 00c4 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 195 00c6 0222     		movs	r2, #2
+ 196 00c8 62F30203 		bfi	r3, r2, #0, #3
+ 197 00cc E371     		strb	r3, [r4, #7]
+ 198 00ce D3E7     		b	.L1
+ 199              	.L14:
+ 171:../driver/button_drv.c **** 			{
+ 200              		.loc 1 171 9 is_stmt 1 view .LVU61
+ 171:../driver/button_drv.c **** 			{
+ 201              		.loc 1 171 19 is_stmt 0 view .LVU62
+ 202 00d0 6388     		ldrh	r3, [r4, #2]
+ 171:../driver/button_drv.c **** 			{
+ 203              		.loc 1 171 12 view .LVU63
+ 204 00d2 002B     		cmp	r3, #0
+ 205 00d4 D0D0     		beq	.L1
+ 173:../driver/button_drv.c ****                 {
+ 206              		.loc 1 173 17 is_stmt 1 view .LVU64
+ 173:../driver/button_drv.c ****                 {
+ 207              		.loc 1 173 27 is_stmt 0 view .LVU65
+ 208 00d6 2288     		ldrh	r2, [r4]
+ 173:../driver/button_drv.c ****                 {
+ 209              		.loc 1 173 20 view .LVU66
+ 210 00d8 9342     		cmp	r3, r2
+ 211 00da CDD2     		bcs	.L1
+ 175:../driver/button_drv.c ****                     EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_LONG);
+ 212              		.loc 1 175 21 is_stmt 1 view .LVU67
+ 175:../driver/button_drv.c ****                     EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_LONG);
+ 213              		.loc 1 175 35 is_stmt 0 view .LVU68
+ 214 00dc A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 215 00de 0422     		movs	r2, #4
+ 216 00e0 62F30713 		bfi	r3, r2, #4, #4
+ 217 00e4 A371     		strb	r3, [r4, #6]
+ 176:../driver/button_drv.c ****                     pstBtn->State = 4; 
+ 218              		.loc 1 176 21 is_stmt 1 view .LVU69
+ 176:../driver/button_drv.c ****                     pstBtn->State = 4; 
+ 219              		.loc 1 176 21 view .LVU70
+ 220 00e6 E369     		ldr	r3, [r4, #28]
+ 221 00e8 0BB1     		cbz	r3, .L16
+ 176:../driver/button_drv.c ****                     pstBtn->State = 4; 
+ 222              		.loc 1 176 21 discriminator 1 view .LVU71
+ 223 00ea 2046     		mov	r0, r4
+ 224 00ec 9847     		blx	r3
+ 225              	.LVL8:
+ 226              	.L16:
+ 176:../driver/button_drv.c ****                     pstBtn->State = 4; 
+ 227              		.loc 1 176 21 discriminator 3 view .LVU72
+ 177:../driver/button_drv.c ****                 }
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 10
+
+
+ 228              		.loc 1 177 21 discriminator 3 view .LVU73
+ 177:../driver/button_drv.c ****                 }
+ 229              		.loc 1 177 35 is_stmt 0 discriminator 3 view .LVU74
+ 230 00ee E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 231 00f0 0422     		movs	r2, #4
+ 232 00f2 62F30203 		bfi	r3, r2, #0, #3
+ 233 00f6 E371     		strb	r3, [r4, #7]
+ 234 00f8 BEE7     		b	.L1
+ 235              	.L9:
+ 183:../driver/button_drv.c **** 			{ 
+ 236              		.loc 1 183 4 is_stmt 1 view .LVU75
+ 183:../driver/button_drv.c **** 			{ 
+ 237              		.loc 1 183 14 is_stmt 0 view .LVU76
+ 238 00fa E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 183:../driver/button_drv.c **** 			{ 
+ 239              		.loc 1 183 35 view .LVU77
+ 240 00fc C3F38012 		ubfx	r2, r3, #6, #1
+ 183:../driver/button_drv.c **** 			{ 
+ 241              		.loc 1 183 7 view .LVU78
+ 242 0100 B2EBD31F 		cmp	r2, r3, lsr #7
+ 243 0104 0FD0     		beq	.L27
+ 191:../driver/button_drv.c **** 			{ 
+ 244              		.loc 1 191 9 is_stmt 1 view .LVU79
+ 191:../driver/button_drv.c **** 			{ 
+ 245              		.loc 1 191 19 is_stmt 0 view .LVU80
+ 246 0106 2288     		ldrh	r2, [r4]
+ 191:../driver/button_drv.c **** 			{ 
+ 247              		.loc 1 191 27 view .LVU81
+ 248 0108 6379     		ldrb	r3, [r4, #5]	@ zero_extendqisi2
+ 191:../driver/button_drv.c **** 			{ 
+ 249              		.loc 1 191 12 view .LVU82
+ 250 010a 9A42     		cmp	r2, r3
+ 251 010c B4D9     		bls	.L1
+ 193:../driver/button_drv.c **** 				{
+ 252              		.loc 1 193 5 is_stmt 1 view .LVU83
+ 193:../driver/button_drv.c **** 				{
+ 253              		.loc 1 193 24 is_stmt 0 view .LVU84
+ 254 010e A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 255 0110 03F00F03 		and	r3, r3, #15
+ 193:../driver/button_drv.c **** 				{
+ 256              		.loc 1 193 8 view .LVU85
+ 257 0114 012B     		cmp	r3, #1
+ 258 0116 1DD0     		beq	.L28
+ 198:../driver/button_drv.c **** 				{
+ 259              		.loc 1 198 10 is_stmt 1 view .LVU86
+ 198:../driver/button_drv.c **** 				{
+ 260              		.loc 1 198 13 is_stmt 0 view .LVU87
+ 261 0118 022B     		cmp	r3, #2
+ 262 011a 26D0     		beq	.L29
+ 263              	.L20:
+ 201:../driver/button_drv.c **** 				}
+ 264              		.loc 1 201 6 is_stmt 1 discriminator 3 view .LVU88
+ 203:../driver/button_drv.c **** 			}
+ 265              		.loc 1 203 5 discriminator 3 view .LVU89
+ 203:../driver/button_drv.c **** 			}
+ 266              		.loc 1 203 19 is_stmt 0 discriminator 3 view .LVU90
+ 267 011c E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 11
+
+
+ 268 011e 6FF30203 		bfc	r3, #0, #3
+ 269 0122 E371     		strb	r3, [r4, #7]
+ 270 0124 A8E7     		b	.L1
+ 271              	.L27:
+ 185:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_DOWN);
+ 272              		.loc 1 185 5 is_stmt 1 view .LVU91
+ 185:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_DOWN);
+ 273              		.loc 1 185 19 is_stmt 0 view .LVU92
+ 274 0126 A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 275 0128 6FF30713 		bfc	r3, #4, #4
+ 276 012c A371     		strb	r3, [r4, #6]
+ 186:../driver/button_drv.c **** 				pstBtn->Repeat++;
+ 277              		.loc 1 186 5 is_stmt 1 view .LVU93
+ 186:../driver/button_drv.c **** 				pstBtn->Repeat++;
+ 278              		.loc 1 186 5 view .LVU94
+ 279 012e E368     		ldr	r3, [r4, #12]
+ 280 0130 0BB1     		cbz	r3, .L18
+ 186:../driver/button_drv.c **** 				pstBtn->Repeat++;
+ 281              		.loc 1 186 5 discriminator 1 view .LVU95
+ 282 0132 2046     		mov	r0, r4
+ 283 0134 9847     		blx	r3
+ 284              	.LVL9:
+ 285              	.L18:
+ 186:../driver/button_drv.c **** 				pstBtn->Repeat++;
+ 286              		.loc 1 186 5 discriminator 3 view .LVU96
+ 187:../driver/button_drv.c **** 				pstBtn->Ticks = 0;
+ 287              		.loc 1 187 5 discriminator 3 view .LVU97
+ 187:../driver/button_drv.c **** 				pstBtn->Ticks = 0;
+ 288              		.loc 1 187 11 is_stmt 0 discriminator 3 view .LVU98
+ 289 0136 A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 290 0138 03F00F02 		and	r2, r3, #15
+ 187:../driver/button_drv.c **** 				pstBtn->Ticks = 0;
+ 291              		.loc 1 187 19 discriminator 3 view .LVU99
+ 292 013c 0132     		adds	r2, r2, #1
+ 293 013e 62F30303 		bfi	r3, r2, #0, #4
+ 294 0142 A371     		strb	r3, [r4, #6]
+ 188:../driver/button_drv.c **** 				pstBtn->State = 3;
+ 295              		.loc 1 188 5 is_stmt 1 discriminator 3 view .LVU100
+ 188:../driver/button_drv.c **** 				pstBtn->State = 3;
+ 296              		.loc 1 188 19 is_stmt 0 discriminator 3 view .LVU101
+ 297 0144 0023     		movs	r3, #0
+ 298 0146 2380     		strh	r3, [r4]	@ movhi
+ 189:../driver/button_drv.c **** 			} 
+ 299              		.loc 1 189 5 is_stmt 1 discriminator 3 view .LVU102
+ 189:../driver/button_drv.c **** 			} 
+ 300              		.loc 1 189 19 is_stmt 0 discriminator 3 view .LVU103
+ 301 0148 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 302 014a 0322     		movs	r2, #3
+ 303 014c 62F30203 		bfi	r3, r2, #0, #3
+ 304 0150 E371     		strb	r3, [r4, #7]
+ 305 0152 91E7     		b	.L1
+ 306              	.L28:
+ 195:../driver/button_drv.c **** 					EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_SINGLE);
+ 307              		.loc 1 195 6 is_stmt 1 view .LVU104
+ 195:../driver/button_drv.c **** 					EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_SINGLE);
+ 308              		.loc 1 195 20 is_stmt 0 view .LVU105
+ 309 0154 A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 12
+
+
+ 310 0156 0222     		movs	r2, #2
+ 311 0158 62F30713 		bfi	r3, r2, #4, #4
+ 312 015c A371     		strb	r3, [r4, #6]
+ 196:../driver/button_drv.c **** 				} 
+ 313              		.loc 1 196 6 is_stmt 1 view .LVU106
+ 196:../driver/button_drv.c **** 				} 
+ 314              		.loc 1 196 6 view .LVU107
+ 315 015e 6369     		ldr	r3, [r4, #20]
+ 316 0160 002B     		cmp	r3, #0
+ 317 0162 DBD0     		beq	.L20
+ 196:../driver/button_drv.c **** 				} 
+ 318              		.loc 1 196 6 discriminator 1 view .LVU108
+ 319 0164 2046     		mov	r0, r4
+ 320 0166 9847     		blx	r3
+ 321              	.LVL10:
+ 322 0168 D8E7     		b	.L20
+ 323              	.L29:
+ 200:../driver/button_drv.c **** 					EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_DOUBLE); 
+ 324              		.loc 1 200 6 view .LVU109
+ 200:../driver/button_drv.c **** 					EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_DOUBLE); 
+ 325              		.loc 1 200 20 is_stmt 0 view .LVU110
+ 326 016a A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 327 016c 0322     		movs	r2, #3
+ 328 016e 62F30713 		bfi	r3, r2, #4, #4
+ 329 0172 A371     		strb	r3, [r4, #6]
+ 201:../driver/button_drv.c **** 				}
+ 330              		.loc 1 201 6 is_stmt 1 view .LVU111
+ 201:../driver/button_drv.c **** 				}
+ 331              		.loc 1 201 6 view .LVU112
+ 332 0174 A369     		ldr	r3, [r4, #24]
+ 333 0176 002B     		cmp	r3, #0
+ 334 0178 D0D0     		beq	.L20
+ 201:../driver/button_drv.c **** 				}
+ 335              		.loc 1 201 6 discriminator 1 view .LVU113
+ 336 017a 2046     		mov	r0, r4
+ 337 017c 9847     		blx	r3
+ 338              	.LVL11:
+ 339 017e CDE7     		b	.L20
+ 340              	.L8:
+ 208:../driver/button_drv.c **** 			{
+ 341              		.loc 1 208 4 view .LVU114
+ 208:../driver/button_drv.c **** 			{
+ 342              		.loc 1 208 14 is_stmt 0 view .LVU115
+ 343 0180 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 208:../driver/button_drv.c **** 			{
+ 344              		.loc 1 208 35 view .LVU116
+ 345 0182 C3F38012 		ubfx	r2, r3, #6, #1
+ 208:../driver/button_drv.c **** 			{
+ 346              		.loc 1 208 7 view .LVU117
+ 347 0186 B2EBD31F 		cmp	r2, r3, lsr #7
+ 348 018a 3FF475AF 		beq	.L1
+ 210:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_UP);
+ 349              		.loc 1 210 5 is_stmt 1 view .LVU118
+ 210:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_UP);
+ 350              		.loc 1 210 19 is_stmt 0 view .LVU119
+ 351 018e A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 352 0190 0122     		movs	r2, #1
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 13
+
+
+ 353 0192 62F30713 		bfi	r3, r2, #4, #4
+ 354 0196 A371     		strb	r3, [r4, #6]
+ 211:../driver/button_drv.c **** 				
+ 355              		.loc 1 211 5 is_stmt 1 view .LVU120
+ 211:../driver/button_drv.c **** 				
+ 356              		.loc 1 211 5 view .LVU121
+ 357 0198 2369     		ldr	r3, [r4, #16]
+ 358 019a 0BB1     		cbz	r3, .L21
+ 211:../driver/button_drv.c **** 				
+ 359              		.loc 1 211 5 discriminator 1 view .LVU122
+ 360 019c 2046     		mov	r0, r4
+ 361 019e 9847     		blx	r3
+ 362              	.LVL12:
+ 363              	.L21:
+ 211:../driver/button_drv.c **** 				
+ 364              		.loc 1 211 5 discriminator 3 view .LVU123
+ 213:../driver/button_drv.c **** 				{
+ 365              		.loc 1 213 5 discriminator 3 view .LVU124
+ 213:../driver/button_drv.c **** 				{
+ 366              		.loc 1 213 15 is_stmt 0 discriminator 3 view .LVU125
+ 367 01a0 2288     		ldrh	r2, [r4]
+ 213:../driver/button_drv.c **** 				{
+ 368              		.loc 1 213 23 discriminator 3 view .LVU126
+ 369 01a2 6379     		ldrb	r3, [r4, #5]	@ zero_extendqisi2
+ 213:../driver/button_drv.c **** 				{
+ 370              		.loc 1 213 8 discriminator 3 view .LVU127
+ 371 01a4 9A42     		cmp	r2, r3
+ 372 01a6 07D2     		bcs	.L22
+ 215:../driver/button_drv.c **** 					pstBtn->State = 2; 
+ 373              		.loc 1 215 6 is_stmt 1 view .LVU128
+ 215:../driver/button_drv.c **** 					pstBtn->State = 2; 
+ 374              		.loc 1 215 20 is_stmt 0 view .LVU129
+ 375 01a8 0023     		movs	r3, #0
+ 376 01aa 2380     		strh	r3, [r4]	@ movhi
+ 216:../driver/button_drv.c **** 				} 
+ 377              		.loc 1 216 6 is_stmt 1 view .LVU130
+ 216:../driver/button_drv.c **** 				} 
+ 378              		.loc 1 216 20 is_stmt 0 view .LVU131
+ 379 01ac E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 380 01ae 0222     		movs	r2, #2
+ 381 01b0 62F30203 		bfi	r3, r2, #0, #3
+ 382 01b4 E371     		strb	r3, [r4, #7]
+ 383 01b6 5FE7     		b	.L1
+ 384              	.L22:
+ 220:../driver/button_drv.c **** 				}
+ 385              		.loc 1 220 6 is_stmt 1 view .LVU132
+ 220:../driver/button_drv.c **** 				}
+ 386              		.loc 1 220 20 is_stmt 0 view .LVU133
+ 387 01b8 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 388 01ba 6FF30203 		bfc	r3, #0, #3
+ 389 01be E371     		strb	r3, [r4, #7]
+ 390 01c0 5AE7     		b	.L1
+ 391              	.L6:
+ 226:../driver/button_drv.c **** 			{
+ 392              		.loc 1 226 4 is_stmt 1 view .LVU134
+ 226:../driver/button_drv.c **** 			{
+ 393              		.loc 1 226 14 is_stmt 0 view .LVU135
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 14
+
+
+ 394 01c2 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 226:../driver/button_drv.c **** 			{
+ 395              		.loc 1 226 35 view .LVU136
+ 396 01c4 C3F38012 		ubfx	r2, r3, #6, #1
+ 226:../driver/button_drv.c **** 			{
+ 397              		.loc 1 226 7 view .LVU137
+ 398 01c8 B2EBD31F 		cmp	r2, r3, lsr #7
+ 399 01cc 0DD0     		beq	.L30
+ 239:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_UP);
+ 400              		.loc 1 239 5 is_stmt 1 view .LVU138
+ 239:../driver/button_drv.c **** 				EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_UP);
+ 401              		.loc 1 239 19 is_stmt 0 view .LVU139
+ 402 01ce A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 403 01d0 0122     		movs	r2, #1
+ 404 01d2 62F30713 		bfi	r3, r2, #4, #4
+ 405 01d6 A371     		strb	r3, [r4, #6]
+ 240:../driver/button_drv.c **** 				
+ 406              		.loc 1 240 5 is_stmt 1 view .LVU140
+ 240:../driver/button_drv.c **** 				
+ 407              		.loc 1 240 5 view .LVU141
+ 408 01d8 2369     		ldr	r3, [r4, #16]
+ 409 01da 0BB1     		cbz	r3, .L24
+ 240:../driver/button_drv.c **** 				
+ 410              		.loc 1 240 5 discriminator 1 view .LVU142
+ 411 01dc 2046     		mov	r0, r4
+ 412 01de 9847     		blx	r3
+ 413              	.LVL13:
+ 414              	.L24:
+ 240:../driver/button_drv.c **** 				
+ 415              		.loc 1 240 5 discriminator 3 view .LVU143
+ 242:../driver/button_drv.c **** 			}
+ 416              		.loc 1 242 5 discriminator 3 view .LVU144
+ 242:../driver/button_drv.c **** 			}
+ 417              		.loc 1 242 19 is_stmt 0 discriminator 3 view .LVU145
+ 418 01e0 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 419 01e2 6FF30203 		bfc	r3, #0, #3
+ 420 01e6 E371     		strb	r3, [r4, #7]
+ 421              		.loc 1 246 1 discriminator 3 view .LVU146
+ 422 01e8 46E7     		b	.L1
+ 423              	.L30:
+ 228:../driver/button_drv.c **** 				{
+ 424              		.loc 1 228 5 is_stmt 1 view .LVU147
+ 228:../driver/button_drv.c **** 				{
+ 425              		.loc 1 228 15 is_stmt 0 view .LVU148
+ 426 01ea 2379     		ldrb	r3, [r4, #4]	@ zero_extendqisi2
+ 228:../driver/button_drv.c **** 				{
+ 427              		.loc 1 228 8 view .LVU149
+ 428 01ec 002B     		cmp	r3, #0
+ 429 01ee 3FF443AF 		beq	.L1
+ 230:../driver/button_drv.c **** 					{
+ 430              		.loc 1 230 6 is_stmt 1 view .LVU150
+ 230:../driver/button_drv.c **** 					{
+ 431              		.loc 1 230 16 is_stmt 0 view .LVU151
+ 432 01f2 2288     		ldrh	r2, [r4]
+ 230:../driver/button_drv.c **** 					{
+ 433              		.loc 1 230 24 view .LVU152
+ 434 01f4 92FBF3F1 		sdiv	r1, r2, r3
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 15
+
+
+ 435 01f8 03FB1123 		mls	r3, r3, r1, r2
+ 230:../driver/button_drv.c **** 					{
+ 436              		.loc 1 230 9 view .LVU153
+ 437 01fc 002B     		cmp	r3, #0
+ 438 01fe 7FF43BAF 		bne	.L1
+ 232:../driver/button_drv.c **** 						EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_LONG_HOLD);
+ 439              		.loc 1 232 25 is_stmt 1 view .LVU154
+ 232:../driver/button_drv.c **** 						EVENT_CALLBACK_EXECUTE(pstBtn, BTN_EVT_LONG_HOLD);
+ 440              		.loc 1 232 39 is_stmt 0 view .LVU155
+ 441 0202 A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 442 0204 0522     		movs	r2, #5
+ 443 0206 62F30713 		bfi	r3, r2, #4, #4
+ 444 020a A371     		strb	r3, [r4, #6]
+ 233:../driver/button_drv.c **** 					}
+ 445              		.loc 1 233 7 is_stmt 1 view .LVU156
+ 233:../driver/button_drv.c **** 					}
+ 446              		.loc 1 233 7 view .LVU157
+ 447 020c 236A     		ldr	r3, [r4, #32]
+ 448 020e 002B     		cmp	r3, #0
+ 449 0210 3FF432AF 		beq	.L1
+ 233:../driver/button_drv.c **** 					}
+ 450              		.loc 1 233 7 discriminator 1 view .LVU158
+ 451 0214 2046     		mov	r0, r4
+ 452 0216 9847     		blx	r3
+ 453              	.LVL14:
+ 454 0218 2EE7     		b	.L1
+ 455              		.cfi_endproc
+ 456              	.LFE4:
+ 458              		.section	.text.button_init,"ax",%progbits
+ 459              		.align	1
+ 460              		.global	button_init
+ 461              		.syntax unified
+ 462              		.thumb
+ 463              		.thumb_func
+ 465              	button_init:
+ 466              	.LVL15:
+ 467              	.LFB0:
+  25:../driver/button_drv.c **** 	BUTTON_t * pstCurrBtn = s_pstBtnListHead;
+ 468              		.loc 1 25 1 view -0
+ 469              		.cfi_startproc
+ 470              		@ args = 0, pretend = 0, frame = 0
+ 471              		@ frame_needed = 0, uses_anonymous_args = 0
+  25:../driver/button_drv.c **** 	BUTTON_t * pstCurrBtn = s_pstBtnListHead;
+ 472              		.loc 1 25 1 is_stmt 0 view .LVU160
+ 473 0000 70B5     		push	{r4, r5, r6, lr}
+ 474              	.LCFI1:
+ 475              		.cfi_def_cfa_offset 16
+ 476              		.cfi_offset 4, -16
+ 477              		.cfi_offset 5, -12
+ 478              		.cfi_offset 6, -8
+ 479              		.cfi_offset 14, -4
+ 480 0002 0446     		mov	r4, r0
+ 481 0004 0D46     		mov	r5, r1
+ 482 0006 1646     		mov	r6, r2
+  26:../driver/button_drv.c **** 	
+ 483              		.loc 1 26 2 is_stmt 1 view .LVU161
+  26:../driver/button_drv.c **** 	
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 16
+
+
+ 484              		.loc 1 26 13 is_stmt 0 view .LVU162
+ 485 0008 144B     		ldr	r3, .L39
+ 486 000a 1B68     		ldr	r3, [r3]
+ 487              	.LVL16:
+  29:../driver/button_drv.c ****     {
+ 488              		.loc 1 29 5 is_stmt 1 view .LVU163
+  29:../driver/button_drv.c ****     {
+ 489              		.loc 1 29 11 is_stmt 0 view .LVU164
+ 490 000c 00E0     		b	.L32
+ 491              	.L38:
+  36:../driver/button_drv.c ****     }
+ 492              		.loc 1 36 9 is_stmt 1 view .LVU165
+  36:../driver/button_drv.c ****     }
+ 493              		.loc 1 36 20 is_stmt 0 view .LVU166
+ 494 000e 5B6A     		ldr	r3, [r3, #36]
+ 495              	.LVL17:
+ 496              	.L32:
+  29:../driver/button_drv.c ****     {
+ 497              		.loc 1 29 11 is_stmt 1 view .LVU167
+ 498 0010 1BB1     		cbz	r3, .L37
+  31:../driver/button_drv.c ****         {
+ 499              		.loc 1 31 9 view .LVU168
+  31:../driver/button_drv.c ****         {
+ 500              		.loc 1 31 12 is_stmt 0 view .LVU169
+ 501 0012 A342     		cmp	r3, r4
+ 502 0014 FBD1     		bne	.L38
+  34:../driver/button_drv.c ****         }
+ 503              		.loc 1 34 20 view .LVU170
+ 504 0016 0020     		movs	r0, #0
+ 505              	.LVL18:
+  34:../driver/button_drv.c ****         }
+ 506              		.loc 1 34 20 view .LVU171
+ 507 0018 1EE0     		b	.L33
+ 508              	.LVL19:
+ 509              	.L37:
+  39:../driver/button_drv.c ****     pstBtn->Event          = (INT8U)BTN_EVT_NONE;
+ 510              		.loc 1 39 2 is_stmt 1 view .LVU172
+ 511 001a 2822     		movs	r2, #40
+ 512              	.LVL20:
+  39:../driver/button_drv.c ****     pstBtn->Event          = (INT8U)BTN_EVT_NONE;
+ 513              		.loc 1 39 2 is_stmt 0 view .LVU173
+ 514 001c 0021     		movs	r1, #0
+ 515              	.LVL21:
+  39:../driver/button_drv.c ****     pstBtn->Event          = (INT8U)BTN_EVT_NONE;
+ 516              		.loc 1 39 2 view .LVU174
+ 517 001e 2046     		mov	r0, r4
+ 518              	.LVL22:
+  39:../driver/button_drv.c ****     pstBtn->Event          = (INT8U)BTN_EVT_NONE;
+ 519              		.loc 1 39 2 view .LVU175
+ 520 0020 FFF7FEFF 		bl	memset
+ 521              	.LVL23:
+  40:../driver/button_drv.c ****     pstBtn->GetPinLevel    = GetPinLevel;
+ 522              		.loc 1 40 5 is_stmt 1 view .LVU176
+  40:../driver/button_drv.c ****     pstBtn->GetPinLevel    = GetPinLevel;
+ 523              		.loc 1 40 28 is_stmt 0 view .LVU177
+ 524 0024 A379     		ldrb	r3, [r4, #6]	@ zero_extendqisi2
+ 525 0026 0722     		movs	r2, #7
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 17
+
+
+ 526 0028 62F30713 		bfi	r3, r2, #4, #4
+ 527 002c A371     		strb	r3, [r4, #6]
+  41:../driver/button_drv.c ****     pstBtn->LastLevel      = pstBtn->GetPinLevel();
+ 528              		.loc 1 41 5 is_stmt 1 view .LVU178
+  41:../driver/button_drv.c ****     pstBtn->LastLevel      = pstBtn->GetPinLevel();
+ 529              		.loc 1 41 28 is_stmt 0 view .LVU179
+ 530 002e A560     		str	r5, [r4, #8]
+  42:../driver/button_drv.c ****     pstBtn->ActiveLevel    = (BUTTON_ActiveLevel_t)ActiveLevel;
+ 531              		.loc 1 42 5 is_stmt 1 view .LVU180
+  42:../driver/button_drv.c ****     pstBtn->ActiveLevel    = (BUTTON_ActiveLevel_t)ActiveLevel;
+ 532              		.loc 1 42 30 is_stmt 0 view .LVU181
+ 533 0030 A847     		blx	r5
+ 534              	.LVL24:
+  42:../driver/button_drv.c ****     pstBtn->ActiveLevel    = (BUTTON_ActiveLevel_t)ActiveLevel;
+ 535              		.loc 1 42 28 view .LVU182
+ 536 0032 E379     		ldrb	r3, [r4, #7]	@ zero_extendqisi2
+ 537 0034 60F3C713 		bfi	r3, r0, #7, #1
+ 538 0038 E371     		strb	r3, [r4, #7]
+  43:../driver/button_drv.c **** 	pstBtn->ShortTicks     = 30;
+ 539              		.loc 1 43 5 is_stmt 1 view .LVU183
+  43:../driver/button_drv.c **** 	pstBtn->ShortTicks     = 30;
+ 540              		.loc 1 43 28 is_stmt 0 view .LVU184
+ 541 003a DBB2     		uxtb	r3, r3
+ 542 003c 66F38613 		bfi	r3, r6, #6, #1
+ 543 0040 E371     		strb	r3, [r4, #7]
+  44:../driver/button_drv.c **** 	pstBtn->LongTicks      = 50;
+ 544              		.loc 1 44 2 is_stmt 1 view .LVU185
+  44:../driver/button_drv.c **** 	pstBtn->LongTicks      = 50;
+ 545              		.loc 1 44 25 is_stmt 0 view .LVU186
+ 546 0042 1E23     		movs	r3, #30
+ 547 0044 6371     		strb	r3, [r4, #5]
+  45:../driver/button_drv.c **** 	pstBtn->LongHoldPeriod = 20;
+ 548              		.loc 1 45 2 is_stmt 1 view .LVU187
+  45:../driver/button_drv.c **** 	pstBtn->LongHoldPeriod = 20;
+ 549              		.loc 1 45 25 is_stmt 0 view .LVU188
+ 550 0046 3223     		movs	r3, #50
+ 551 0048 6380     		strh	r3, [r4, #2]	@ movhi
+  46:../driver/button_drv.c **** 	
+ 552              		.loc 1 46 2 is_stmt 1 view .LVU189
+  46:../driver/button_drv.c **** 	
+ 553              		.loc 1 46 25 is_stmt 0 view .LVU190
+ 554 004a 1423     		movs	r3, #20
+ 555 004c 2371     		strb	r3, [r4, #4]
+  48:../driver/button_drv.c **** 	s_pstBtnListHead = pstBtn;
+ 556              		.loc 1 48 2 is_stmt 1 view .LVU191
+  48:../driver/button_drv.c **** 	s_pstBtnListHead = pstBtn;
+ 557              		.loc 1 48 15 is_stmt 0 view .LVU192
+ 558 004e 034B     		ldr	r3, .L39
+ 559 0050 1A68     		ldr	r2, [r3]
+ 560 0052 6262     		str	r2, [r4, #36]
+  49:../driver/button_drv.c **** 	
+ 561              		.loc 1 49 2 is_stmt 1 view .LVU193
+  49:../driver/button_drv.c **** 	
+ 562              		.loc 1 49 19 is_stmt 0 view .LVU194
+ 563 0054 1C60     		str	r4, [r3]
+  51:../driver/button_drv.c **** }
+ 564              		.loc 1 51 2 is_stmt 1 view .LVU195
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 18
+
+
+  51:../driver/button_drv.c **** }
+ 565              		.loc 1 51 9 is_stmt 0 view .LVU196
+ 566 0056 0120     		movs	r0, #1
+ 567              	.L33:
+  52:../driver/button_drv.c **** 
+ 568              		.loc 1 52 1 view .LVU197
+ 569 0058 70BD     		pop	{r4, r5, r6, pc}
+ 570              	.LVL25:
+ 571              	.L40:
+  52:../driver/button_drv.c **** 
+ 572              		.loc 1 52 1 view .LVU198
+ 573 005a 00BF     		.align	2
+ 574              	.L39:
+ 575 005c 00000000 		.word	.LANCHOR0
+ 576              		.cfi_endproc
+ 577              	.LFE0:
+ 579              		.section	.text.button_set_time_param,"ax",%progbits
+ 580              		.align	1
+ 581              		.global	button_set_time_param
+ 582              		.syntax unified
+ 583              		.thumb
+ 584              		.thumb_func
+ 586              	button_set_time_param:
+ 587              	.LVL26:
+ 588              	.LFB1:
+  68:../driver/button_drv.c **** 	if (ShortTicks)
+ 589              		.loc 1 68 1 is_stmt 1 view -0
+ 590              		.cfi_startproc
+ 591              		@ args = 0, pretend = 0, frame = 0
+ 592              		@ frame_needed = 0, uses_anonymous_args = 0
+ 593              		@ link register save eliminated.
+  69:../driver/button_drv.c **** 	{
+ 594              		.loc 1 69 2 view .LVU200
+  69:../driver/button_drv.c **** 	{
+ 595              		.loc 1 69 5 is_stmt 0 view .LVU201
+ 596 0000 01B1     		cbz	r1, .L42
+  71:../driver/button_drv.c **** 	}
+ 597              		.loc 1 71 3 is_stmt 1 view .LVU202
+  71:../driver/button_drv.c **** 	}
+ 598              		.loc 1 71 22 is_stmt 0 view .LVU203
+ 599 0002 4171     		strb	r1, [r0, #5]
+ 600              	.L42:
+  74:../driver/button_drv.c **** 	{
+ 601              		.loc 1 74 2 is_stmt 1 view .LVU204
+  74:../driver/button_drv.c **** 	{
+ 602              		.loc 1 74 5 is_stmt 0 view .LVU205
+ 603 0004 02B1     		cbz	r2, .L43
+  76:../driver/button_drv.c **** 	}
+ 604              		.loc 1 76 3 is_stmt 1 view .LVU206
+  76:../driver/button_drv.c **** 	}
+ 605              		.loc 1 76 21 is_stmt 0 view .LVU207
+ 606 0006 4280     		strh	r2, [r0, #2]	@ movhi
+ 607              	.L43:
+  79:../driver/button_drv.c **** 	{
+ 608              		.loc 1 79 2 is_stmt 1 view .LVU208
+  79:../driver/button_drv.c **** 	{
+ 609              		.loc 1 79 5 is_stmt 0 view .LVU209
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 19
+
+
+ 610 0008 03B1     		cbz	r3, .L41
+  81:../driver/button_drv.c **** 	}
+ 611              		.loc 1 81 3 is_stmt 1 view .LVU210
+  81:../driver/button_drv.c **** 	}
+ 612              		.loc 1 81 26 is_stmt 0 view .LVU211
+ 613 000a 0371     		strb	r3, [r0, #4]
+ 614              	.L41:
+  83:../driver/button_drv.c **** 
+ 615              		.loc 1 83 1 view .LVU212
+ 616 000c 7047     		bx	lr
+ 617              		.cfi_endproc
+ 618              	.LFE1:
+ 620              		.section	.text.button_attach,"ax",%progbits
+ 621              		.align	1
+ 622              		.global	button_attach
+ 623              		.syntax unified
+ 624              		.thumb
+ 625              		.thumb_func
+ 627              	button_attach:
+ 628              	.LVL27:
+ 629              	.LFB2:
+  94:../driver/button_drv.c ****     pstBtn->CallBack[Event] = CallBack;
+ 630              		.loc 1 94 1 is_stmt 1 view -0
+ 631              		.cfi_startproc
+ 632              		@ args = 0, pretend = 0, frame = 0
+ 633              		@ frame_needed = 0, uses_anonymous_args = 0
+ 634              		@ link register save eliminated.
+  95:../driver/button_drv.c **** }
+ 635              		.loc 1 95 5 view .LVU214
+  95:../driver/button_drv.c **** }
+ 636              		.loc 1 95 29 is_stmt 0 view .LVU215
+ 637 0000 0231     		adds	r1, r1, #2
+ 638              	.LVL28:
+  95:../driver/button_drv.c **** }
+ 639              		.loc 1 95 29 view .LVU216
+ 640 0002 00EB8100 		add	r0, r0, r1, lsl #2
+ 641              	.LVL29:
+  95:../driver/button_drv.c **** }
+ 642              		.loc 1 95 29 view .LVU217
+ 643 0006 4260     		str	r2, [r0, #4]
+  96:../driver/button_drv.c **** 
+ 644              		.loc 1 96 1 view .LVU218
+ 645 0008 7047     		bx	lr
+ 646              		.cfi_endproc
+ 647              	.LFE2:
+ 649              		.section	.text.button_get_event,"ax",%progbits
+ 650              		.align	1
+ 651              		.global	button_get_event
+ 652              		.syntax unified
+ 653              		.thumb
+ 654              		.thumb_func
+ 656              	button_get_event:
+ 657              	.LVL30:
+ 658              	.LFB3:
+ 105:../driver/button_drv.c ****     return (BUTTON_Event_t)(pstBtn->Event);
+ 659              		.loc 1 105 1 is_stmt 1 view -0
+ 660              		.cfi_startproc
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 20
+
+
+ 661              		@ args = 0, pretend = 0, frame = 0
+ 662              		@ frame_needed = 0, uses_anonymous_args = 0
+ 663              		@ link register save eliminated.
+ 106:../driver/button_drv.c **** }
+ 664              		.loc 1 106 5 view .LVU220
+ 106:../driver/button_drv.c **** }
+ 665              		.loc 1 106 35 is_stmt 0 view .LVU221
+ 666 0000 8079     		ldrb	r0, [r0, #6]	@ zero_extendqisi2
+ 667              	.LVL31:
+ 107:../driver/button_drv.c **** 
+ 668              		.loc 1 107 1 view .LVU222
+ 669 0002 0009     		lsrs	r0, r0, #4
+ 670 0004 7047     		bx	lr
+ 671              		.cfi_endproc
+ 672              	.LFE3:
+ 674              		.section	.text.button_scan,"ax",%progbits
+ 675              		.align	1
+ 676              		.global	button_scan
+ 677              		.syntax unified
+ 678              		.thumb
+ 679              		.thumb_func
+ 681              	button_scan:
+ 682              	.LFB5:
+ 247:../driver/button_drv.c **** 
+ 248:../driver/button_drv.c **** /**@brief 按键扫描
+ 249:../driver/button_drv.c ****  *
+ 250:../driver/button_drv.c ****  * @note 应被周期性调用，建议时间5~20ms且为定时基准的整数倍
+ 251:../driver/button_drv.c ****  *
+ 252:../driver/button_drv.c ****  * @param 无
+ 253:../driver/button_drv.c ****  *
+ 254:../driver/button_drv.c ****  * @retval 无
+ 255:../driver/button_drv.c ****  */
+ 256:../driver/button_drv.c **** void button_scan(void)
+ 257:../driver/button_drv.c **** {
+ 683              		.loc 1 257 1 is_stmt 1 view -0
+ 684              		.cfi_startproc
+ 685              		@ args = 0, pretend = 0, frame = 0
+ 686              		@ frame_needed = 0, uses_anonymous_args = 0
+ 687 0000 10B5     		push	{r4, lr}
+ 688              	.LCFI2:
+ 689              		.cfi_def_cfa_offset 8
+ 690              		.cfi_offset 4, -8
+ 691              		.cfi_offset 14, -4
+ 258:../driver/button_drv.c **** 	BUTTON_t *pstCurrBtn = s_pstBtnListHead;
+ 692              		.loc 1 258 2 view .LVU224
+ 693              		.loc 1 258 12 is_stmt 0 view .LVU225
+ 694 0002 054B     		ldr	r3, .L51
+ 695 0004 1C68     		ldr	r4, [r3]
+ 696              	.LVL32:
+ 259:../driver/button_drv.c **** 
+ 260:../driver/button_drv.c ****     /* 遍历按键链表并依次处理 */
+ 261:../driver/button_drv.c ****     while (pstCurrBtn) 
+ 697              		.loc 1 261 5 is_stmt 1 view .LVU226
+ 698              		.loc 1 261 11 is_stmt 0 view .LVU227
+ 699 0006 03E0     		b	.L48
+ 700              	.L49:
+ 262:../driver/button_drv.c ****     {       
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 21
+
+
+ 263:../driver/button_drv.c ****         BUTTON_Handler(pstCurrBtn);
+ 701              		.loc 1 263 9 is_stmt 1 view .LVU228
+ 702 0008 2046     		mov	r0, r4
+ 703 000a FFF7FEFF 		bl	BUTTON_Handler
+ 704              	.LVL33:
+ 264:../driver/button_drv.c ****         pstCurrBtn = pstCurrBtn->Next;
+ 705              		.loc 1 264 9 view .LVU229
+ 706              		.loc 1 264 20 is_stmt 0 view .LVU230
+ 707 000e 646A     		ldr	r4, [r4, #36]
+ 708              	.LVL34:
+ 709              	.L48:
+ 261:../driver/button_drv.c ****     {       
+ 710              		.loc 1 261 11 is_stmt 1 view .LVU231
+ 711 0010 002C     		cmp	r4, #0
+ 712 0012 F9D1     		bne	.L49
+ 265:../driver/button_drv.c ****     }
+ 266:../driver/button_drv.c **** }
+ 713              		.loc 1 266 1 is_stmt 0 view .LVU232
+ 714 0014 10BD     		pop	{r4, pc}
+ 715              	.LVL35:
+ 716              	.L52:
+ 717              		.loc 1 266 1 view .LVU233
+ 718 0016 00BF     		.align	2
+ 719              	.L51:
+ 720 0018 00000000 		.word	.LANCHOR0
+ 721              		.cfi_endproc
+ 722              	.LFE5:
+ 724              		.section	.text.button_reset,"ax",%progbits
+ 725              		.align	1
+ 726              		.global	button_reset
+ 727              		.syntax unified
+ 728              		.thumb
+ 729              		.thumb_func
+ 731              	button_reset:
+ 732              	.LFB6:
+ 267:../driver/button_drv.c **** 
+ 268:../driver/button_drv.c **** /**@brief 按键复位
+ 269:../driver/button_drv.c ****  *
+ 270:../driver/button_drv.c ****  * @param 无
+ 271:../driver/button_drv.c ****  *
+ 272:../driver/button_drv.c ****  * @retval 无
+ 273:../driver/button_drv.c ****  */
+ 274:../driver/button_drv.c **** void button_reset(void)
+ 275:../driver/button_drv.c **** {
+ 733              		.loc 1 275 1 is_stmt 1 view -0
+ 734              		.cfi_startproc
+ 735              		@ args = 0, pretend = 0, frame = 0
+ 736              		@ frame_needed = 0, uses_anonymous_args = 0
+ 737              		@ link register save eliminated.
+ 276:../driver/button_drv.c **** 	BUTTON_t *pstCurrBtn = s_pstBtnListHead;
+ 738              		.loc 1 276 2 view .LVU235
+ 739              		.loc 1 276 12 is_stmt 0 view .LVU236
+ 740 0000 0C4B     		ldr	r3, .L56
+ 741 0002 1B68     		ldr	r3, [r3]
+ 742              	.LVL36:
+ 277:../driver/button_drv.c **** 
+ 278:../driver/button_drv.c ****     while (pstCurrBtn) 
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 22
+
+
+ 743              		.loc 1 278 5 is_stmt 1 view .LVU237
+ 744              		.loc 1 278 11 is_stmt 0 view .LVU238
+ 745 0004 13E0     		b	.L54
+ 746              	.L55:
+ 279:../driver/button_drv.c ****     {
+ 280:../driver/button_drv.c ****         pstCurrBtn->State = 0;
+ 747              		.loc 1 280 9 is_stmt 1 view .LVU239
+ 748              		.loc 1 280 27 is_stmt 0 view .LVU240
+ 749 0006 DA79     		ldrb	r2, [r3, #7]	@ zero_extendqisi2
+ 750 0008 6FF30202 		bfc	r2, #0, #3
+ 751 000c DA71     		strb	r2, [r3, #7]
+ 281:../driver/button_drv.c ****         pstCurrBtn->DebounceCnt = 0;
+ 752              		.loc 1 281 9 is_stmt 1 view .LVU241
+ 753              		.loc 1 281 33 is_stmt 0 view .LVU242
+ 754 000e D2B2     		uxtb	r2, r2
+ 755 0010 6FF3C502 		bfc	r2, #3, #3
+ 756 0014 DA71     		strb	r2, [r3, #7]
+ 282:../driver/button_drv.c ****         pstCurrBtn->Ticks = 0;
+ 757              		.loc 1 282 9 is_stmt 1 view .LVU243
+ 758              		.loc 1 282 27 is_stmt 0 view .LVU244
+ 759 0016 0021     		movs	r1, #0
+ 760 0018 1980     		strh	r1, [r3]	@ movhi
+ 283:../driver/button_drv.c ****         pstCurrBtn->Repeat = 0;
+ 761              		.loc 1 283 9 is_stmt 1 view .LVU245
+ 762              		.loc 1 283 28 is_stmt 0 view .LVU246
+ 763 001a 9A79     		ldrb	r2, [r3, #6]	@ zero_extendqisi2
+ 764 001c 61F30302 		bfi	r2, r1, #0, #4
+ 765 0020 9A71     		strb	r2, [r3, #6]
+ 284:../driver/button_drv.c ****         pstCurrBtn->Event = (INT8U)BTN_EVT_NONE;
+ 766              		.loc 1 284 9 is_stmt 1 view .LVU247
+ 767              		.loc 1 284 27 is_stmt 0 view .LVU248
+ 768 0022 D2B2     		uxtb	r2, r2
+ 769 0024 0721     		movs	r1, #7
+ 770 0026 61F30712 		bfi	r2, r1, #4, #4
+ 771 002a 9A71     		strb	r2, [r3, #6]
+ 285:../driver/button_drv.c **** 		
+ 286:../driver/button_drv.c ****         pstCurrBtn = pstCurrBtn->Next;
+ 772              		.loc 1 286 9 is_stmt 1 view .LVU249
+ 773              		.loc 1 286 20 is_stmt 0 view .LVU250
+ 774 002c 5B6A     		ldr	r3, [r3, #36]
+ 775              	.LVL37:
+ 776              	.L54:
+ 278:../driver/button_drv.c ****     {
+ 777              		.loc 1 278 11 is_stmt 1 view .LVU251
+ 778 002e 002B     		cmp	r3, #0
+ 779 0030 E9D1     		bne	.L55
+ 287:../driver/button_drv.c ****     }
+ 288:../driver/button_drv.c **** }
+ 780              		.loc 1 288 1 is_stmt 0 view .LVU252
+ 781 0032 7047     		bx	lr
+ 782              	.L57:
+ 783              		.align	2
+ 784              	.L56:
+ 785 0034 00000000 		.word	.LANCHOR0
+ 786              		.cfi_endproc
+ 787              	.LFE6:
+ 789              		.section	.bss.s_pstBtnListHead,"aw",%nobits
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 23
+
+
+ 790              		.align	2
+ 791              		.set	.LANCHOR0,. + 0
+ 794              	s_pstBtnListHead:
+ 795 0000 00000000 		.space	4
+ 796              		.text
+ 797              	.Letext0:
+ 798              		.file 2 "../driver/general_type.h"
+ 799              		.file 3 "../driver/button_drv.h"
+ 800              		.file 4 "<built-in>"
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccnKVALC.s 			page 24
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 button_drv.c
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:18     .text.BUTTON_Handler:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:23     .text.BUTTON_Handler:00000000 BUTTON_Handler
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:97     .text.BUTTON_Handler:00000052 $d
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:459    .text.button_init:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:465    .text.button_init:00000000 button_init
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:575    .text.button_init:0000005c $d
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:580    .text.button_set_time_param:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:586    .text.button_set_time_param:00000000 button_set_time_param
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:621    .text.button_attach:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:627    .text.button_attach:00000000 button_attach
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:650    .text.button_get_event:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:656    .text.button_get_event:00000000 button_get_event
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:675    .text.button_scan:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:681    .text.button_scan:00000000 button_scan
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:720    .text.button_scan:00000018 $d
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:725    .text.button_reset:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:731    .text.button_reset:00000000 button_reset
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:785    .text.button_reset:00000034 $d
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:790    .bss.s_pstBtnListHead:00000000 $d
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:794    .bss.s_pstBtnListHead:00000000 s_pstBtnListHead
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:103    .text.BUTTON_Handler:00000057 $d
+C:\Users\28470\AppData\Local\Temp\ccnKVALC.s:103    .text.BUTTON_Handler:00000058 $t
+
+UNDEFINED SYMBOLS
+memset

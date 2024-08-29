@@ -1,0 +1,482 @@
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"delay.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.delay_init,"ax",%progbits
+  18              		.align	1
+  19              		.global	delay_init
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	delay_init:
+  25              	.LFB29:
+  26              		.file 1 "../system/delay/delay.c"
+   1:../system/delay/delay.c **** #include "delay.h"
+   2:../system/delay/delay.c **** ////////////////////////////////////////////////////////////////////////////////// 	 
+   3:../system/delay/delay.c **** //Èç¹ûÐèÒªÊ¹ÓÃOS,Ôò°üÀ¨ÏÂÃæµÄÍ·ÎÄ¼þ¼´¿É.
+   4:../system/delay/delay.c **** #if SYSTEM_SUPPORT_OS
+   5:../system/delay/delay.c **** #include "includes.h"					//ucos Ê¹ÓÃ	  
+   6:../system/delay/delay.c **** #endif
+   7:../system/delay/delay.c **** //////////////////////////////////////////////////////////////////////////////////	 
+   8:../system/delay/delay.c **** //±¾³ÌÐòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßÐí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
+   9:../system/delay/delay.c **** //ALIENTEK STM32¿ª·¢°å
+  10:../system/delay/delay.c **** //Ê¹ÓÃSysTickµÄÆÕÍ¨¼ÆÊýÄ£Ê½¶ÔÑÓ³Ù½øÐÐ¹ÜÀí£¨ÊÊºÏSTM32F10xÏµÁÐ£©
+  11:../system/delay/delay.c **** //°üÀ¨delay_us,delay_ms
+  12:../system/delay/delay.c **** //ÕýµãÔ­×Ó@ALIENTEK
+  13:../system/delay/delay.c **** //¼¼ÊõÂÛÌ³:www.openedv.com
+  14:../system/delay/delay.c **** //´´½¨ÈÕÆÚ:2010/1/1
+  15:../system/delay/delay.c **** //°æ±¾£ºV1.8
+  16:../system/delay/delay.c **** //°æÈ¨ËùÓÐ£¬µÁ°æ±Ø¾¿¡£
+  17:../system/delay/delay.c **** //Copyright(C) ¹ãÖÝÊÐÐÇÒíµç×Ó¿Æ¼¼ÓÐÏÞ¹«Ë¾ 2009-2019
+  18:../system/delay/delay.c **** //All rights reserved
+  19:../system/delay/delay.c **** //********************************************************************************
+  20:../system/delay/delay.c **** //V1.2ÐÞ¸ÄËµÃ÷
+  21:../system/delay/delay.c **** //ÐÞÕýÁËÖÐ¶ÏÖÐµ÷ÓÃ³öÏÖËÀÑ­»·µÄ´íÎó
+  22:../system/delay/delay.c **** //·ÀÖ¹ÑÓÊ±²»×¼È·,²ÉÓÃdo while½á¹¹!
+  23:../system/delay/delay.c **** //V1.3ÐÞ¸ÄËµÃ÷
+  24:../system/delay/delay.c **** //Ôö¼ÓÁË¶ÔUCOSIIÑÓÊ±µÄÖ§³Ö.
+  25:../system/delay/delay.c **** //Èç¹ûÊ¹ÓÃucosII,delay_init»á×Ô¶¯ÉèÖÃSYSTICKµÄÖµ,Ê¹Ö®ÓëucosµÄTICKS_PER_SEC¶ÔÓ¦.
+  26:../system/delay/delay.c **** //delay_msºÍdelay_usÒ²½øÐÐÁËÕë¶ÔucosµÄ¸ÄÔì.
+  27:../system/delay/delay.c **** //delay_us¿ÉÒÔÔÚucosÏÂÊ¹ÓÃ,¶øÇÒ×¼È·¶ÈºÜ¸ß,¸üÖØÒªµÄÊÇÃ»ÓÐÕ¼ÓÃ¶îÍâµÄ¶¨Ê±Æ÷.
+  28:../system/delay/delay.c **** //delay_msÔÚucosÏÂ,¿ÉÒÔµ±³ÉOSTimeDlyÀ´ÓÃ,ÔÚÎ´Æô¶¯ucosÊ±,Ëü²ÉÓÃdelay_usÊµÏÖ,´Ó¶ø×¼È·ÑÓÊ±
+  29:../system/delay/delay.c **** //¿ÉÒÔÓÃÀ´³õÊ¼»¯ÍâÉè,ÔÚÆô¶¯ÁËucosÖ®ºódelay_ms¸ù¾ÝÑÓÊ±µÄ³¤¶Ì,Ñ¡ÔñOSTimeDlyÊµÏÖ»òÕßdelay_usÊµÏÖ.
+  30:../system/delay/delay.c **** //V1.4ÐÞ¸ÄËµÃ÷ 20110929
+  31:../system/delay/delay.c **** //ÐÞ¸ÄÁËÊ¹ÓÃucos,µ«ÊÇucosÎ´Æô¶¯µÄÊ±ºò,delay_msÖÐÖÐ¶ÏÎÞ·¨ÏìÓ¦µÄbug.
+  32:../system/delay/delay.c **** //V1.5ÐÞ¸ÄËµÃ÷ 20120902
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s 			page 2
+
+
+  33:../system/delay/delay.c **** //ÔÚdelay_us¼ÓÈëucosÉÏËø£¬·ÀÖ¹ÓÉÓÚucos´ò¶Ïdelay_usµÄÖ´ÐÐ£¬¿ÉÄÜµ¼ÖÂµÄÑÓÊ±²»×¼¡£
+  34:../system/delay/delay.c **** //V1.6ÐÞ¸ÄËµÃ÷ 20150109
+  35:../system/delay/delay.c **** //ÔÚdelay_ms¼ÓÈëOSLockNestingÅÐ¶Ï¡£
+  36:../system/delay/delay.c **** //V1.7ÐÞ¸ÄËµÃ÷ 20150319
+  37:../system/delay/delay.c **** //ÐÞ¸ÄOSÖ§³Ö·½Ê½,ÒÔÖ§³ÖÈÎÒâOS(²»ÏÞÓÚUCOSIIºÍUCOSIII,ÀíÂÛÉÏÈÎÒâOS¶¼¿ÉÒÔÖ§³Ö)
+  38:../system/delay/delay.c **** //Ìí¼Ó:delay_osrunning/delay_ostickspersec/delay_osintnestingÈý¸öºê¶¨Òå
+  39:../system/delay/delay.c **** //Ìí¼Ó:delay_osschedlock/delay_osschedunlock/delay_ostimedlyÈý¸öº¯Êý
+  40:../system/delay/delay.c **** //V1.8ÐÞ¸ÄËµÃ÷ 20150519
+  41:../system/delay/delay.c **** //ÐÞÕýUCOSIIIÖ§³ÖÊ±µÄ2¸öbug£º
+  42:../system/delay/delay.c **** //delay_tickspersec¸ÄÎª£ºdelay_ostickspersec
+  43:../system/delay/delay.c **** //delay_intnesting¸ÄÎª£ºdelay_osintnesting
+  44:../system/delay/delay.c **** //////////////////////////////////////////////////////////////////////////////////  
+  45:../system/delay/delay.c **** 
+  46:../system/delay/delay.c **** static u8  fac_us=0;							//usÑÓÊ±±¶³ËÊý			   
+  47:../system/delay/delay.c **** static u16 fac_ms=0;							//msÑÓÊ±±¶³ËÊý,ÔÚucosÏÂ,´ú±íÃ¿¸ö½ÚÅÄµÄmsÊý
+  48:../system/delay/delay.c **** 	
+  49:../system/delay/delay.c **** 	
+  50:../system/delay/delay.c **** #if SYSTEM_SUPPORT_OS							//Èç¹ûSYSTEM_SUPPORT_OS¶¨ÒåÁË,ËµÃ÷ÒªÖ§³ÖOSÁË(²»ÏÞÓÚUCOS).
+  51:../system/delay/delay.c **** //µ±delay_us/delay_msÐèÒªÖ§³ÖOSµÄÊ±ºòÐèÒªÈý¸öÓëOSÏà¹ØµÄºê¶¨ÒåºÍº¯ÊýÀ´Ö§³Ö
+  52:../system/delay/delay.c **** //Ê×ÏÈÊÇ3¸öºê¶¨Òå:
+  53:../system/delay/delay.c **** //    delay_osrunning:ÓÃÓÚ±íÊ¾OSµ±Ç°ÊÇ·ñÕýÔÚÔËÐÐ,ÒÔ¾ö¶¨ÊÇ·ñ¿ÉÒÔÊ¹ÓÃÏà¹Øº¯Êý
+  54:../system/delay/delay.c **** //delay_ostickspersec:ÓÃÓÚ±íÊ¾OSÉè¶¨µÄÊ±ÖÓ½ÚÅÄ,delay_init½«¸ù¾ÝÕâ¸ö²ÎÊýÀ´³õÊ¼¹þsystick
+  55:../system/delay/delay.c **** // delay_osintnesting:ÓÃÓÚ±íÊ¾OSÖÐ¶ÏÇ¶Ì×¼¶±ð,ÒòÎªÖÐ¶ÏÀïÃæ²»¿ÉÒÔµ÷¶È,delay_msÊ¹ÓÃ¸Ã²ÎÊýÀ´¾ö¶¨ÈçºÎÔËÐ
+  56:../system/delay/delay.c **** //È»ºóÊÇ3¸öº¯Êý:
+  57:../system/delay/delay.c **** //  delay_osschedlock:ÓÃÓÚËø¶¨OSÈÎÎñµ÷¶È,½ûÖ¹µ÷¶È
+  58:../system/delay/delay.c **** //delay_osschedunlock:ÓÃÓÚ½âËøOSÈÎÎñµ÷¶È,ÖØÐÂ¿ªÆôµ÷¶È
+  59:../system/delay/delay.c **** //    delay_ostimedly:ÓÃÓÚOSÑÓÊ±,¿ÉÒÔÒýÆðÈÎÎñµ÷¶È.
+  60:../system/delay/delay.c **** 
+  61:../system/delay/delay.c **** //±¾Àý³Ì½ö×÷UCOSIIºÍUCOSIIIµÄÖ§³Ö,ÆäËûOS,Çë×ÔÐÐ²Î¿¼×ÅÒÆÖ²
+  62:../system/delay/delay.c **** //Ö§³ÖUCOSII
+  63:../system/delay/delay.c **** #ifdef 	OS_CRITICAL_METHOD						//OS_CRITICAL_METHOD¶¨ÒåÁË,ËµÃ÷ÒªÖ§³ÖUCOSII				
+  64:../system/delay/delay.c **** #define delay_osrunning		OSRunning			//OSÊÇ·ñÔËÐÐ±ê¼Ç,0,²»ÔËÐÐ;1,ÔÚÔËÐÐ
+  65:../system/delay/delay.c **** #define delay_ostickspersec	OS_TICKS_PER_SEC	//OSÊ±ÖÓ½ÚÅÄ,¼´Ã¿Ãëµ÷¶È´ÎÊý
+  66:../system/delay/delay.c **** #define delay_osintnesting 	OSIntNesting		//ÖÐ¶ÏÇ¶Ì×¼¶±ð,¼´ÖÐ¶ÏÇ¶Ì×´ÎÊý
+  67:../system/delay/delay.c **** #endif
+  68:../system/delay/delay.c **** 
+  69:../system/delay/delay.c **** //Ö§³ÖUCOSIII
+  70:../system/delay/delay.c **** #ifdef 	CPU_CFG_CRITICAL_METHOD					//CPU_CFG_CRITICAL_METHOD¶¨ÒåÁË,ËµÃ÷ÒªÖ§³ÖUCOSIII	
+  71:../system/delay/delay.c **** #define delay_osrunning		OSRunning			//OSÊÇ·ñÔËÐÐ±ê¼Ç,0,²»ÔËÐÐ;1,ÔÚÔËÐÐ
+  72:../system/delay/delay.c **** #define delay_ostickspersec	OSCfg_TickRate_Hz	//OSÊ±ÖÓ½ÚÅÄ,¼´Ã¿Ãëµ÷¶È´ÎÊý
+  73:../system/delay/delay.c **** #define delay_osintnesting 	OSIntNestingCtr		//ÖÐ¶ÏÇ¶Ì×¼¶±ð,¼´ÖÐ¶ÏÇ¶Ì×´ÎÊý
+  74:../system/delay/delay.c **** #endif
+  75:../system/delay/delay.c **** 
+  76:../system/delay/delay.c **** 
+  77:../system/delay/delay.c **** //us¼¶ÑÓÊ±Ê±,¹Ø±ÕÈÎÎñµ÷¶È(·ÀÖ¹´ò¶Ïus¼¶ÑÓ³Ù)
+  78:../system/delay/delay.c **** void delay_osschedlock(void)
+  79:../system/delay/delay.c **** {
+  80:../system/delay/delay.c **** #ifdef CPU_CFG_CRITICAL_METHOD   				//Ê¹ÓÃUCOSIII
+  81:../system/delay/delay.c **** 	OS_ERR err; 
+  82:../system/delay/delay.c **** 	OSSchedLock(&err);							//UCOSIIIµÄ·½Ê½,½ûÖ¹µ÷¶È£¬·ÀÖ¹´ò¶ÏusÑÓÊ±
+  83:../system/delay/delay.c **** #else											//·ñÔòUCOSII
+  84:../system/delay/delay.c **** 	OSSchedLock();								//UCOSIIµÄ·½Ê½,½ûÖ¹µ÷¶È£¬·ÀÖ¹´ò¶ÏusÑÓÊ±
+  85:../system/delay/delay.c **** #endif
+  86:../system/delay/delay.c **** }
+  87:../system/delay/delay.c **** 
+  88:../system/delay/delay.c **** //us¼¶ÑÓÊ±Ê±,»Ö¸´ÈÎÎñµ÷¶È
+  89:../system/delay/delay.c **** void delay_osschedunlock(void)
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s 			page 3
+
+
+  90:../system/delay/delay.c **** {	
+  91:../system/delay/delay.c **** #ifdef CPU_CFG_CRITICAL_METHOD   				//Ê¹ÓÃUCOSIII
+  92:../system/delay/delay.c **** 	OS_ERR err; 
+  93:../system/delay/delay.c **** 	OSSchedUnlock(&err);						//UCOSIIIµÄ·½Ê½,»Ö¸´µ÷¶È
+  94:../system/delay/delay.c **** #else											//·ñÔòUCOSII
+  95:../system/delay/delay.c **** 	OSSchedUnlock();							//UCOSIIµÄ·½Ê½,»Ö¸´µ÷¶È
+  96:../system/delay/delay.c **** #endif
+  97:../system/delay/delay.c **** }
+  98:../system/delay/delay.c **** 
+  99:../system/delay/delay.c **** //µ÷ÓÃOS×Ô´øµÄÑÓÊ±º¯ÊýÑÓÊ±
+ 100:../system/delay/delay.c **** //ticks:ÑÓÊ±µÄ½ÚÅÄÊý
+ 101:../system/delay/delay.c **** void delay_ostimedly(u32 ticks)
+ 102:../system/delay/delay.c **** {
+ 103:../system/delay/delay.c **** #ifdef CPU_CFG_CRITICAL_METHOD
+ 104:../system/delay/delay.c **** 	OS_ERR err; 
+ 105:../system/delay/delay.c **** 	OSTimeDly(ticks,OS_OPT_TIME_PERIODIC,&err);	//UCOSIIIÑÓÊ±²ÉÓÃÖÜÆÚÄ£Ê½
+ 106:../system/delay/delay.c **** #else
+ 107:../system/delay/delay.c **** 	OSTimeDly(ticks);							//UCOSIIÑÓÊ±
+ 108:../system/delay/delay.c **** #endif 
+ 109:../system/delay/delay.c **** }
+ 110:../system/delay/delay.c ****  
+ 111:../system/delay/delay.c **** //systickÖÐ¶Ï·þÎñº¯Êý,Ê¹ÓÃucosÊ±ÓÃµ½
+ 112:../system/delay/delay.c **** void SysTick_Handler(void)
+ 113:../system/delay/delay.c **** {	
+ 114:../system/delay/delay.c **** 	if(delay_osrunning==1)						//OS¿ªÊ¼ÅÜÁË,²ÅÖ´ÐÐÕý³£µÄµ÷¶È´¦Àí
+ 115:../system/delay/delay.c **** 	{
+ 116:../system/delay/delay.c **** 		OSIntEnter();							//½øÈëÖÐ¶Ï
+ 117:../system/delay/delay.c **** 		OSTimeTick();       					//µ÷ÓÃucosµÄÊ±ÖÓ·þÎñ³ÌÐò               
+ 118:../system/delay/delay.c **** 		OSIntExit();       	 					//´¥·¢ÈÎÎñÇÐ»»ÈíÖÐ¶Ï
+ 119:../system/delay/delay.c **** 	}
+ 120:../system/delay/delay.c **** }
+ 121:../system/delay/delay.c **** #endif
+ 122:../system/delay/delay.c **** 
+ 123:../system/delay/delay.c **** 			   
+ 124:../system/delay/delay.c **** //³õÊ¼»¯ÑÓ³Ùº¯Êý
+ 125:../system/delay/delay.c **** //µ±Ê¹ÓÃOSµÄÊ±ºò,´Ëº¯Êý»á³õÊ¼»¯OSµÄÊ±ÖÓ½ÚÅÄ
+ 126:../system/delay/delay.c **** //SYSTICKµÄÊ±ÖÓ¹Ì¶¨ÎªHCLKÊ±ÖÓµÄ1/8
+ 127:../system/delay/delay.c **** //SYSCLK:ÏµÍ³Ê±ÖÓ
+ 128:../system/delay/delay.c **** void delay_init()
+ 129:../system/delay/delay.c **** {
+  27              		.loc 1 129 1 view -0
+  28              		.cfi_startproc
+  29              		@ args = 0, pretend = 0, frame = 0
+  30              		@ frame_needed = 0, uses_anonymous_args = 0
+  31 0000 08B5     		push	{r3, lr}
+  32              	.LCFI0:
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+ 130:../system/delay/delay.c **** #if SYSTEM_SUPPORT_OS  							//Èç¹ûÐèÒªÖ§³ÖOS.
+ 131:../system/delay/delay.c **** 	u32 reload;
+ 132:../system/delay/delay.c **** #endif
+ 133:../system/delay/delay.c **** 	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);	//Ñ¡ÔñÍâ²¿Ê±ÖÓ  HCLK/8
+  36              		.loc 1 133 2 view .LVU1
+  37 0002 6FF00400 		mvn	r0, #4
+  38 0006 FFF7FEFF 		bl	SysTick_CLKSourceConfig
+  39              	.LVL0:
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s 			page 4
+
+
+ 134:../system/delay/delay.c **** 	fac_us=SystemCoreClock/8000000;				//ÎªÏµÍ³Ê±ÖÓµÄ1/8  
+  40              		.loc 1 134 2 view .LVU2
+  41              		.loc 1 134 24 is_stmt 0 view .LVU3
+  42 000a 084B     		ldr	r3, .L3
+  43 000c 1B68     		ldr	r3, [r3]
+  44 000e 084A     		ldr	r2, .L3+4
+  45 0010 A2FB0323 		umull	r2, r3, r2, r3
+  46              		.loc 1 134 8 view .LVU4
+  47 0014 C3F34753 		ubfx	r3, r3, #21, #8
+  48 0018 064A     		ldr	r2, .L3+8
+  49 001a 1370     		strb	r3, [r2]
+ 135:../system/delay/delay.c **** #if SYSTEM_SUPPORT_OS  							//Èç¹ûÐèÒªÖ§³ÖOS.
+ 136:../system/delay/delay.c **** 	reload=SystemCoreClock/8000000;				//Ã¿ÃëÖÓµÄ¼ÆÊý´ÎÊý µ¥Î»ÎªM  
+ 137:../system/delay/delay.c **** 	reload*=1000000/delay_ostickspersec;		//¸ù¾Ýdelay_ostickspersecÉè¶¨Òç³öÊ±¼ä
+ 138:../system/delay/delay.c **** 												//reloadÎª24Î»¼Ä´æÆ÷,×î´óÖµ:16777216,ÔÚ72MÏÂ,Ô¼ºÏ1.86s×óÓÒ	
+ 139:../system/delay/delay.c **** 	fac_ms=1000/delay_ostickspersec;			//´ú±íOS¿ÉÒÔÑÓÊ±µÄ×îÉÙµ¥Î»	   
+ 140:../system/delay/delay.c **** 
+ 141:../system/delay/delay.c **** 	SysTick->CTRL|=SysTick_CTRL_TICKINT_Msk;   	//¿ªÆôSYSTICKÖÐ¶Ï
+ 142:../system/delay/delay.c **** 	SysTick->LOAD=reload; 						//Ã¿1/delay_ostickspersecÃëÖÐ¶ÏÒ»´Î	
+ 143:../system/delay/delay.c **** 	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk;   	//¿ªÆôSYSTICK    
+ 144:../system/delay/delay.c **** 
+ 145:../system/delay/delay.c **** #else
+ 146:../system/delay/delay.c **** 	fac_ms=(u16)fac_us*1000;					//·ÇOSÏÂ,´ú±íÃ¿¸ömsÐèÒªµÄsystickÊ±ÖÓÊý   
+  50              		.loc 1 146 2 is_stmt 1 view .LVU5
+  51              		.loc 1 146 8 is_stmt 0 view .LVU6
+  52 001c C3EB4312 		rsb	r2, r3, r3, lsl #5
+  53 0020 03EB8203 		add	r3, r3, r2, lsl #2
+  54 0024 DA00     		lsls	r2, r3, #3
+  55 0026 044B     		ldr	r3, .L3+12
+  56 0028 1A80     		strh	r2, [r3]	@ movhi
+ 147:../system/delay/delay.c **** #endif
+ 148:../system/delay/delay.c **** }								    
+  57              		.loc 1 148 1 view .LVU7
+  58 002a 08BD     		pop	{r3, pc}
+  59              	.L4:
+  60              		.align	2
+  61              	.L3:
+  62 002c 00000000 		.word	SystemCoreClock
+  63 0030 83DE1B43 		.word	1125899907
+  64 0034 00000000 		.word	.LANCHOR0
+  65 0038 00000000 		.word	.LANCHOR1
+  66              		.cfi_endproc
+  67              	.LFE29:
+  69              		.section	.text.delay_us,"ax",%progbits
+  70              		.align	1
+  71              		.global	delay_us
+  72              		.syntax unified
+  73              		.thumb
+  74              		.thumb_func
+  76              	delay_us:
+  77              	.LVL1:
+  78              	.LFB30:
+ 149:../system/delay/delay.c **** 
+ 150:../system/delay/delay.c **** #if SYSTEM_SUPPORT_OS  							//Èç¹ûÐèÒªÖ§³ÖOS.
+ 151:../system/delay/delay.c **** //ÑÓÊ±nus
+ 152:../system/delay/delay.c **** //nusÎªÒªÑÓÊ±µÄusÊý.		    								   
+ 153:../system/delay/delay.c **** void delay_us(u32 nus)
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s 			page 5
+
+
+ 154:../system/delay/delay.c **** {		
+ 155:../system/delay/delay.c **** 	u32 ticks;
+ 156:../system/delay/delay.c **** 	u32 told,tnow,tcnt=0;
+ 157:../system/delay/delay.c **** 	u32 reload=SysTick->LOAD;					//LOADµÄÖµ	    	 
+ 158:../system/delay/delay.c **** 	ticks=nus*fac_us; 							//ÐèÒªµÄ½ÚÅÄÊý	  		 
+ 159:../system/delay/delay.c **** 	tcnt=0;
+ 160:../system/delay/delay.c **** 	delay_osschedlock();						//×èÖ¹OSµ÷¶È£¬·ÀÖ¹´ò¶ÏusÑÓÊ±
+ 161:../system/delay/delay.c **** 	told=SysTick->VAL;        					//¸Õ½øÈëÊ±µÄ¼ÆÊýÆ÷Öµ
+ 162:../system/delay/delay.c **** 	while(1)
+ 163:../system/delay/delay.c **** 	{
+ 164:../system/delay/delay.c **** 		tnow=SysTick->VAL;	
+ 165:../system/delay/delay.c **** 		if(tnow!=told)
+ 166:../system/delay/delay.c **** 		{	    
+ 167:../system/delay/delay.c **** 			if(tnow<told)tcnt+=told-tnow;		//ÕâÀï×¢ÒâÒ»ÏÂSYSTICKÊÇÒ»¸öµÝ¼õµÄ¼ÆÊýÆ÷¾Í¿ÉÒÔÁË.
+ 168:../system/delay/delay.c **** 			else tcnt+=reload-tnow+told;	    
+ 169:../system/delay/delay.c **** 			told=tnow;
+ 170:../system/delay/delay.c **** 			if(tcnt>=ticks)break;				//Ê±¼ä³¬¹ý/µÈÓÚÒªÑÓ³ÙµÄÊ±¼ä,ÔòÍË³ö.
+ 171:../system/delay/delay.c **** 		}  
+ 172:../system/delay/delay.c **** 	};
+ 173:../system/delay/delay.c **** 	delay_osschedunlock();						//»Ö¸´OSµ÷¶È									    
+ 174:../system/delay/delay.c **** }
+ 175:../system/delay/delay.c **** //ÑÓÊ±nms
+ 176:../system/delay/delay.c **** //nms:ÒªÑÓÊ±µÄmsÊý
+ 177:../system/delay/delay.c **** void delay_ms(u16 nms)
+ 178:../system/delay/delay.c **** {	
+ 179:../system/delay/delay.c **** 	if(delay_osrunning&&delay_osintnesting==0)	//Èç¹ûOSÒÑ¾­ÔÚÅÜÁË,²¢ÇÒ²»ÊÇÔÚÖÐ¶ÏÀïÃæ(ÖÐ¶ÏÀïÃæ²»ÄÜÈÎÎñµ
+ 180:../system/delay/delay.c **** 	{		 
+ 181:../system/delay/delay.c **** 		if(nms>=fac_ms)							//ÑÓÊ±µÄÊ±¼ä´óÓÚOSµÄ×îÉÙÊ±¼äÖÜÆÚ 
+ 182:../system/delay/delay.c **** 		{ 
+ 183:../system/delay/delay.c ****    			delay_ostimedly(nms/fac_ms);		//OSÑÓÊ±
+ 184:../system/delay/delay.c **** 		}
+ 185:../system/delay/delay.c **** 		nms%=fac_ms;							//OSÒÑ¾­ÎÞ·¨Ìá¹©ÕâÃ´Ð¡µÄÑÓÊ±ÁË,²ÉÓÃÆÕÍ¨·½Ê½ÑÓÊ±    
+ 186:../system/delay/delay.c **** 	}
+ 187:../system/delay/delay.c **** 	delay_us((u32)(nms*1000));					//ÆÕÍ¨·½Ê½ÑÓÊ±  
+ 188:../system/delay/delay.c **** }
+ 189:../system/delay/delay.c **** #else //²»ÓÃOSÊ±
+ 190:../system/delay/delay.c **** //ÑÓÊ±nus
+ 191:../system/delay/delay.c **** //nusÎªÒªÑÓÊ±µÄusÊý.		    								   
+ 192:../system/delay/delay.c **** void delay_us(u32 nus)
+ 193:../system/delay/delay.c **** {		
+  79              		.loc 1 193 1 is_stmt 1 view -0
+  80              		.cfi_startproc
+  81              		@ args = 0, pretend = 0, frame = 0
+  82              		@ frame_needed = 0, uses_anonymous_args = 0
+  83              		@ link register save eliminated.
+ 194:../system/delay/delay.c **** 	u32 temp;	    	 
+  84              		.loc 1 194 2 view .LVU9
+ 195:../system/delay/delay.c **** 	SysTick->LOAD=nus*fac_us; 					//Ê±¼ä¼ÓÔØ	  		 
+  85              		.loc 1 195 2 view .LVU10
+  86              		.loc 1 195 19 is_stmt 0 view .LVU11
+  87 0000 0E4B     		ldr	r3, .L7
+  88 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  89 0004 03FB00F0 		mul	r0, r3, r0
+  90              	.LVL2:
+  91              		.loc 1 195 15 view .LVU12
+  92 0008 4FF0E023 		mov	r3, #-536813568
+  93 000c 5861     		str	r0, [r3, #20]
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s 			page 6
+
+
+ 196:../system/delay/delay.c **** 	SysTick->VAL=0x00;        					//Çå¿Õ¼ÆÊýÆ÷
+  94              		.loc 1 196 2 is_stmt 1 view .LVU13
+  95              		.loc 1 196 14 is_stmt 0 view .LVU14
+  96 000e 0022     		movs	r2, #0
+  97 0010 9A61     		str	r2, [r3, #24]
+ 197:../system/delay/delay.c **** 	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;	//¿ªÊ¼µ¹Êý	  
+  98              		.loc 1 197 2 is_stmt 1 view .LVU15
+  99              		.loc 1 197 15 is_stmt 0 view .LVU16
+ 100 0012 1A69     		ldr	r2, [r3, #16]
+ 101 0014 42F00102 		orr	r2, r2, #1
+ 102 0018 1A61     		str	r2, [r3, #16]
+ 103              	.L6:
+ 198:../system/delay/delay.c **** 	do
+ 104              		.loc 1 198 2 is_stmt 1 discriminator 1 view .LVU17
+ 199:../system/delay/delay.c **** 	{
+ 200:../system/delay/delay.c **** 		temp=SysTick->CTRL;
+ 105              		.loc 1 200 3 discriminator 1 view .LVU18
+ 106              		.loc 1 200 7 is_stmt 0 discriminator 1 view .LVU19
+ 107 001a 4FF0E023 		mov	r3, #-536813568
+ 108 001e 1B69     		ldr	r3, [r3, #16]
+ 109              	.LVL3:
+ 201:../system/delay/delay.c **** 	}while((temp&0x01)&&!(temp&(1<<16)));		//µÈ´ýÊ±¼äµ½´ï   
+ 110              		.loc 1 201 8 is_stmt 1 discriminator 1 view .LVU20
+ 111              		.loc 1 201 20 is_stmt 0 discriminator 1 view .LVU21
+ 112 0020 03F00113 		and	r3, r3, #65537
+ 113              	.LVL4:
+ 114              		.loc 1 201 2 discriminator 1 view .LVU22
+ 115 0024 012B     		cmp	r3, #1
+ 116 0026 F8D0     		beq	.L6
+ 202:../system/delay/delay.c **** 	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;	//¹Ø±Õ¼ÆÊýÆ÷
+ 117              		.loc 1 202 2 is_stmt 1 view .LVU23
+ 118              		.loc 1 202 15 is_stmt 0 view .LVU24
+ 119 0028 4FF0E023 		mov	r3, #-536813568
+ 120 002c 1A69     		ldr	r2, [r3, #16]
+ 121 002e 22F00102 		bic	r2, r2, #1
+ 122 0032 1A61     		str	r2, [r3, #16]
+ 203:../system/delay/delay.c **** 	SysTick->VAL =0X00;      					 //Çå¿Õ¼ÆÊýÆ÷	 
+ 123              		.loc 1 203 2 is_stmt 1 view .LVU25
+ 124              		.loc 1 203 15 is_stmt 0 view .LVU26
+ 125 0034 0022     		movs	r2, #0
+ 126 0036 9A61     		str	r2, [r3, #24]
+ 204:../system/delay/delay.c **** }
+ 127              		.loc 1 204 1 view .LVU27
+ 128 0038 7047     		bx	lr
+ 129              	.L8:
+ 130 003a 00BF     		.align	2
+ 131              	.L7:
+ 132 003c 00000000 		.word	.LANCHOR0
+ 133              		.cfi_endproc
+ 134              	.LFE30:
+ 136              		.section	.text.delay_ms,"ax",%progbits
+ 137              		.align	1
+ 138              		.global	delay_ms
+ 139              		.syntax unified
+ 140              		.thumb
+ 141              		.thumb_func
+ 143              	delay_ms:
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s 			page 7
+
+
+ 144              	.LVL5:
+ 145              	.LFB31:
+ 205:../system/delay/delay.c **** //ÑÓÊ±nms
+ 206:../system/delay/delay.c **** //×¢ÒânmsµÄ·¶Î§
+ 207:../system/delay/delay.c **** //SysTick->LOADÎª24Î»¼Ä´æÆ÷,ËùÒÔ,×î´óÑÓÊ±Îª:
+ 208:../system/delay/delay.c **** //nms<=0xffffff*8*1000/SYSCLK
+ 209:../system/delay/delay.c **** //SYSCLKµ¥Î»ÎªHz,nmsµ¥Î»Îªms
+ 210:../system/delay/delay.c **** //¶Ô72MÌõ¼þÏÂ,nms<=1864 
+ 211:../system/delay/delay.c **** void delay_ms(u16 nms)
+ 212:../system/delay/delay.c **** {	 		  	  
+ 146              		.loc 1 212 1 is_stmt 1 view -0
+ 147              		.cfi_startproc
+ 148              		@ args = 0, pretend = 0, frame = 0
+ 149              		@ frame_needed = 0, uses_anonymous_args = 0
+ 150              		@ link register save eliminated.
+ 213:../system/delay/delay.c **** 	u32 temp;		   
+ 151              		.loc 1 213 2 view .LVU29
+ 214:../system/delay/delay.c **** 	SysTick->LOAD=(u32)nms*fac_ms;				//Ê±¼ä¼ÓÔØ(SysTick->LOADÎª24bit)
+ 152              		.loc 1 214 2 view .LVU30
+ 153              		.loc 1 214 24 is_stmt 0 view .LVU31
+ 154 0000 0E4B     		ldr	r3, .L11
+ 155 0002 1B88     		ldrh	r3, [r3]
+ 156 0004 03FB00F0 		mul	r0, r3, r0
+ 157              	.LVL6:
+ 158              		.loc 1 214 15 view .LVU32
+ 159 0008 4FF0E023 		mov	r3, #-536813568
+ 160 000c 5861     		str	r0, [r3, #20]
+ 215:../system/delay/delay.c **** 	SysTick->VAL =0x00;							//Çå¿Õ¼ÆÊýÆ÷
+ 161              		.loc 1 215 2 is_stmt 1 view .LVU33
+ 162              		.loc 1 215 15 is_stmt 0 view .LVU34
+ 163 000e 0022     		movs	r2, #0
+ 164 0010 9A61     		str	r2, [r3, #24]
+ 216:../system/delay/delay.c **** 	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;	//¿ªÊ¼µ¹Êý  
+ 165              		.loc 1 216 2 is_stmt 1 view .LVU35
+ 166              		.loc 1 216 15 is_stmt 0 view .LVU36
+ 167 0012 1A69     		ldr	r2, [r3, #16]
+ 168 0014 42F00102 		orr	r2, r2, #1
+ 169 0018 1A61     		str	r2, [r3, #16]
+ 170              	.L10:
+ 217:../system/delay/delay.c **** 	do
+ 171              		.loc 1 217 2 is_stmt 1 discriminator 1 view .LVU37
+ 218:../system/delay/delay.c **** 	{
+ 219:../system/delay/delay.c **** 		temp=SysTick->CTRL;
+ 172              		.loc 1 219 3 discriminator 1 view .LVU38
+ 173              		.loc 1 219 7 is_stmt 0 discriminator 1 view .LVU39
+ 174 001a 4FF0E023 		mov	r3, #-536813568
+ 175 001e 1B69     		ldr	r3, [r3, #16]
+ 176              	.LVL7:
+ 220:../system/delay/delay.c **** 	}while((temp&0x01)&&!(temp&(1<<16)));		//µÈ´ýÊ±¼äµ½´ï   
+ 177              		.loc 1 220 8 is_stmt 1 discriminator 1 view .LVU40
+ 178              		.loc 1 220 20 is_stmt 0 discriminator 1 view .LVU41
+ 179 0020 03F00113 		and	r3, r3, #65537
+ 180              	.LVL8:
+ 181              		.loc 1 220 2 discriminator 1 view .LVU42
+ 182 0024 012B     		cmp	r3, #1
+ 183 0026 F8D0     		beq	.L10
+ 221:../system/delay/delay.c **** 	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;	//¹Ø±Õ¼ÆÊýÆ÷
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s 			page 8
+
+
+ 184              		.loc 1 221 2 is_stmt 1 view .LVU43
+ 185              		.loc 1 221 15 is_stmt 0 view .LVU44
+ 186 0028 4FF0E023 		mov	r3, #-536813568
+ 187 002c 1A69     		ldr	r2, [r3, #16]
+ 188 002e 22F00102 		bic	r2, r2, #1
+ 189 0032 1A61     		str	r2, [r3, #16]
+ 222:../system/delay/delay.c **** 	SysTick->VAL =0X00;       					//Çå¿Õ¼ÆÊýÆ÷	  	    
+ 190              		.loc 1 222 2 is_stmt 1 view .LVU45
+ 191              		.loc 1 222 15 is_stmt 0 view .LVU46
+ 192 0034 0022     		movs	r2, #0
+ 193 0036 9A61     		str	r2, [r3, #24]
+ 223:../system/delay/delay.c **** } 
+ 194              		.loc 1 223 1 view .LVU47
+ 195 0038 7047     		bx	lr
+ 196              	.L12:
+ 197 003a 00BF     		.align	2
+ 198              	.L11:
+ 199 003c 00000000 		.word	.LANCHOR1
+ 200              		.cfi_endproc
+ 201              	.LFE31:
+ 203              		.section	.bss.fac_ms,"aw",%nobits
+ 204              		.align	1
+ 205              		.set	.LANCHOR1,. + 0
+ 208              	fac_ms:
+ 209 0000 0000     		.space	2
+ 210              		.section	.bss.fac_us,"aw",%nobits
+ 211              		.set	.LANCHOR0,. + 0
+ 214              	fac_us:
+ 215 0000 00       		.space	1
+ 216              		.text
+ 217              	.Letext0:
+ 218              		.file 2 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\machi
+ 219              		.file 3 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\sys\\
+ 220              		.file 4 "../core/core_cm3.h"
+ 221              		.file 5 "../user/stm32f10x.h"
+ 222              		.file 6 "../user/system_stm32f10x.h"
+ 223              		.file 7 "../stm32f10x_fwlib/inc/misc.h"
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s 			page 9
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 delay.c
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:18     .text.delay_init:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:24     .text.delay_init:00000000 delay_init
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:62     .text.delay_init:0000002c $d
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:70     .text.delay_us:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:76     .text.delay_us:00000000 delay_us
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:132    .text.delay_us:0000003c $d
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:137    .text.delay_ms:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:143    .text.delay_ms:00000000 delay_ms
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:199    .text.delay_ms:0000003c $d
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:204    .bss.fac_ms:00000000 $d
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:208    .bss.fac_ms:00000000 fac_ms
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:214    .bss.fac_us:00000000 fac_us
+C:\Users\28470\AppData\Local\Temp\ccn1qLSj.s:215    .bss.fac_us:00000000 $d
+
+UNDEFINED SYMBOLS
+SysTick_CLKSourceConfig
+SystemCoreClock

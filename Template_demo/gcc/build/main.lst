@@ -1,0 +1,159 @@
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccKEuL2P.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"main.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.main,"ax",%progbits
+  18              		.align	1
+  19              		.global	main
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	main:
+  25              	.LFB32:
+  26              		.file 1 "../user/main.c"
+   1:../user/main.c **** #include "stm32f10x.h"
+   2:../user/main.c **** #include "delay.h"
+   3:../user/main.c **** #include "usart.h"
+   4:../user/main.c **** #include "pal_button.h"
+   5:../user/main.c **** //#include "oled.h"
+   6:../user/main.c **** #include "bsp_iic.h"
+   7:../user/main.c **** #include "bsp_led.h"
+   8:../user/main.c **** #include "pal_rgb.h" 
+   9:../user/main.c **** #include "bsp_usart2.h"
+  10:../user/main.c **** #include "common.h" 
+  11:../user/main.c **** #include "malloc.h" 
+  12:../user/main.c **** 
+  13:../user/main.c **** int main(void)
+  14:../user/main.c **** {	
+  27              		.loc 1 14 1 view -0
+  28              		.cfi_startproc
+  29              		@ Volatile: function does not return.
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              	.LCFI0:
+  34              		.cfi_def_cfa_offset 8
+  35              		.cfi_offset 3, -8
+  36              		.cfi_offset 14, -4
+  15:../user/main.c **** 	delay_init();
+  37              		.loc 1 15 2 view .LVU1
+  38 0002 FFF7FEFF 		bl	delay_init
+  39              	.LVL0:
+  16:../user/main.c **** 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); //设置NVIC中断分组2:2位抢占优先级，2位响应优先级
+  40              		.loc 1 16 2 view .LVU2
+  41 0006 4FF4A060 		mov	r0, #1280
+  42 000a FFF7FEFF 		bl	NVIC_PriorityGroupConfig
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccKEuL2P.s 			page 2
+
+
+  43              	.LVL1:
+  17:../user/main.c **** 	uart_init(115200); 
+  44              		.loc 1 17 2 view .LVU3
+  45 000e 4FF4E130 		mov	r0, #115200
+  46 0012 FFF7FEFF 		bl	uart_init
+  47              	.LVL2:
+  18:../user/main.c **** 	usart2_init(115200);
+  48              		.loc 1 18 2 view .LVU4
+  49 0016 4FF4E130 		mov	r0, #115200
+  50 001a FFF7FEFF 		bl	usart2_init
+  51              	.LVL3:
+  19:../user/main.c **** 	led_init();
+  52              		.loc 1 19 2 view .LVU5
+  53 001e FFF7FEFF 		bl	led_init
+  54              	.LVL4:
+  20:../user/main.c **** 	key_init(); 
+  55              		.loc 1 20 2 view .LVU6
+  56 0022 FFF7FEFF 		bl	key_init
+  57              	.LVL5:
+  21:../user/main.c **** 	tim3_int_init(9,7199);    //1ms
+  58              		.loc 1 21 2 view .LVU7
+  59 0026 41F61F41 		movw	r1, #7199
+  60 002a 0920     		movs	r0, #9
+  61 002c FFF7FEFF 		bl	tim3_int_init
+  62              	.LVL6:
+  22:../user/main.c **** 	dev_key_attach_init();   //按键驱动注册
+  63              		.loc 1 22 2 view .LVU8
+  64 0030 FFF7FEFF 		bl	dev_key_attach_init
+  65              	.LVL7:
+  23:../user/main.c **** 	dev_rgb_attach_init();	 //RGB驱动注册
+  66              		.loc 1 23 2 view .LVU9
+  67 0034 FFF7FEFF 		bl	dev_rgb_attach_init
+  68              	.LVL8:
+  24:../user/main.c **** 	
+  25:../user/main.c **** //	iic_init();
+  26:../user/main.c **** //	oled_init();			//初始化oled 
+  27:../user/main.c **** 
+  28:../user/main.c **** 	atk_8266_test(ATK_ESP8266_CWMODE_TBL[0]);
+  69              		.loc 1 28 2 view .LVU10
+  70 0038 024B     		ldr	r3, .L4
+  71 003a 1868     		ldr	r0, [r3]
+  72 003c FFF7FEFF 		bl	atk_8266_test
+  73              	.LVL9:
+  74              	.L2:
+  29:../user/main.c **** 
+  30:../user/main.c ****     while (1) {
+  75              		.loc 1 30 5 discriminator 1 view .LVU11
+  31:../user/main.c **** 
+  32:../user/main.c ****     }
+  76              		.loc 1 32 5 discriminator 1 view .LVU12
+  30:../user/main.c **** 
+  77              		.loc 1 30 11 discriminator 1 view .LVU13
+  78 0040 FEE7     		b	.L2
+  79              	.L5:
+  80 0042 00BF     		.align	2
+  81              	.L4:
+  82 0044 00000000 		.word	ATK_ESP8266_CWMODE_TBL
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccKEuL2P.s 			page 3
+
+
+  83              		.cfi_endproc
+  84              	.LFE32:
+  86              		.text
+  87              	.Letext0:
+  88              		.file 2 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\machi
+  89              		.file 3 "g:\\software\\vscode_for_stm32\\2024-q4-armgcc\\10 2021.10\\arm-none-eabi\\include\\sys\\
+  90              		.file 4 "../system/delay/delay.h"
+  91              		.file 5 "../stm32f10x_fwlib/inc/misc.h"
+  92              		.file 6 "../system/usart/usart.h"
+  93              		.file 7 "../bsp/bsp_usart2.h"
+  94              		.file 8 "../bsp/bsp_led.h"
+  95              		.file 9 "../bsp/bsp_key.h"
+  96              		.file 10 "../driver/pal_button.h"
+  97              		.file 11 "../driver/pal_rgb.h"
+  98              		.file 12 "../app/ESP8266/common.h"
+ARM GAS  C:\Users\28470\AppData\Local\Temp\ccKEuL2P.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\28470\AppData\Local\Temp\ccKEuL2P.s:18     .text.main:00000000 $t
+C:\Users\28470\AppData\Local\Temp\ccKEuL2P.s:24     .text.main:00000000 main
+C:\Users\28470\AppData\Local\Temp\ccKEuL2P.s:82     .text.main:00000044 $d
+
+UNDEFINED SYMBOLS
+delay_init
+NVIC_PriorityGroupConfig
+uart_init
+usart2_init
+led_init
+key_init
+tim3_int_init
+dev_key_attach_init
+dev_rgb_attach_init
+atk_8266_test
+ATK_ESP8266_CWMODE_TBL
