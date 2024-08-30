@@ -15,7 +15,7 @@ void LIN_LED_Drive(LIN_MSG* pLINMsg);
 LIN_MSG*  pWiperMsg;    //LIN数据 
 extern    LIN_BUFFER  LIN_RxDataBuff;   //缓冲区
 
-u8 Data[3] = {0x23,0x24,0x25};
+u8 Data[8] = {0x00,0x02,0xAA,0xBB,0xCC,0xDD,0xEE,0xFF};
 int main(void)
 {	
 	delay_init();	    	//延时函数初始化	
@@ -46,13 +46,13 @@ void LIN_LED_Drive(LIN_MSG* pLINMsg)
 			case 0x01:
 					LED0 = 0;
 					pLINMsg->Data[0] = 0;
-					LIN_Send_data(0x13,Data,3);	
+					LIN_Send_data(0x13,Data,8);	
 					
 			break;
 			case 0x02:	
 					LED1 = 0;
 					pLINMsg->Data[0] = 0;
-					LIN_Send_data(0x12,Data,3);
+					LIN_Send_data(0x12,Data,8);
 			break;	
 			default: 
 				 return;				

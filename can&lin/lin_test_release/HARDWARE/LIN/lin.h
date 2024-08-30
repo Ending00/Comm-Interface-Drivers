@@ -29,11 +29,13 @@ uint8_t LIN_GetChecksum(uint8_t PID, uint8_t* pData,uint8_t DataLen,uint8_t flag
 void LIN_SendBytes(USART_TypeDef* USARTx,uint8_t* pData,uint8_t DataLen);
 void LIN_Send_data(uint8_t PID, uint8_t* pData,uint8_t DataLen);
 
+void LIN_Rx_data(uint8_t PID, uint8_t* pData,uint8_t DataLen);
+	
 void Lin_SendHead(u8 id);
 void Lin_SendSyncSegment(void);
 void Lin_SendBreak(void);
 
-#endif
+#endif        
 
 
 

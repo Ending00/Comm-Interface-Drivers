@@ -14,9 +14,10 @@ LIN_BUFFER  LIN_RxDataBuff;
   * @param  None
   * @retval None
 	*/
+	uint8_t ReceiveData = 0;
 void LIN_MASTER_IRQHandler(void)
 {
-	uint8_t ReceiveData = 0;
+//	uint8_t ReceiveData = 0;
 	
 	//LIN断开帧中断
 	if ((USART_GetITStatus(USART2,USART_IT_LBD) == SET)){		//LIN断路检测中断  1 -- 有同步间隔段	
@@ -80,10 +81,10 @@ void LIN_MasterRxMsg(uint8_t Data)
 			
 			if(PID == pLINMsg->PID){                     //判断PID是否正确  后续根据LDF定
 				//根据判断是执行还是反馈 改变标志位
-				if(pLINMsg->FrameID == 0x31){              // 1 -- 执行  即继续接收数据
+				if(pLINMsg->FrameID == 0x31){              // 1 -- 执行  即继续接收数据       主机写，从机继续读取数据
 					LIN_RxStateGet = MSG_GET;	
-				}else if(pLINMsg->FrameID == 0x32){        // 2 -- 反馈  即向LIN总线发送消息
-					LIN_Send_data(pLINMsg->PID,data,sizeof(data)/sizeof(data[0]));   //反馈消息
+				}else if(pLINMsg->FrameID == 0x32){        // 2 -- 反馈  即向LIN总线发送消息  主机读，从机反馈数据到总线
+					LIN_Rx_data(pLINMsg->PID,data,sizeof(data)/sizeof(data[0]));   //反馈消息
 					LIN_RxStateGet = BREAK_GET;
 				}else{                                     // 3 -- 其他  即不执行也不反馈                       
 					LIN_RingBUF_ClearRxMsg(&LIN_RxDataBuff); //清空当前缓冲区

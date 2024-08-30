@@ -110,6 +110,30 @@ uint8_t LIN_GetChecksum(uint8_t PID, uint8_t* pData,uint8_t DataLen,uint8_t flag
     }
 }
 
+
+//uint8_t LIN_GetChecksum(uint8_t PID, uint8_t* pData,uint8_t DataLen,uint8_t flag) 			 
+//{  
+//	  uint16_t CheckSum = 0; 
+//      uint8_t i = 0;	
+//    //FrameID为3C 3D的PID为3C 7D
+//	  if((PID!=0x3C)&&(PID!=0x7D)){    //诊断帧只能使用标准校验和，标准校验和不包含PID 只校验数据段              	  
+//			CheckSum = PID;     		
+//	  }
+//	  for(i = 0; i < DataLen; i++){
+//			CheckSum += pData[i];		  
+//			if (CheckSum > 0xFF){
+//				CheckSum -= 0xFF;  
+//			}
+//	  }
+//		
+//		if(flag == 0){
+//			return (~CheckSum) & 0xFF;  //发送方需要取反
+//		}else{
+//			return CheckSum & 0xFF; 		//接收方不需要
+//		}
+//}
+
+
 /**
   * @brief  LIN发送字节	
   * @param  USARTx：串口号，pData：数据指针，Length：数据长度
@@ -152,9 +176,32 @@ void LIN_Send_data(uint8_t PID, uint8_t* pData, uint8_t DataLen)
     free(Linbuffer);  // 使用完后释放内存
 }
 
-/*******************************************************
-* LIN从机处理
-*******************************************************/
+/******************************主机读，从机写*****************************
+*	LIN从机处理
+*
+*   主机发送：| Break | Sync Field | Identifier Field |
+*	从机响应：|               Data Field                | Checksum Field |
+**************************************************************************/
+void LIN_Rx_data(uint8_t PID, uint8_t* pData,uint8_t DataLen)
+{
+	uint8_t i = 0 , Checksum = 0;	
+    uint8_t* Linbuffer = (uint8_t*)malloc(DataLen + 1);  // 动态分配数组(数据+校验和)
+    if (Linbuffer == NULL) {
+        // 处理内存分配失败的情况
+        return;
+    }
+	Checksum = LIN_GetChecksum(PID,pData,DataLen,0);     //获取校验和段
+	for (i = 0; i < DataLen; i++)                        //存DataLen个字节数据段
+	{     
+		Linbuffer[i] = *(pData + i);		
+	}
+	Linbuffer[DataLen] = Checksum;                   //校验和
+	LIN_SendBytes(USART2, Linbuffer ,DataLen+1);     //发送从机数据
+	free(Linbuffer);  // 使用完后释放内存
+}
+
+
+
 //缓冲区初始化
 void LIN_RingBUF_Init(LIN_BUFFER* pLINBuff)
 {
