@@ -1,0 +1,5 @@
+{
+    //"cortex-debug.gdbPath": "G:/SoftWare/vscode_for_stm32/2024-q4-armgcc/10 2021.10/bin",
+    "cortex-debug.stutilPath": "F:/demo/environment_config/stlink-1.8.0-win32/bin/st-util",
+    "cortex-debug.variableUseNaturalFormat": false
+}

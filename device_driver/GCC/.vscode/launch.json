@@ -1,0 +1,97 @@
+// Configure debug launch settings
+// Feel free to copy these and modify them for your debugger and MCU
+{
+    "version": "0.2.0",
+    "projectName": "DEMO",
+    "configurations": [
+        {
+            "name": "JLink launch",
+            "cwd": "${workspaceRoot}",
+            "executable": "F:/demo/demo/build/demo.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "jlink",
+            "device": "STM32F103RC",
+            "interface": "swd",
+            "runToMain": true, // else it starts at reset handler - not interested
+            "preLaunchTask": "task-build", // configured in tasks.json
+            "svdFile": "", // Include svd to watch device peripherals
+            "swoConfig":
+            {
+                "enabled": true,
+                "cpuFrequency": 168000000,
+                "swoFrequency": 10000000,
+                "source": "probe",
+                "decoders":
+                [
+                    {
+                        "label": "ITM port 0 output",
+                        "type": "console",
+                        "port": 0,
+                        "showOnStartup": true,
+                        "encoding": "ascii"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "JLink attach",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}/build/demo.elf",
+            "request": "attach",
+            "type": "cortex-debug",
+            "servertype": "jlink",
+            "device": "STM32F103RC",
+            "interface": "swd",
+            "runToEntryPoint": "main", // else it starts at reset handler - not interested
+            "preLaunchTask": "task-build", // configured in tasks.json
+            "svdFile": "", // Include svd to watch device peripherals
+            "swoConfig":
+            {
+                "enabled": true,
+                "cpuFrequency": 160000000,
+                "swoFrequency": 4000000,
+                "source": "probe",
+                "decoders":
+                [
+                    {
+                        "label": "ITM port 0 output",
+                        "type": "console",
+                        "port": 0,
+                        "showOnStartup": true,
+                        "encoding": "ascii"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "STlink launch",
+            "cwd": "${workspaceRoot}",
+            "executable": "F:/demo/demo/build/demo.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "stutil",
+            "device": "STM32F103RC",
+            "interface": "swd",
+            "runToMain": true, // else it starts at reset handler - not interested
+            "preLaunchTask": "task-build", // configured in tasks.json
+            "svdFile": "", // Include svd to watch device peripherals
+            "swoConfig": {} // currently (v1.7.0) not supported
+        },
+        
+        {
+            "name": "STlink attach",
+            "cwd": "${workspaceRoot}",
+            "executable": "F:/demo/demo/build/demo.elf",
+            "request": "attach",
+            "type": "cortex-debug",
+            "servertype": "stutil",
+            "device": "STM32F103RC",
+            "interface": "swd",
+            "runToEntryPoint": "main", // else it starts at reset handler - not interested
+            "preLaunchTask": "task-build", // configured in tasks.json
+            "svdFile": "", // Include svd to watch device peripherals
+            "swoConfig": {} // currently (v1.7.0) not supported
+        },
+    ]
+}

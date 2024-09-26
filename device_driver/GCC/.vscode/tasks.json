@@ -1,0 +1,57 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        // MAKE(BUILD + CLEAN) 
+        {
+            "label": "task-build",
+            "group": "build",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "all",
+                "-j4"
+            ]
+        },
+        {
+            "label": "task-clean",
+            "group": "build",
+            "type": "shell",
+            "command": "make",
+            "args": ["clean"]
+        },
+        // JLINK (FLASH + ERASE)
+        {
+            "label": "task-jflash",
+            "group": "build",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "-j4",
+                "jflash"
+            ]
+        },
+        {
+            "label": "task-jerase",
+            "group": "build",
+            "type": "shell",
+            "command": "make",
+            "args": ["jerase"]
+        },
+        // STLINK (FLASH+ERASE)
+        {
+            "label": "task-stflash",
+            "group": "build",
+            "type": "shell",
+            "command": "make",
+            "args": ["-j4", "stflash"]
+        },
+        {
+            "label": "task-sterase",
+            "group": "build",
+            "type": "shell",
+            "command": "F:/demo/environment_config/stlink-1.8.0-win32/bin/st-flash",
+            "args": ["--freq=4000","erase"]
+        },
+    ]
+}
+ 
